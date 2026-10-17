@@ -45,25 +45,26 @@ Enlace directo a una diapositiva: `index.html#/42`.
 
 ---
 
-## Contenido: 148 diapositivas en 14 módulos
+## Contenido: 159 diapositivas en 16 módulos
 
 | Módulo | Diapositivas | Contenido |
 |---|---|---|
 | 0 · Encuadre | 6 | Objetivos, agenda de 4 h, reglas del juego |
-| 1 · Qué es la IA | 7 | Definiciones, historia, taxonomía, glosario |
-| 2 · Cómo aprende | 10 | Datos, pérdida, gradientes, sobreajuste, RLHF/DPO |
+| 1 · Qué es la IA | 8 | Definiciones, los tres saltos (transformer, ChatGPT, agentes), taxonomía, glosario |
+| 2 · Cómo aprende | 14 | Datos, pérdida, gradientes, sobreajuste, las 4 fases, **fine-tuning, LoRA y QLoRA** |
 | 3 · Anatomía de un LLM | 10 | Tokens, embeddings, atención, bloques, muestreo, multimodalidad |
 | 4 · Inferencia | 14 | Prefill/decode, KV cache, cuantización, razonamiento, precios, hardware, API vs propio |
-| 5 · Arquitecturas | 13 | Densa vs MoE, CNN, RNN/LSTM, transformers, difusión, otros modelos |
-| 6 · Panorama 2026 | 12 | Laboratorios, modelos punteros, precios, pesos abiertos, benchmarks, riesgos |
-| 7 · Harness y agentes | 12 | Bucle, herramientas, contexto, permisos, ecosistema, MCP, paralelismo, coste |
-| 8 · Skills y contexto | 7 | Skills, fichero de convenciones, memoria, ADRs, anatomía del prompt |
-| 9 · Día a día (código) | 11 | Código heredado, tests, revisión, refactors, SQL, bugs, anti-patrones |
-| 10 · Despliegue y apps | 10 | Plantillas, contenedores, IaC, CI/CD, observabilidad, seguridad, métricas |
-| 11 · Automatizar | 9 | Inventario, contrato, CLIs, lotes, trabajos programados, cuándo NO |
-| 12 · Riesgos y reglas | 10 | Alucinaciones, inyección de prompts, datos, seguridad, coste, checklists |
-| 13 · Taller y adopción | 12 | 6 ejercicios guiados, plan 30/60/90, diez reglas |
-| 14 · Anexo | 5 | Recursos, plantilla de convenciones, glosario, cómo editar |
+| 5 · Arquitecturas | 11 | Densa vs MoE, CNN, RNN/LSTM, tres familias de transformer, alternativas, otros modelos |
+| 6 · Difusión y ComfyUI | 9 | Difusión paso a paso, checkpoints/VAE/LoRA/ControlNet, ComfyUI, flujos de equipo, LoRA de imagen, vídeo y audio |
+| 7 · Panorama 2026 | 12 | Laboratorios, modelos punteros, precios, pesos abiertos, benchmarks, riesgos |
+| 8 · Harness y agentes | 12 | Bucle, herramientas, contexto, permisos, ecosistema, MCP, paralelismo, coste |
+| 9 · Skills y contexto | 7 | Skills, fichero de convenciones, memoria, ADRs, anatomía del prompt |
+| 10 · Día a día (código) | 11 | Código heredado, tests, revisión, refactors, SQL, bugs, anti-patrones |
+| 11 · Despliegue y apps | 10 | Plantillas, contenedores, IaC, CI/CD, observabilidad, seguridad, métricas |
+| 12 · Automatizar | 9 | Inventario, contrato, CLIs, lotes, trabajos programados, cuándo NO |
+| 13 · Riesgos y reglas | 10 | Alucinaciones, inyección de prompts, datos, seguridad, coste, checklists |
+| 14 · Taller y adopción | 12 | 6 ejercicios guiados, plan 30/60/90, diez reglas |
+| 15 · Anexo | 5 | Recursos, plantilla de convenciones, glosario, cómo editar |
 
 Cada diapositiva incluye **notas del ponente** (tecla `N`).
 

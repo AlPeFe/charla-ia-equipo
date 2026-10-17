@@ -260,6 +260,175 @@ Salida (probabilidades del modelo):
 </section>
 
 <section class="slide" data-module="2 · Cómo aprende">
+  <div class="kicker">Fine-tuning · adaptadores</div>
+  <h2>Fine-tuning: qué cambia y qué no</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card accent">
+          <h3>Qué se puede conseguir</h3>
+          <ul class="tight">
+            <li><b>Formato y estilo</b>: que responda siempre con la estructura que necesitas (JSON, informes, informes de incidencias).</li>
+            <li><b>Tono y vocabulario</b> de la casa, con las palabras del dominio.</li>
+            <li><b>Especialización</b> en una tarea estrecha y repetitiva (clasificar, extraer, reformular).</li>
+            <li><b>Tamaño</b>: un modelo pequeño afinado puede igualar a uno grande en <em>una</em> tarea concreta, y salir 20 veces más barato.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card bad">
+          <h3>Qué NO consigue (y es lo que más se pide)</h3>
+          <ul class="tight">
+            <li><b>No le mete conocimiento fiable.</b> Meter datos en los pesos no garantiza respuestas correctas ni rastreables: para eso, RAG y contexto.</li>
+            <li><b>No arregla un prompt malo</b> ni un proceso mal definido.</li>
+            <li><b>No se actualiza solo</b>: cada cambio de tu información exige reentrenar o, mejor, recuperar.</li>
+            <li><b>No es gratis mantenerlo</b>: dataset, evaluación, versiones, regresiones.</li>
+          </ul>
+        </div>
+        <div class="warnbox">Regla: el fine-tuning sirve para cambiar <b>el comportamiento</b> del modelo; el RAG y las herramientas sirven para darle <b>información</b>. Confundir los dos es el error más caro y más común.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Preguntar al equipo: "¿qué caso tenemos donde el problema sea de formato o de estilo, no de datos?". Ese es el candidato bueno.</li>
+    <li>Mencionar el coste oculto: el modelo antiguo se deprecia y hay que reentrenar el adaptador sobre la base nueva.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="2 · Cómo aprende">
+  <div class="kicker">LoRA</div>
+  <h2>LoRA: la idea, sin matemáticas</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card accent">
+          <h3>El truco</h3>
+          <p><b>Congelas el modelo original</b> y sólo aprendes una <em>corrección</em> de bajo rango: dos matrices pequeñas (A y B) cuyo producto se suma a cada capa.</p>
+          <pre style="font-size:15px"><code>pesos_originales  (congelados)
+        +
+B (r &#215; d)  &#215;  A (d &#215; r)   &#8592; lo único que se entrena
+
+r = 8, 16, 32, 64...  &#8594; 0,1%&#8211;1% de los parámetros</code></pre>
+          <ul class="tight">
+            <li>Entrena en horas, no en semanas; cabe en una GPU de consumo.</li>
+            <li>El adaptador pesa <b>megas</b>, no gigas: se versiona y se comparte fácil.</li>
+            <li>Puedes tener varios (uno de estilo, uno de dominio, uno de idioma) y <b>cambiarlos en caliente</b> sobre la misma base.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card">
+          <h3>Los cuatro parámetros que oirás</h3>
+          <table style="font-size:16px">
+            <thead><tr><th>Parámetro</th><th>Qué significa</th></tr></thead>
+            <tbody>
+              <tr><td><b>rank (r)</b></td><td>Capacidad del adaptador. Bajo = cambios suaves; alto = más capacidad y más sobreajuste.</td></tr>
+              <tr><td><b>alpha</b></td><td>Cuánto pesa el adaptador frente al modelo base (escala efectiva = alpha/r).</td></tr>
+              <tr><td><b>targets</b></td><td>En qué capas se engancha: sólo atención, o todas las lineales (más potente y más caro).</td></tr>
+              <tr><td><b>dropout</b></td><td>Regularización: ayuda a que no memorice.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="okbox"><b>Merge o no merge.</b> Puedes fusionar el adaptador con la base (un modelo único, más simple de servir) o mantenerlos separados (puedes combinarlos y retirarlos sin reentrenar). Lo segundo es lo habitual en producto.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Insistir: LoRA no añade conocimiento nuevo fiable; moldea forma, tono y especialización.</li>
+    <li>En generación de imágenes, LoRA es exactamente la misma idea aplicada a la difusión: se entrena una LoRA de estilo o de personaje y se combina con el modelo base (bloque 6).</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="2 · Cómo aprende">
+  <div class="kicker">QLoRA</div>
+  <h2>QLoRA: entrenar en una GPU modesta</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card accent">
+          <h3>La receta</h3>
+          <ol class="tight">
+            <li>El modelo base se carga <b>cuantizado a 4 bits</b> (formato NF4, pensado para redes neuronales).</li>
+            <li>Los adaptadores (lo único que se entrena) siguen en 16 bits: el aprendizaje no se degrada igual.</li>
+            <li>Optimizador con memoria paginada en RAM y doble cuantización de las constantes: menos pico de VRAM.</li>
+          </ol>
+          <p class="small">Resultado: mismo resultado práctico que LoRA en 16 bits, con bastante menos memoria.</p>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card">
+          <h3>Memoria orientativa <span class="tag warn">orden de magnitud</span></h3>
+          <table style="font-size:16px">
+            <thead><tr><th>Lo que quieres</th><th>VRAM razonable</th></tr></thead>
+            <tbody>
+              <tr><td>Adaptador de un 3B&#8211;7B (QLoRA 4 bits)</td><td class="num">8&#8211;12 GB</td></tr>
+              <tr><td>LoRA de un 7B en 16 bits</td><td class="num">16&#8211;24 GB</td></tr>
+              <tr><td>Adaptador de un 30B (QLoRA)</td><td class="num">24&#8211;48 GB</td></tr>
+              <tr><td>Adaptador de un 70B (QLoRA)</td><td class="num">48&#8211;80 GB (o alquiler)</td></tr>
+              <tr><td>Entrenamiento completo de un 7B</td><td class="num">80 GB+ y varias GPUs</td></tr>
+            </tbody>
+          </table>
+          <p class="small">Cifras orientativas para planificar, no medidas de laboratorio: dependen de la longitud de las secuencias y del tamaño de lote.</p>
+        </div>
+      </div>
+    </div>
+    <div class="callout">Variantes de la misma familia: <b>DoRA</b> (separa magnitud y dirección), <b>LoHa/LoKr</b>, adaptadores clásicos, <em>prefix/prompt tuning</em> (sólo aprende vectores) e <b>IA3</b>. Todas comparten la idea: tocar poquísimo para cambiar mucho.</div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Herramientas habituales: PEFT/TRL, Unsloth, Axolotl. En imagen: kohya-ss / OneTrainer.</li>
+    <li>Si alguien quiere probar: un 7B con QLoRA en una GPU de 12 GB es un fin de semana, no un proyecto de meses.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="2 · Cómo aprende">
+  <div class="kicker">Fine-tuning · de la receta a producción</div>
+  <h2>Si lo haces, hazlo con método</h2>
+  <div class="body compact">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card">
+          <h3>Los cuatro artefactos que hay que versionar</h3>
+          <ol class="tight">
+            <li><b>Dataset</b>: pares instrucción/respuesta, limpios, sin datos personales, con su origen documentado.</li>
+            <li><b>Receta</b>: base, r, alpha, targets, épocas, semilla. Sin esto, no es reproducible.</li>
+            <li><b>Adaptador</b>: los pesos (megas) y su licencia.</li>
+            <li><b>Evaluación</b>: tu banco de 30&#8211;50 casos con antes/después y detección de regresiones.</li>
+          </ol>
+        </div>
+        <div class="card warn">
+          <h3>Errores clásicos</h3>
+          <ul class="tight">
+            <li>Entrenar con datos sin limpiar: el modelo aprende <em>y refuerza</em> los errores del histórico.</li>
+            <li>No comprobar que sigue haciendo bien lo que ya hacía (regresiones silenciosas).</li>
+            <li>Mezclar tareas distintas en un adaptador.</li>
+            <li>Olvidar la licencia de la base y la del dataset.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card ok">
+          <h3>Decisión en cuatro pasos</h3>
+          <table style="font-size:16px">
+            <thead><tr><th>¿Qué falta?</th><th>Qué hacer</th></tr></thead>
+            <tbody>
+              <tr><td>Información concreta</td><td>RAG / herramientas</td></tr>
+              <tr><td>Formato o tono</td><td>Prompt + ejemplos; si es muy repetitivo, LoRA</td></tr>
+              <tr><td>Una tarea estrecha y de mucho volumen</td><td>Modelo pequeño + LoRA/QLoRA</td></tr>
+              <tr><td>Una capacidad nueva del modelo</td><td>No es cosa tuya: cambia de modelo</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="okbox">En la mayoría de los equipos, el orden correcto es: <b>prompt &#8594; contexto/RAG &#8594; herramientas &#8594; y sólo entonces, un adaptador</b>.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Cerrar: el adaptador es un artefacto de software más, con dueño, versión y evaluación.</li>
+    <li>Si nadie lo va a mantener, no se entrena: se resuelve con contexto.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="2 · Cómo aprende">
   <h2>Idea clave del bloque</h2>
   <div class="body center" style="justify-content:center">
     <div class="quote" style="max-width:1000px;font-size:30px">Un modelo no <b>sabe</b>: <b>predice</b>.<br>Y predice en función de lo que le has puesto delante.</div>

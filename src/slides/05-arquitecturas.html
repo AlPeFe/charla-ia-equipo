@@ -2,7 +2,7 @@
 <section class="slide section" data-module="5 · Arquitecturas">
   <div class="kicker">Bloque 5</div>
   <h2>Arquitecturas</h2>
-  <p class="lede">Dense, MoE, CNN, LSTM, transformers, difusión&#8230; y qué significa cada palabra.</p>
+  <p class="lede">Dense, MoE, CNN, LSTM, transformers, modelos de estado&#8230; y qué significa cada palabra.</p>
   <aside class="notes"><ul><li>Este es el bloque que la gente pide: "qué tipos de redes hay". Lo aterrizo con ejemplos reales de modelos del snapshot.</li></ul></aside>
 </section>
 
@@ -26,7 +26,7 @@
           <ul class="tight">
             <li><b>Según cómo procesan la secuencia</b>: densas, MoE, RNN/LSTM, transformers, SSM.</li>
             <li><b>Según para qué son</b>: texto, imagen, audio, vídeo, grafos, tablas, embeddings.</li>
-            <li><b>Según de dónde vienen</b>: convolucionales (visión y series), recurrentes (secuencias antiguas), atención (todo lo moderno), difusión (generación visual).</li>
+            <li><b>Según para qué datos</b>: imágenes y señales (convolucionales), secuencias (recurrentes), lenguaje y multimodal (atención), grafos, tablas. La difusión, aparte, cubre la generación visual.</li>
           </ul>
         </div>
       </div>
@@ -77,7 +77,7 @@
 </section>
 
 <section class="slide" data-module="5 · Arquitecturas">
-  <h2>Redes convolucionales (CNN): la arquitectura que vio el mundo</h2>
+  <h2>Redes convolucionales (CNN): visión y señales, sin exagerar</h2>
   <div class="body">
     <div class="cols c2">
       <div class="col">
@@ -100,7 +100,7 @@
             <li>Los <b>encoders visuales</b> de los modelos multimodales modernos son parientes directos (ViT: trocear la imagen y aplicar atención a los parches).</li>
           </ul>
         </div>
-        <div class="callout">Lección histórica (2012, AlexNet): la misma arquitectura + GPUs + más datos batió todo lo anterior de golpe. Fue el primer aviso de que <b>la escala</b> era la palanca.</div>
+        <div class="callout">Hoy siguen siendo la respuesta cuando el problema es <b>pequeño, local y en tiempo real</b>: clasificar 20 imágenes por segundo en una cámara, detectar un defecto en producción, medir una señal. Un LLM ahí sería más caro y más lento.</div>
       </div>
     </div>
   </div>
@@ -108,30 +108,28 @@
 </section>
 
 <section class="slide" data-module="5 · Arquitecturas">
-  <h2>RNN, LSTM y GRU: leer en orden, recordando</h2>
+  <h2>RNN, LSTM y GRU: cuándo siguen siendo útiles</h2>
   <div class="body">
     <div class="cols c2">
       <div class="col">
         <div class="card">
-          <h3>Cómo funcionaban</h3>
-          <p>Procesan la secuencia <b>un elemento a la vez</b>, manteniendo un "estado" (memoria) que se actualiza en cada paso. La LSTM añadió compuertas para decidir qué recordar y qué olvidar; la GRU, una versión más ligera.</p>
+          <h3>Cómo funcionan</h3>
+          <p>Procesan la secuencia <b>un elemento a la vez</b>, manteniendo un estado (memoria) que se actualiza en cada paso. Las compuertas de la LSTM (o la GRU) deciden qué recordar y qué olvidar.</p>
           <ul class="tight">
-            <li>Perfectas para texto, audio, series temporales, sensores.</li>
-            <li>Concepto aún vivo: <em>estado oculto</em>, <em>secuencia</em>, <em>memoria</em>.</li>
+            <li>Muy buenas con series temporales, sensores y señales: datos donde el orden importa y el modelo es pequeño.</li>
+            <li>Concepto aún vivo y útil: <em>estado oculto</em>, <em>secuencia</em>, <em>memoria</em>.</li>
           </ul>
         </div>
       </div>
       <div class="col">
         <div class="card bad">
-          <h3>Por qué se abandonaron para lenguaje</h3>
+          <h3>Por qué no se usan para lenguaje</h3>
           <ul class="tight">
-            <li><b>Secuenciales de verdad</b>: no se pueden paralelizar; entrenar era lentísimo.</li>
-            <li><b>Se les olvida el pasado lejano</b> (gradiente que se desvanece), aun con compuertas.</li>
-            <li><b>Cuello de botella</b>: toda la información debía pasar por un estado de tamaño fijo.</li>
-            <li>La atención resolvió las tres cosas a la vez: paralelismo total y acceso directo a cualquier posición.</li>
+            <li>Procesan en secuencia: no se pueden paralelizar, así que no escalan al tamaño ni a los datos que exige un LLM.</li>
+            <li>Cuello de botella de memoria: toda la información pasa por un estado de tamaño fijo.</li>
           </ul>
         </div>
-        <div class="okbox">Siguen siendo la respuesta correcta en muchos problemas <b>pequeños y en tiempo real</b> (predicción de sensores, señales biomédicas), donde un transformer es exagerado y más caro.</div>
+        <div class="okbox">Regla: si el dato es <b>secuencia numérica</b> y el modelo cabe en kilobytes o pocos megas, empieza por aquí (o por un método estadístico) antes que por un transformer.</div>
       </div>
     </div>
   </div>
@@ -140,38 +138,6 @@
   </ul></aside>
 </section>
 
-<section class="slide" data-module="5 · Arquitecturas">
-  <h2>Seq2seq + atención: el puente hacia el transformer</h2>
-  <div class="body">
-    <div class="cols c2">
-      <div class="col">
-        <div class="card">
-          <h3>La receta de la traducción (2014-2017)</h3>
-          <div class="flow" style="font-size:16px">
-            <span class="node">Encoder (LSTM)</span><span class="arrow">&#8594;</span>
-            <span class="node">Vector de contexto</span><span class="arrow">&#8594;</span>
-            <span class="node">Decoder (LSTM)</span>
-          </div>
-          <p>Problema: todo el significado de la frase se comprimía en un vector fijo. En frases largas, se perdía información.</p>
-          <p><b>Solución (2015):</b> que el decoder <em>mirara</em> las posiciones del encoder con distintos pesos en cada paso. Eso es <b>atención</b>.</p>
-        </div>
-      </div>
-      <div class="col">
-        <div class="card accent">
-          <h3>Y el salto (2017)</h3>
-          <p><em>Attention is all you need</em>: si la atención es lo que aporta, quitemos las RNN y dejemos sólo atención (más redes densas, residuales y normalización).</p>
-          <ul class="tight">
-            <li>Entrenamiento <b>paralelo</b> sobre toda la secuencia.</li>
-            <li>Camino directo entre posiciones lejanas.</li>
-            <li>Escala de forma predecible: más capas y más datos, mejor.</li>
-          </ul>
-        </div>
-        <div class="okbox">Toda la IA generativa que usamos hoy (texto, imagen, audio, vídeo, código) desciende de ese paper. Es la pieza más rentable de la historia reciente del software.</div>
-      </div>
-    </div>
-  </div>
-  <aside class="notes"><ul><li>Anécdota: la atención se inventó para traducir; ocho años después es la base de todo.</li></ul></aside>
-</section>
 
 <section class="slide" data-module="5 · Arquitecturas">
   <h2>Tres familias de transformer</h2>
@@ -256,38 +222,6 @@
   <aside class="notes"><ul><li>Mencionar que los híbridos son hoy lo habitual en modelos de contexto muy largo.</li></ul></aside>
 </section>
 
-<section class="slide" data-module="5 · Arquitecturas">
-  <h2>Difusión: cómo se genera una imagen (o un vídeo)</h2>
-  <div class="body">
-    <div class="cols c2">
-      <div class="col">
-        <div class="card">
-          <h3>La idea, en dos pasos</h3>
-          <ol class="tight">
-            <li><b>Entrenamiento</b>: a imágenes reales se les añade ruido progresivamente hasta destruirlas. La red aprende a <em>deshacer</em> un paso de ruido.</li>
-            <li><b>Generación</b>: se parte de ruido puro y se aplica la red muchas veces hasta que emerge una imagen.</li>
-          </ol>
-          <p class="small">Variante eficiente: hacerlo en un espacio <b>latente</b> comprimido (de ahí "Stable Diffusion" y compañía), mucho más rápido.</p>
-        </div>
-      </div>
-      <div class="col">
-        <div class="card accent">
-          <h3>Conceptos que verás</h3>
-          <ul class="tight">
-            <li><b>Pasos</b>: más pasos &#8594; más calidad y más tiempo.</li>
-            <li><b>Guidance / CFG</b>: cuánto se fuerza la adherencia al texto. Muy alto &#8594; imagen rígida y con artefactos.</li>
-            <li><b>Semilla</b>: misma semilla + mismo prompt = misma imagen (aquí sí hay reproducibilidad decente).</li>
-            <li><b>Inpainting / img2img / control</b>: editar zonas o guiar por boceto y pose.</li>
-          </ul>
-        </div>
-        <div class="callout">Vídeo = difusión sobre muchos fotogramas, con el problema añadido de la coherencia temporal. Audio y voz (síntesis, clonación) usan variantes similares.</div>
-      </div>
-    </div>
-  </div>
-  <aside class="notes"><ul>
-    <li>Punto clave para el equipo: en generación visual el "no determinismo" es menor, pero el <b>derecho de uso</b> de imágenes y voces es un asunto serio.</li>
-  </ul></aside>
-</section>
 
 <section class="slide" data-module="5 · Arquitecturas">
   <h2>Cuando no necesitas un LLM: otras arquitecturas útiles</h2>
@@ -344,7 +278,7 @@
         <tr><td><code>:free</code>, <code>:batch</code></td><td>Variantes de precio (gratis con límites; procesado sin prisa a mitad de precio).</td></tr>
       </tbody>
     </table>
-    <div class="okbox">Con esto ya puedes mirar cualquier catálogo de modelos y saber qué estás comprando. En el bloque siguiente lo aplicamos al panorama real de hoy.</div>
+    <div class="okbox">Con esto ya puedes mirar cualquier catálogo de modelos y saber qué estás comprando. Ahora pasamos a la generación visual (difusión y ComfyUI) y, después, al panorama real de laboratorios y modelos.</div>
   </div>
   <aside class="notes"><ul><li>Ejercicio rápido: poner 5 nombres de modelos en pantalla y que el grupo los interprete.</li></ul></aside>
 </section>
@@ -359,5 +293,5 @@
       <div class="card"><h3>Transformers</h3><p>Decoder-only para generar; encoder para entender.</p></div>
     </div>
   </div>
-  <aside class="notes"><ul><li>Descanso de 15 minutos antes de la parte 2 (panorama + harness).</li></ul></aside>
+  <aside class="notes"><ul><li>Antes del descanso queda el bloque de difusión y ComfyUI; después, la parte 2 (panorama + harness).</li></ul></aside>
 </section>

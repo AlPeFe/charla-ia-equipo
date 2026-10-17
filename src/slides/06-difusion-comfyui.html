@@ -1,0 +1,287 @@
+<!-- ============ MÓDULO 6 · DIFUSIÓN Y COMFYUI ============ -->
+<section class="slide section" data-module="6 · Difusión y ComfyUI">
+  <div class="kicker">Bloque 6</div>
+  <h2>Difusión: generar imagen, vídeo y audio</h2>
+  <p class="lede">Cómo funciona por dentro y cómo se trabaja en serio: ComfyUI, checkpoints, LoRAs y ControlNet.</p>
+  <aside class="notes"><ul><li>Bloque muy pedido: pasar de "pedir una imagen en un chat" a tener un flujo reproducible y automatizable.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="6 · Difusión y ComfyUI">
+  <h2>Difusión: cómo se genera una imagen</h2>
+  <div class="body compact">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card">
+          <h3>La idea, en dos pasos</h3>
+          <ol class="tight">
+            <li><b>Entrenamiento</b>: a imágenes reales se les añade ruido progresivamente hasta destruirlas, y la red aprende a <em>deshacer</em> un paso de ruido.</li>
+            <li><b>Generación</b>: se parte de ruido puro y se aplica la red muchas veces, guiada por tu texto, hasta que emerge una imagen.</li>
+          </ol>
+          <p class="small">Variante eficiente: hacerlo en un espacio <b>latente</b> comprimido (mucho más rápido que en píxeles).</p>
+        </div>
+        <div class="card accent">
+          <h3>De dónde sale el control</h3>
+          <ul class="tight">
+            <li><b>Texto</b> (prompt positivo y negativo) guía el contenido.</li>
+            <li><b>Guidance / CFG</b>: cuánto se fuerza la adherencia al texto. Muy alto &#8594; imagen rígida y con artefactos.</li>
+            <li><b>Pasos</b>: más pasos &#8594; más calidad y más tiempo.</li>
+            <li><b>Semilla</b>: aquí sí hay reproducibilidad real (misma semilla + mismo flujo = misma imagen).</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card ok">
+          <h3>Lo que se puede hacer más allá de "texto &#8594; imagen"</h3>
+          <ul class="tight">
+            <li><b>img2img</b>: partir de una imagen y transformarla con menos o más fuerza.</li>
+            <li><b>Inpainting</b>: repintar sólo una zona enmascarada (quitar un objeto, cambiar un fondo).</li>
+            <li><b>Upscale y detalle</b>: subir resolución y afinar sin rehacer la imagen.</li>
+            <li><b>Control estructural</b>: respetar una pose, un boceto, una profundidad o los bordes de una foto.</li>
+            <li><b>Estilo o personaje consistente</b>: con LoRAs entrenadas para eso.</li>
+            <li><b>Vídeo</b>: la misma idea con coherencia temporal (más caro y más difícil).</li>
+          </ul>
+        </div>
+        <div class="callout">Diferencia clave frente a un LLM: aquí <b>la reproducibilidad es alcanzable</b> (semilla, modelo, flujo). Guardar el flujo es tan importante como guardar el resultado.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Insistir en el par negativo/positivo y en la semilla: son las palancas que la gente no conoce.</li>
+    <li>El mensaje "guarda el flujo, no sólo la imagen" es el corazón del bloque.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="6 · Difusión y ComfyUI">
+  <h2>El ecosistema: qué es cada fichero que te descargas</h2>
+  <div class="body">
+    <table class="sm">
+      <thead><tr><th>Pieza</th><th>Para qué sirve</th><th>Detalles prácticos</th></tr></thead>
+      <tbody>
+        <tr><td><b>Checkpoint</b> (modelo base)</td><td>El modelo de difusión que dibuja</td><td>Gigas por fichero. Familias: SDXL, Flux y las nuevas de los grandes labs. Define el "estilo por defecto"</td></tr>
+        <tr><td><b>VAE</b></td><td>Traduce entre píxeles y el espacio latente</td><td>A veces viene incluido en el checkpoint; si no, se elige aparte y afecta mucho al color y al contraste</td></tr>
+        <tr><td><b>Text encoder</b> (CLIP, T5&#8230;)</td><td>Convierte tu prompt en algo que el modelo entiende</td><td>Determina lo bien que "entiende" las frases largas. No se cambia a la ligera</td></tr>
+        <tr><td><b>LoRA</b></td><td>Un ajuste pequeño que añade estilo, personaje o técnica</td><td>Decenas o cientos de MB. Se apilan varias con distintos pesos (0,6 / 0,4&#8230;)</td></tr>
+        <tr><td><b>ControlNet</b> / IPAdapter</td><td>Imponer estructura (pose, profundidad, bordes) o imitar un estilo de referencia</td><td>Modelos adicionales por tipo de control; es lo que convierte una imagen bonita en una imagen útil</td></tr>
+        <tr><td><b>Upscaler</b></td><td>Aumentar resolución con detalle coherente</td><td>Modelos específicos; mejor subir en dos pasos que multiplicar por cuatro de golpe</td></tr>
+        <tr><td><b>Sampler / scheduler</b></td><td>El método que quita el ruido paso a paso</td><td>Cambia la rapidez y el carácter del resultado; se elige una vez por tipo de tarea</td></tr>
+        <tr><td><b>Workflow</b></td><td>El grafo con todos los pasos y parámetros</td><td><b>Esto es el código.</b> Se versiona, se revisa y se comparte</td></tr>
+      </tbody>
+    </table>
+    <div class="warnbox">Usa siempre formatos seguros y auditables (<code>.safetensors</code>) en lugar de los antiguos serializados, y revisa la <b>licencia</b> de cada modelo y de cada LoRA: no todas permiten uso comercial.</div>
+  </div>
+  <aside class="notes"><ul><li>Cuando alguien dice "no me sale lo que pido", casi siempre es prompt + sampler + CFG, no el modelo.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="6 · Difusión y ComfyUI">
+  <h2>ComfyUI: qué es y por qué se ha vuelto el estándar de trabajo</h2>
+  <div class="body compact">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card accent">
+          <h3>Qué es</h3>
+          <p>Un programa (local) que te da un <b>editor de grafos por nodos</b> para construir flujos de generación con modelos de difusión: cada nodo hace una cosa (cargar modelo, codificar prompt, muestrear, decodificar, escalar, guardar) y tú conectas los cables.</p>
+          <ul class="tight">
+            <li>No hace falta programar: se arrastra y se conecta. Todo el flujo es un fichero JSON que se guarda y se versiona.</li>
+            <li>Ecosistema enorme de nodos extra (control de pose, máscaras, vídeo, utilidades).</li>
+            <li>Tiene <b>modo API</b>: se puede lanzar sin interfaz para procesar por lotes.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card">
+          <h3>Por qué no basta una web de "genera imágenes"</h3>
+          <ul class="tight">
+            <li><b>Control</b>: puedes decidir cada paso, no sólo escribir un texto.</li>
+            <li><b>Reproducibilidad</b>: mismo workflow + misma semilla + mismo modelo = mismo resultado.</li>
+            <li><b>Consistencia</b>: mismo personaje, mismo estilo o misma línea gráfica en 40 imágenes.</li>
+            <li><b>Automatización</b>: conectar con un script y generar 200 variantes por la noche.</li>
+            <li><b>Privacidad</b>: la imagen no sale de tu máquina.</li>
+          </ul>
+        </div>
+        <div class="card ok">
+          <h3>Requisitos y alternativas</h3>
+          <p><b>Local</b>: una GPU con memoria decente (para modelos de imagen medios, del orden de 8 GB en adelante) y disco para los checkpoints, que pesan gigas. Hay versiones en la nube si no hay GPU.</p>
+          <p class="small">Alternativas con menos control y menos curva: interfaces tipo A1111/Forge, InvokeAI o Fooocus; y los modelos de imagen de los grandes laboratorios por API, ideales cuando quieres una imagen y no un flujo.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Ser honesto: ComfyUI tiene curva de aprendizaje. Se empieza copiando un workflow de la comunidad y se toca un nodo cada vez.</li>
+    <li>Para uso puntual, la API de un laboratorio es más barata en tiempo; ComfyUI brilla cuando necesitas control, consistencia o volumen.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="6 · Difusión y ComfyUI">
+  <h2>El flujo típico, nodo a nodo</h2>
+  <div class="body">
+    <div class="flow" style="row-gap:10px">
+      <span class="node">Cargar checkpoint</span><span class="arrow">&#8594;</span>
+      <span class="node">Text encoder<br><span class="small">prompt + / &#8722;</span></span><span class="arrow">&#8594;</span>
+      <span class="node">Latente vacío + semilla</span><span class="arrow">&#8594;</span>
+      <span class="node">Sampler<br><span class="small">pasos · CFG</span></span><span class="arrow">&#8594;</span>
+      <span class="node">VAE decode</span><span class="arrow">&#8594;</span>
+      <span class="node">Upscale</span><span class="arrow">&#8594;</span>
+      <span class="node">Guardar + nombre</span>
+    </div>
+    <div class="cols c2">
+      <div class="col">
+        <div class="card">
+          <h3>Variantes que se construyen desde ese esqueleto</h3>
+          <ul class="tight">
+            <li><b>img2img</b>: cargar imagen y usar un latente con ruido en lugar de uno vacío (menos "denoise" = más fiel).</li>
+            <li><b>Inpainting</b>: añadir un nodo de máscara y limitar el repintado a esa zona.</li>
+            <li><b>ControlNet</b>: insertar un nodo que aporte la estructura (pose, bordes, profundidad) antes del sampler.</li>
+            <li><b>LoRAs</b>: nodos intercalados con sus pesos, antes del sampler.</li>
+            <li><b>Lotes</b>: variar la semilla en bucle y generar una cuadrícula para elegir.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card accent">
+          <h3>Higiene de trabajo (esto es lo que diferencia a un profesional)</h3>
+          <ul class="tight">
+            <li><b>Nombrar las salidas</b> con lo que importa: fecha, tarea, versión del workflow.</li>
+            <li><b>Guardar el workflow</b> con cada entrega, no sólo la imagen.</li>
+            <li>Fijar <b>semillas</b> cuando quieras volver a un resultado.</li>
+            <li>No cambiar cinco parámetros a la vez: uno cada vez, y anotarlo.</li>
+            <li>Guardar el "prompt negativo" que funciona: es propiedad del equipo.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Regla del bloque: el workflow es el código de esta disciplina. Si no se guarda, no existe.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="6 · Difusión y ComfyUI">
+  <h2>ComfyUI como herramienta de equipo (y para automatizar)</h2>
+  <div class="body compact">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card ok">
+          <h3>Lo que aporta a un equipo</h3>
+          <ul class="tight">
+            <li><b>Workflows en el repositorio</b>: como plantillas revisables ("cabecera de campaña", "ficha de producto", "ilustración para documentación").</li>
+            <li><b>Consistencia de marca</b>: mismo flujo para todos, con las LoRAs y parámetros aprobados.</li>
+            <li><b>Reproducible</b>: cualquiera rehace la imagen de hace tres meses.</li>
+            <li><b>Sin nube</b>: los materiales sensibles no salen de casa.</li>
+          </ul>
+        </div>
+        <div class="card accent">
+          <h3>Automatización por lotes</h3>
+          <ol class="tight">
+            <li>Se prepara el workflow y se exporta en formato API.</li>
+            <li>Un script genera las variaciones (títulos, idiomas, formatos, semillas).</li>
+            <li>Se envían por la API local de ComfyUI y se recogen los resultados.</li>
+            <li>Se aplica un filtro automático (tamaño, resolución, metadatos) y se revisa a mano lo que se publique.</li>
+          </ol>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card warn">
+          <h3>Lo que no hay que hacer</h3>
+          <ul class="tight">
+            <li>Generar 500 imágenes sin criterio "a ver si alguna vale": quema tiempo y disco.</li>
+            <li>Publicar material con caras, logos o marcas de terceros sin permiso.</li>
+            <li>Usar workflows de la comunidad sin revisar qué nodos instalan y a qué acceden.</li>
+            <li>Mezclar en el mismo flujo modelos con licencias incompatibles.</li>
+          </ul>
+        </div>
+        <div class="callout">Y el puente con lo que ya vimos: pedirle al agente que <b>escriba el script</b> que genera el lote, revise los metadatos y monte el índice de imágenes. Trabajo repetitivo, cero creatividad.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Aquí conecta con el bloque de automatización: ComfyUI + script = fábrica de material gráfico reproducible.</li>
+    <li>Avisar del coste de tiempo: generar y curar consume; medirlo como cualquier tarea.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="6 · Difusión y ComfyUI">
+  <h2>Entrenar tu propia LoRA de imagen</h2>
+  <div class="body compact">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card accent">
+          <h3>Para qué y cómo</h3>
+          <ul class="tight">
+            <li><b>Objetivo típico</b>: un estilo gráfico propio, un personaje consistente, un producto concreto, una técnica de ilustración.</li>
+            <li><b>Datos</b>: del orden de 20 a 100 imágenes buenas y bien etiquetadas. Pocas y buenas &gt; muchas y sucias.</li>
+            <li><b>Herramientas</b>: utilidades específicas de entrenamiento para difusión (kohya-ss, OneTrainer&#8230;), que ya integran LoRA/QLoRA para imagen.</li>
+            <li><b>Tiempo y resultado</b>: horas de GPU; sale un fichero de decenas o cientos de megas que se combina con el modelo base.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card">
+          <h3>El sobreajuste, otra vez</h3>
+          <ul class="tight">
+            <li>Con demasiados pasos de entrenamiento, la LoRA <b>memoriza</b> las imágenes de ejemplo y sólo sabe dibujar esas.</li>
+            <li>Se detecta comparando: variaciones que salen clónicas de las fotos originales.</li>
+            <li>Se corrige con menos pasos, menos rank, más variedad de datos.</li>
+          </ul>
+        </div>
+        <div class="card bad">
+          <h3>Límites éticos y legales (no negociables)</h3>
+          <ul class="tight">
+            <li><b>Personas reales</b>: hace falta consentimiento explícito para entrenar su cara o su voz.</li>
+            <li><b>Estilo de un artista vivo</b>: imitarlo para uso comercial es un problema legal y reputacional.</li>
+            <li><b>Material de entrenamiento</b>: revisa de dónde sale cada imagen.</li>
+            <li>Si acabará publicado, <b>dilo</b>: contenido generado con IA, revisado por una persona.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Si el equipo va a usar caras de compañeros para una campaña interna: consentimiento por escrito, aunque sea interna.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="6 · Difusión y ComfyUI">
+  <h2>Vídeo y audio: lo mismo, con más coste</h2>
+  <div class="body">
+    <div class="cols c3">
+      <div class="card">
+        <h3>Vídeo</h3>
+        <ul class="tight">
+          <li>Difusión sobre muchos fotogramas + coherencia temporal.</li>
+          <li>Mucho más caro en tiempo y memoria que la imagen.</li>
+          <li>Estilos: texto&#8594;vídeo, imagen&#8594;vídeo, animar un personaje, sustituir fondos.</li>
+          <li>Usos reales: presentaciones de producto, formación interna, prototipos de anuncio.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Voz y transcripción</h3>
+        <ul class="tight">
+          <li><b>Transcripción</b>: reuniones, entrevistas, notas de voz. Muy maduro y útil a diario.</li>
+          <li><b>Síntesis de voz</b>: locuciones para formación y accesibilidad.</li>
+          <li><b>Clonación de voz</b>: sólo con consentimiento explícito y por escrito.</li>
+          <li>Cuidado con datos personales en las grabaciones (RGPD).</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Música y sonido</h3>
+        <ul class="tight">
+          <li>Generación de piezas de fondo, efectos y jingles.</li>
+          <li>Revisa la licencia antes de usarlo en algo publicado.</li>
+          <li>Para piezas serias: compositor humano y la IA como borrador.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="warnbox">Marcar siempre el contenido sintético cuando el receptor pueda importarle (vídeo interno, redes, material para clientes). Y nunca usar voz o imagen de una persona para decir algo que no ha dicho.</div>
+  </div>
+  <aside class="notes"><ul><li>Cerrar el bloque: generar es fácil; publicar con derechos, criterio y revisión es el trabajo.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="6 · Difusión y ComfyUI">
+  <h2>Idea clave del bloque</h2>
+  <div class="body center" style="justify-content:center">
+    <div class="quote" style="max-width:1020px;font-size:29px">Una imagen se genera en segundos. Un <b>flujo reproducible</b> que da imágenes consistentes, con derechos en orden, es lo que tiene valor.</div>
+    <div class="cols c3" style="max-width:1150px">
+      <div class="card"><h3>Guarda el flujo</h3><p>Workflow + semilla + modelo + LoRA. La imagen es el subproducto.</p></div>
+      <div class="card"><h3>Controla la estructura</h3><p>ControlNet y máscaras convierten una imagen bonita en imagen útil.</p></div>
+      <div class="card"><h3>Cuida los derechos</h3><p>Licencias, consentimiento y marcado del contenido sintético.</p></div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Siguiente bloque: el panorama real de laboratorios y modelos (ya renumerado como bloque 7).</li></ul></aside>
+</section>

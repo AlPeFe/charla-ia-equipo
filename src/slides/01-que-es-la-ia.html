@@ -29,27 +29,30 @@
 </section>
 
 <section class="slide" data-module="1 · Qué es la IA">
-  <h2>Ochenta años en una diapositiva</h2>
+  <h2>Los tres saltos que sí cambiaron las reglas</h2>
   <div class="body">
-    <table>
-      <thead><tr><th>Momento</th><th>Hito</th><th>Por qué importa</th></tr></thead>
-      <tbody>
-        <tr><td class="num">1950</td><td>Test de Turing</td><td>Se plantea la pregunta: ¿puede una máquina conversar como un humano?</td></tr>
-        <tr><td class="num">1956</td><td>Dartmouth</td><td>Nace el nombre y el optimismo fundacional.</td></tr>
-        <tr><td class="num">1965&#8211;85</td><td>Sistemas expertos y <b>los dos inviernos</b></td><td>Las reglas a mano no escalan: lección que se repite en cada ciclo.</td></tr>
-        <tr><td class="num">1997</td><td>Deep Blue vs Kasparov</td><td>Búsqueda + fuerza bruta: no es aprendizaje.</td></tr>
-        <tr><td class="num">2012</td><td>AlexNet (ImageNet)</td><td>GPUs + redes convolucionales: el deep learning despega de verdad.</td></tr>
-        <tr><td class="num">2017</td><td>&laquo;Attention is all you need&raquo;</td><td>El <b>transformer</b>: la arquitectura que hace posible todo lo demás.</td></tr>
-        <tr><td class="num">2020&#8211;22</td><td>GPT-3, difusión, ChatGPT</td><td>Escala + alineación + interfaz de chat: la IA llega al público.</td></tr>
-        <tr><td class="num">2023&#8211;24</td><td>Multimodal, contexto largo, MoE, open weights</td><td>Se convierte en infraestructura: precios bajan, capacidades suben.</td></tr>
-        <tr><td class="num">2025&#8211;26</td><td><b>Agentes y harness</b></td><td>El modelo aprende a usar herramientas, ejecutar código y trabajar por objetivos.</td></tr>
-      </tbody>
-    </table>
-    <div class="callout">Fíjate en el patrón: cada vez que se intentó <em>programar el conocimiento a mano</em>, fracasó. Lo que ha funcionado es <b>aprender de datos</b> y luego <b>dar herramientas</b>.</div>
+    <div class="cols c3">
+      <div class="card accent">
+        <h3>2017 · El transformer</h3>
+        <p>La atención sustituye a las redes recurrentes: entrenamiento en paralelo y acceso directo a cualquier parte del texto. A partir de aquí todo lo demás es <em>escala + datos</em>.</p>
+        <p class="small">Es el punto de partida: lo anterior importa como contexto, no como tecnología.</p>
+      </div>
+      <div class="card ok">
+        <h3>2022 · ChatGPT</h3>
+        <p>No fue un modelo mejor, fue la <b>alineación con preferencias humanas</b> (seguir instrucciones y conversar) más una interfaz trivial de usar. Ahí el modelo pasa de juguete a herramienta.</p>
+        <p class="small">Cuatro fases: preentrenamiento &#8594; instrucciones &#8594; preferencias &#8594; refuerzo.</p>
+      </div>
+      <div class="card warn">
+        <h3>2025&#8211;26 · Agentes y herramientas</h3>
+        <p>El modelo deja de ser un respondedor y pasa a ser un <b>ejecutor en bucle</b>: lee, ejecuta código, usa herramientas y se autocorrige. Es el cambio que nos afecta profesionalmente.</p>
+        <p class="small">Y parte del progreso viene ahora de gastar más cómputo <em>al responder</em>, no sólo al entrenar.</p>
+      </div>
+    </div>
+    <div class="callout">Todo lo anterior (sistemas expertos, dos inviernos de la IA, ajedrez) sirve para entender por qué fracasaron dos veces: <b>programar el conocimiento a mano no escala</b>. Lo que funciona es aprender de datos y dar herramientas.</div>
   </div>
   <aside class="notes"><ul>
-    <li>No detenerse mucho: es contexto. Lo importante es el patrón (reglas a mano vs aprendizaje).</li>
-    <li>Si el grupo es joven: explicar brevemente qué era un "sistema experto".</li>
+    <li>No perder tiempo en la historia: si alguien pregunta, la lección se resume en la frase final.</li>
+    <li>Lo importante de esta diapositiva: sitúa transformer (arquitectura), ChatGPT (usabilidad + alineación) y agentes (ejecución).</li>
   </ul></aside>
 </section>
 
@@ -118,14 +121,14 @@
 </section>
 
 <section class="slide" data-module="1 · Qué es la IA">
-  <h2>¿Por qué funciona ahora y no en 1990?</h2>
+  <h2>Por qué funciona ahora: los cuatro multiplicadores</h2>
   <div class="body">
     <div class="cols c2">
       <div class="col">
         <div class="card">
           <h3>Cuatro multiplicadores que se alinearon</h3>
           <ul class="tight">
-            <li><b>Datos</b>: la web, el código público y los corpus digitalizados son enormes y gratuitos.</li>
+            <li><b>Datos</b>: la web, el código público y los corpus digitalizados son enormes, diversos y accesibles.</li>
             <li><b>Cómputo</b>: GPUs y TPUs (hoy en clusters de decenas de miles de chips) hacen viable entrenar con miles de millones de parámetros.</li>
             <li><b>Arquitectura</b>: el transformer entrena en paralelo y escala con la profundidad (las RNN no).</li>
             <li><b>Algoritmo + dinero</b>: las leyes de escala dieron una receta predecible: más cómputo &#8594; mejor pérdida.</li>
