@@ -1,0 +1,289 @@
+<!-- ============ MÓDULO 11 · AUTOMATIZAR LO REPETITIVO ============ -->
+<section class="slide section" data-module="11 · Automatizar">
+  <div class="kicker">Bloque 11</div>
+  <h2>Automatizar lo repetitivo</h2>
+  <p class="lede">De la artesanía diaria a la fábrica: scripts, plantillas y trabajos programados.</p>
+  <aside class="notes"><ul><li>Es el bloque con más retorno a medio plazo: encontrar lo repetitivo y convertirlo en herramienta.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="11 · Automatizar">
+  <h2>Primero, el inventario: ¿qué repetimos cada semana?</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card accent">
+          <h3>Cinco preguntas para el equipo</h3>
+          <ol class="tight">
+            <li>¿Qué tarea haces <b>más de una vez al mes</b> con pasos parecidos?</li>
+            <li>¿Qué tarea requiere copiar datos de un sitio a otro (exportar, transformar, importar)?</li>
+            <li>¿Qué revisas siempre a mano antes de entregar algo?</li>
+            <li>¿Qué te obliga a recordar una secuencia de comandos delicada?</li>
+            <li>¿Qué preguntas te hacen siempre las mismas personas?</li>
+          </ol>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card ok">
+          <h3>Candidatos habituales</h3>
+          <ul class="tight">
+            <li>Informes periódicos (extraer &#8594; calcular &#8594; formatear &#8594; enviar).</li>
+            <li>Altas y bajas de usuarios, permisos y entornos.</li>
+            <li>Preparar releases, notas de versión y documentación.</li>
+            <li>Revisar, renombrar y clasificar ficheros (facturas, imágenes, datos).</li>
+            <li>Comprobar calidad de datos y avisar de anomalías.</li>
+            <li>Responder consultas internas frecuentes con documentación.</li>
+          </ul>
+        </div>
+        <div class="callout">Regla de priorización: <b>frecuencia &#215; tiempo &#215; probabilidad de error</b>. Empieza por lo que se hace cada semana y siempre se hace con prisa.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Ejercicio de 3 minutos en parejas: cada uno escribe dos tareas repetitivas y se eligen dos por votación para el taller.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="11 · Automatizar">
+  <h2>De tarea manual a script: el contrato primero</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card">
+          <h3>Definir el contrato antes de escribir código</h3>
+          <table style="font-size:17px">
+            <thead><tr><th>Pregunta</th><th>Ejemplo</th></tr></thead>
+            <tbody>
+              <tr><td>¿Entrada?</td><td>Un CSV de facturas del mes, o una carpeta</td></tr>
+              <tr><td>¿Salida?</td><td>Un informe en PDF + resumen en pantalla</td></tr>
+              <tr><td>¿Caso normal?</td><td>300 filas, 3 formatos distintos de fecha</td></tr>
+              <tr><td>¿Casos raros?</td><td>Ficheros corruptos, duplicados, filas sin importe</td></tr>
+              <tr><td>¿Qué puede fallar?</td><td>Permisos, red, formato inesperado &#8594; idempotencia</td></tr>
+              <tr><td>¿Quién lo usa?</td><td>Compañera de administración, sin conocimientos técnicos</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card accent">
+          <h3>Diseño mínimo decente</h3>
+          <ul class="tight">
+            <li><b>Un comando</b> y un <code>--help</code> con ejemplos.</li>
+            <li><b>Modo de prueba</b> (<code>--dry-run</code>) que dice lo que haría sin hacerlo.</li>
+            <li><b>Registro</b> (log) con fecha, qué entró, qué salió y qué falló.</li>
+            <li><b>Reejecutable</b>: si se corta a mitad, se puede volver a lanzar.</li>
+            <li><b>Salida clara</b> para no técnicos: "12 ficheros procesados, 2 con avisos".</li>
+          </ul>
+        </div>
+        <div class="okbox">Con IA, escribir este script es cuestión de minutos. La parte que tú aportas es el <b>contrato</b> y los <b>casos raros</b>.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Insistir: los scripts buenos se reconocen en el tratamiento de errores, no en el caso feliz.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="11 · Automatizar">
+  <h2>Herramientas propias: cuando el shell se queda corto</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card">
+          <h3>Escalera de complejidad</h3>
+          <ol class="tight">
+            <li><b>Un comando</b> (<code>grep</code>, <code>jq</code>, <code>ffmpeg</code>): si existe, no lo reescribas.</li>
+            <li><b>Script de shell o Python</b> de 50 líneas: el 80% de las necesidades.</li>
+            <li><b>Pequeño CLI</b> reutilizable en el equipo (con subcomandos).</li>
+            <li><b>Herramienta interna</b> con tests y publicada en el repositorio del equipo.</li>
+            <li><b>Servicio</b> con interfaz: cuando ya lo usa gente sin terminal.</li>
+          </ol>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card accent">
+          <h3>Detalles que marcan la diferencia</h3>
+          <ul class="tight">
+            <li><b>Instalación trivial</b>: un comando, sin entornos raros, o un binario único.</li>
+            <li><b>Documentado en 10 líneas</b> con 3 ejemplos reales.</li>
+            <li><b>Configurable por fichero</b>, no sólo por variables de entorno.</li>
+            <li><b>Sin dependencias frágiles</b>: cuanto menos tenga que instalarse, más se usará.</li>
+            <li><b>Con tests</b>, aunque sean dos casos: mañana alguien lo modificará.</li>
+          </ul>
+        </div>
+        <div class="warnbox">El cementerio de scripts internos está lleno de cosas que necesitaban 15 pasos para ejecutarse. La usabilidad no es un adorno: es la diferencia entre que se use o se abandone.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Contar un caso real de script que nadie usó por ser incómodo de arrancar.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="11 · Automatizar">
+  <h2>Ejecutar código dentro del agente: trabajar a lotes</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card accent">
+          <h3>El patrón más potente</h3>
+          <p>En lugar de pedir al modelo que procese 200 elementos de uno en uno (leyendo y escribiendo texto cada vez), le pides que <b>escriba un programa</b> que los procese, lo ejecute y te dé un resumen.</p>
+          <ul class="tight">
+            <li>Más barato: una llamada en lugar de doscientas.</li>
+            <li>Más rápido: ejecución local en milisegundos.</li>
+            <li>Más fiable: el mismo criterio aplicado a todos los elementos.</li>
+            <li>Reproducible: el script queda en el repositorio.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card ok">
+          <h3>Ejemplos de esta semana</h3>
+          <ul class="tight">
+            <li>Renombrar y clasificar 500 ficheros según su contenido.</li>
+            <li>Analizar 40 ficheros de logs y extraer un informe.</li>
+            <li>Transformar todos los documentos de un formato a otro manteniendo estructura.</li>
+            <li>Recorrer un catálogo de datos y detectar inconsistencias.</li>
+            <li>Generar 120 páginas de documentación a partir de esquemas y descripciones.</li>
+          </ul>
+        </div>
+        <div class="callout">Regla: <b>si va a repetirse más de tres veces, que lo haga un programa, no el modelo</b>. El modelo escribe el programa.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Este es quizá el consejo técnico más rentable de todo el día: cambiar "genera" por "escribe un script que genere".</li></ul></aside>
+</section>
+
+<section class="slide" data-module="11 · Automatizar">
+  <h2>Trabajos programados y automatizaciones del repositorio</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card">
+          <h3>Qué automatizar por calendario</h3>
+          <ul class="tight">
+            <li><b>Diario</b>: verificación de copias, salud de servicios, resumen de incidencias.</li>
+            <li><b>Semanal</b>: informe de actividad, aviso de dependencias desactualizadas, resumen de PRs abiertos.</li>
+            <li><b>Mensual</b>: informes de negocio, revisión de costes, limpieza de recursos huérfanos, rotación de certificados.</li>
+            <li><b>Por evento</b>: al abrir un PR, al publicar una release, al fallar un despliegue.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card accent">
+          <h3>El patrón "automatización que avisa"</h3>
+          <p>No hace falta que la automatización <em>actúe</em> sobre el mundo real. Muchas veces basta con que <b>detecte y avise</b> con contexto y una propuesta:</p>
+          <ul class="tight">
+            <li>Un aviso semanal con 3 problemas y su mitigación sugerida.</li>
+            <li>Un comentario en el PR con hallazgos concretos.</li>
+            <li>Un fichero de informe firmado y fechado en el repositorio.</li>
+          </ul>
+          <p class="small">Menos riesgo, casi todo el valor: la persona decide y ejecuta.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Recomendación: empezar por automatizaciones que sólo leen e informan. Dan confianza y no rompen nada.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="11 · Automatizar">
+  <h2>Integrar con los sistemas internos</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card accent">
+          <h3>El orden correcto</h3>
+          <ol class="tight">
+            <li><b>API/existente</b>: ¿hay ya una interfaz oficial? Úsala.</li>
+            <li><b>Exportación e importación</b> de ficheros: fea pero segura y suficiente muchas veces.</li>
+            <li><b>Base de datos en sólo lectura</b> con credenciales limitadas.</li>
+            <li><b>MCP interno</b>: exponer las cuatro operaciones de verdad del sistema, con permisos.</li>
+            <li><b>Automatización de interfaz gráfica</b>: último recurso, frágil y caro de mantener.</li>
+          </ol>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card warn">
+          <h3>Reglas de convivencia</h3>
+          <ul class="tight">
+            <li>Credenciales propias del servicio, no personales, y con permisos mínimos.</li>
+            <li>Registro auditable: quién hizo qué y cuándo (incluido el agente).</li>
+            <li>Límites de velocidad para no tumbar el sistema en hora punta.</li>
+            <li>Nunca escribir en el sistema de otra persona sin su consentimiento explícito.</li>
+            <li>Datos personales fuera del prompt: trabaja con identificadores y une al final.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Muchas empresas tienen políticas de integración: consultar antes de automatizar sobre sistemas ajenos.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="11 · Automatizar">
+  <h2>Cuándo NO automatizar</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card bad">
+          <h3>Señales de que no merece la pena</h3>
+          <ul class="tight">
+            <li>Se hace una vez al año y tarda 10 minutos.</li>
+            <li>El proceso cambia cada vez que se ejecuta.</li>
+            <li>El "ahorro" real es de 20 minutos y el mantenimiento es de 2 horas al mes.</li>
+            <li>Implica decisiones que requieren criterio humano caso por caso.</li>
+            <li>Requiere accesos que no te van a dar.</li>
+            <li>Nadie va a revisar si falla: una automatización sin vigilancia es una bomba de relojería.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card ok">
+          <h3>Antes de empezar, calcula</h3>
+          <table style="font-size:17px">
+            <thead><tr><th>Concepto</th><th>Ejemplo</th></tr></thead>
+            <tbody>
+              <tr><td>Tiempo manual</td><td>45 min &#215; 4 veces/mes = 3 h/mes</td></tr>
+              <tr><td>Coste de construir</td><td>4 h (una vez)</td></tr>
+              <tr><td>Coste de mantener</td><td>1 h/trimestre</td></tr>
+              <tr><td>Ahorro anual</td><td>36 h &#8722; 8 h = 28 h</td></tr>
+              <tr><td>Veredicto</td><td>Sí, merece la pena</td></tr>
+            </tbody>
+          </table>
+          <p class="small">Haz este cálculo explícito: es lo que convierte una preferencia en una decisión.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>No todo merece automatizarse. La disciplina de decidirlo es parte de la madurez.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="11 · Automatizar">
+  <h2>De procedimiento a skill compartida</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card accent">
+          <h3>El movimiento final</h3>
+          <p>Cuando un procedimiento funciona, conviértelo en <b>skill del repositorio</b>. Entonces ya no es tu truco: es una capacidad del equipo.</p>
+          <ul class="tight">
+            <li>Cualquiera la ejecuta sin saber los detalles.</li>
+            <li>Se mejora de forma colaborativa (es un fichero más).</li>
+            <li>Se mantiene con la misma revisión que el código.</li>
+            <li>Sirve también de documentación viva del proceso.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <pre style="font-size:15px"><code>nombre: informe-mensual-clientes
+descripción: Genera el informe mensual de
+  actividad por cliente. Úsala los días 1
+  o cuando el usuario mencione "informe
+  mensual".
+
+1. Ejecuta: node tools/informe.mjs --mes anterior
+2. Revisa los avisos de datos incompletos
+3. Genera el PDF en informes/AAAA-MM.pdf
+4. Resume en 5 líneas los cambios relevantes
+5. No envíes nada: entrega el PDF para revisión
+
+Criterio de terminado: PDF generado e informado
+al responsable, con la lista de incidencias.</code></pre>
+      </div>
+    </div>
+    <div class="okbox">Cada skill de este tipo es <b>una tarea manual menos, para siempre y para todo el equipo</b>. Este es el mecanismo de acumulación de productividad.</div>
+  </div>
+  <aside class="notes"><ul><li>Cerrar: la IA no sustituye el proceso, lo <em>cristaliza</em> en ficheros que se pueden revisar.</li></ul></aside>
+</section>

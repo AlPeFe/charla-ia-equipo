@@ -1,0 +1,363 @@
+<!-- ============ MÓDULO 5 · ARQUITECTURAS ============ -->
+<section class="slide section" data-module="5 · Arquitecturas">
+  <div class="kicker">Bloque 5</div>
+  <h2>Arquitecturas</h2>
+  <p class="lede">Dense, MoE, CNN, LSTM, transformers, difusión&#8230; y qué significa cada palabra.</p>
+  <aside class="notes"><ul><li>Este es el bloque que la gente pide: "qué tipos de redes hay". Lo aterrizo con ejemplos reales de modelos del snapshot.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="5 · Arquitecturas">
+  <h2>Qué es (y qué no es) una arquitectura</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card">
+          <h3>Es el plano</h3>
+          <p>La forma de la red: cómo se conectan las piezas, qué operaciones se aplican, cómo fluye la información. Es lo que se publica en un <em>paper</em>.</p>
+        </div>
+        <div class="card bad">
+          <h3>No es el modelo</h3>
+          <p>Un modelo entrenado son <b>plano + millones de números ajustados</b>. Dos modelos con la misma arquitectura y distintos datos son mundos distintos.</p>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card accent">
+          <h3>El mapa de este bloque</h3>
+          <ul class="tight">
+            <li><b>Según cómo procesan la secuencia</b>: densas, MoE, RNN/LSTM, transformers, SSM.</li>
+            <li><b>Según para qué son</b>: texto, imagen, audio, vídeo, grafos, tablas, embeddings.</li>
+            <li><b>Según de dónde vienen</b>: convolucionales (visión y series), recurrentes (secuencias antiguas), atención (todo lo moderno), difusión (generación visual).</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="callout">Regla de lectura: en un nombre de modelo, casi todo lo demás (mini, flash, pro, max) son <b>etiquetas comerciales de tamaño o de gama</b>, no arquitecturas distintas.</div>
+  </div>
+  <aside class="notes"><ul><li>Avisar: vamos a ver arquitecturas "históricas" que siguen usándose en nichos, no sólo la moda.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="5 · Arquitecturas">
+  <h2>Densa vs Mezcla de Expertos (MoE) <span class="tag ok">ejemplos reales</span></h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card">
+          <h3>Densa</h3>
+          <p>Todos los parámetros se activan para cada token. Simple, predecible, fácil de servir y de cuantizar. Es lo que hay en casi todos los modelos pequeños.</p>
+          <p class="small">Ejemplo: un 8B denso usa sus 8.000 millones de parámetros en cada token.</p>
+        </div>
+        <div class="card accent">
+          <h3>MoE (mixture of experts)</h3>
+          <p>La capa de red se divide en muchos "expertos" y un <b>enrutador</b> elige unos pocos por token. Muchos parámetros <b>totales</b>, pocos <b>activos</b>.</p>
+          <p class="small">Ejemplos reales del snapshot: <code>nvidia/nemotron-3-ultra-550b-a55b</code> (550B totales, 55B activos), <code>qwen/qwen3.8-2.4t-a95b</code> (2,4 billones totales, 95B activos), <code>google/gemma-4-26b-a4b-it</code> (26B/4B), <code>tencent/hy-mt2-30b-a3b</code> (30B/3B).</p>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card ok">
+          <h3>Cómo leer el nombre</h3>
+          <p>El patrón <code>total-A-<b>activos</b></code> es la convención (por ejemplo <code>-A3B</code> = 3.000 millones activos). Cuando un modelo se llama "1T" o "2.4T", casi siempre es MoE: nadie serviría un denso de ese tamaño a precio de chat.</p>
+        </div>
+        <table style="font-size:17px">
+          <thead><tr><th></th><th>Densa</th><th>MoE</th></tr></thead>
+          <tbody>
+            <tr><td>Parámetros activos</td><td>Todos</td><td>Una fracción (2&#8211;15%)</td></tr>
+            <tr><td>Coste de inferencia</td><td>Proporcional al tamaño</td><td>Proporcional a lo activo</td></tr>
+            <tr><td>VRAM necesaria</td><td>Todo el modelo</td><td>Todo el modelo (¡también!)</td></tr>
+            <tr><td>Entrenamiento</td><td>Más estable</td><td>Más delicado (balanceo)</td></tr>
+          </tbody>
+        </table>
+        <div class="warnbox">Malentendido habitual: un MoE de 550B activando 55B <b>no cabe</b> en una GPU de 55B. La memoria la marca el total; el ahorro es de cómputo, no de VRAM.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Esta es la mejor diapositiva para que se lleven una idea concreta: no confundir parámetros totales con activos.</li>
+    <li>Si preguntan: los expertos no son "temas" (uno de historia y otro de física); son divisiones aprendidas sin semántica explícita.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="5 · Arquitecturas">
+  <h2>Redes convolucionales (CNN): la arquitectura que vio el mundo</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card">
+          <h3>La idea</h3>
+          <p>Un filtro pequeño recorre la imagen buscando un patrón local (un borde, una textura) y se aplica <b>en todas partes</b> con los mismos pesos. Se apilan capas: bordes &#8594; formas &#8594; objetos.</p>
+          <ul class="tight">
+            <li><b>Pesos compartidos</b>: muchísimos menos parámetros que una red densa.</li>
+            <li><b>Equivarianza a la traslación</b>: un gato es un gato esté donde esté.</li>
+            <li><b>Jerarquía</b>: cada capa combina lo que vio la anterior.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card ok">
+          <h3>Dónde se siguen usando</h3>
+          <ul class="tight">
+            <li>Visión por computador clásica: clasificación, detección, segmentación en producción ligera (móvil, cámara, industrial).</li>
+            <li>Series temporales y señales (ECG, audio, vibración de máquinas).</li>
+            <li>Los <b>encoders visuales</b> de los modelos multimodales modernos son parientes directos (ViT: trocear la imagen y aplicar atención a los parches).</li>
+          </ul>
+        </div>
+        <div class="callout">Lección histórica (2012, AlexNet): la misma arquitectura + GPUs + más datos batió todo lo anterior de golpe. Fue el primer aviso de que <b>la escala</b> era la palanca.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Si el grupo es de visión o industrial: aquí está su herramienta; no todo tiene que ser un LLM.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="5 · Arquitecturas">
+  <h2>RNN, LSTM y GRU: leer en orden, recordando</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card">
+          <h3>Cómo funcionaban</h3>
+          <p>Procesan la secuencia <b>un elemento a la vez</b>, manteniendo un "estado" (memoria) que se actualiza en cada paso. La LSTM añadió compuertas para decidir qué recordar y qué olvidar; la GRU, una versión más ligera.</p>
+          <ul class="tight">
+            <li>Perfectas para texto, audio, series temporales, sensores.</li>
+            <li>Concepto aún vivo: <em>estado oculto</em>, <em>secuencia</em>, <em>memoria</em>.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card bad">
+          <h3>Por qué se abandonaron para lenguaje</h3>
+          <ul class="tight">
+            <li><b>Secuenciales de verdad</b>: no se pueden paralelizar; entrenar era lentísimo.</li>
+            <li><b>Se les olvida el pasado lejano</b> (gradiente que se desvanece), aun con compuertas.</li>
+            <li><b>Cuello de botella</b>: toda la información debía pasar por un estado de tamaño fijo.</li>
+            <li>La atención resolvió las tres cosas a la vez: paralelismo total y acceso directo a cualquier posición.</li>
+          </ul>
+        </div>
+        <div class="okbox">Siguen siendo la respuesta correcta en muchos problemas <b>pequeños y en tiempo real</b> (predicción de sensores, señales biomédicas), donde un transformer es exagerado y más caro.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Pregunta habitual: "¿y las LSTM ya no sirven para nada?". Respuesta: para texto a escala, no; para series pequeñas, sí.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="5 · Arquitecturas">
+  <h2>Seq2seq + atención: el puente hacia el transformer</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card">
+          <h3>La receta de la traducción (2014-2017)</h3>
+          <div class="flow" style="font-size:16px">
+            <span class="node">Encoder (LSTM)</span><span class="arrow">&#8594;</span>
+            <span class="node">Vector de contexto</span><span class="arrow">&#8594;</span>
+            <span class="node">Decoder (LSTM)</span>
+          </div>
+          <p>Problema: todo el significado de la frase se comprimía en un vector fijo. En frases largas, se perdía información.</p>
+          <p><b>Solución (2015):</b> que el decoder <em>mirara</em> las posiciones del encoder con distintos pesos en cada paso. Eso es <b>atención</b>.</p>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card accent">
+          <h3>Y el salto (2017)</h3>
+          <p><em>Attention is all you need</em>: si la atención es lo que aporta, quitemos las RNN y dejemos sólo atención (más redes densas, residuales y normalización).</p>
+          <ul class="tight">
+            <li>Entrenamiento <b>paralelo</b> sobre toda la secuencia.</li>
+            <li>Camino directo entre posiciones lejanas.</li>
+            <li>Escala de forma predecible: más capas y más datos, mejor.</li>
+          </ul>
+        </div>
+        <div class="okbox">Toda la IA generativa que usamos hoy (texto, imagen, audio, vídeo, código) desciende de ese paper. Es la pieza más rentable de la historia reciente del software.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Anécdota: la atención se inventó para traducir; ocho años después es la base de todo.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="5 · Arquitecturas">
+  <h2>Tres familias de transformer</h2>
+  <div class="body">
+    <table>
+      <thead><tr><th>Familia</th><th>Cómo mira</th><th>Para qué sirve</th><th>Ejemplos de uso</th></tr></thead>
+      <tbody>
+        <tr><td><b>Decoder-only</b><br><span class="small">(la de los LLM)</span></td><td>Sólo hacia atrás (causal): predice el siguiente token</td><td>Generar texto, chat, código, agentes</td><td>Casi todo lo que usamos: GPT, Claude, Gemini, Llama, Qwen, DeepSeek</td></tr>
+        <tr><td><b>Encoder-only</b></td><td>Ve la frase completa (bidireccional), rellena huecos</td><td>Entender: clasificar, extraer, medir similitud</td><td>Búsqueda semántica, detección de spam, embeddings, moderación</td></tr>
+        <tr><td><b>Encoder-decoder</b></td><td>Uno lee, otro escribe</td><td>Transformar una secuencia en otra</td><td>Traducción, resumen, transcripción, voz</td></tr>
+      </tbody>
+    </table>
+    <div class="cols c2">
+      <div class="col"><div class="callout">Si necesitas <b>entender</b> texto a escala (clasificar 100.000 tickets), un modelo encoder pequeño y barato suele ganar a un LLM: más rápido, más barato y más que suficiente.</div></div>
+      <div class="col"><div class="okbox">Si necesitas <b>generar, razonar o actuar</b>, decoder-only. No hay debate hoy: todo el esfuerzo industrial está ahí.</div></div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Adelantar: en el bloque de automatización veremos que para clasificar usamos modelos pequeños, no el chat.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="5 · Arquitecturas">
+  <h2>MoE por dentro: enrutador, expertos y balanceo</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card">
+          <h3>Cómo funciona, paso a paso</h3>
+          <ol class="tight">
+            <li>El token llega a la capa MoE.</li>
+            <li>El <b>enrutador</b> (una capa pequeña) puntúa a todos los expertos.</li>
+            <li>Se eligen los <b>top-k</b> (típicamente 2 de 8, 2 de 64&#8230;) y se aplican sólo esos.</li>
+            <li>Se combinan sus salidas ponderadas y se sigue adelante.</li>
+          </ol>
+          <p class="small">Ventaja: con el mismo cómputo por token puedes tener mucha más capacidad total. Inconveniente: entrenarlo es delicado.</p>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card warn">
+          <h3>Problemas conocidos</h3>
+          <ul class="tight">
+            <li><b>Colapso de enrutado</b>: el modelo se enamora de dos expertos y el resto no aprende. Se corrige con penalizaciones de balanceo.</li>
+            <li><b>Enrutado entre dispositivos</b>: si los expertos viven en GPUs distintas, hay mucha comunicación.</li>
+            <li><b>Fine-tuning</b>: adaptar un MoE es más incómodo que uno denso.</li>
+            <li><b>Memoria</b>: cargas todos los expertos aunque sólo uses dos (se pueden repartir por demanda, a cambio de latencia).</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="callout">Por qué el sector fue a MoE: es la forma más práctica de seguir creciendo en capacidad <b>sin</b> multiplicar el coste por token de cada consulta.</div>
+  </div>
+  <aside class="notes"><ul><li>Frase para recordar: "dense = todos los músculos siempre; MoE = convocatoria de especialistas".</li></ul></aside>
+</section>
+
+<section class="slide" data-module="5 · Arquitecturas">
+  <h2>Alternativas al transformer: eficiencia y contexto infinito</h2>
+  <div class="body">
+    <div class="cols c3">
+      <div class="card">
+        <h3>Mamba / SSM</h3>
+        <p>Modelos de estado (<em>state space models</em>): procesan secuencias en tiempo <b>lineal</b> y con memoria acotada, en lugar del cuadrático de la atención.</p>
+        <p class="small">Muy buenos en secuencias larguísimas; suelen combinarse en híbridos (unos bloques de atención y otros de SSM).</p>
+      </div>
+      <div class="card">
+        <h3>Variantes de atención eficiente</h3>
+        <ul class="tight">
+          <li><b>Ventana deslizante</b>: cada token sólo mira los últimos N.</li>
+          <li><b>Atención dispersa / por bloques</b>: no toda pareja de posiciones cuenta igual.</li>
+          <li><b>Lineal / kernels</b>: aproximar la atención para bajar el coste.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Y también</h3>
+        <ul class="tight">
+          <li><b>RWKV</b>, <b>xLSTM</b>, convs largas.</li>
+          <li><b>Recurrencia sobre atención</b>: capas que se reutilizan en profundidad.</li>
+          <li>Mezclas de "todo lo anterior" en el mismo modelo.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="okbox">Como usuario no eliges arquitectura: eliges modelo. Como ingeniero te importa porque explica <b>por qué un modelo es rápido con contextos enormes y otro se arrastra</b>, y por qué hay diferencias de coste a igual calidad.</div>
+  </div>
+  <aside class="notes"><ul><li>Mencionar que los híbridos son hoy lo habitual en modelos de contexto muy largo.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="5 · Arquitecturas">
+  <h2>Difusión: cómo se genera una imagen (o un vídeo)</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card">
+          <h3>La idea, en dos pasos</h3>
+          <ol class="tight">
+            <li><b>Entrenamiento</b>: a imágenes reales se les añade ruido progresivamente hasta destruirlas. La red aprende a <em>deshacer</em> un paso de ruido.</li>
+            <li><b>Generación</b>: se parte de ruido puro y se aplica la red muchas veces hasta que emerge una imagen.</li>
+          </ol>
+          <p class="small">Variante eficiente: hacerlo en un espacio <b>latente</b> comprimido (de ahí "Stable Diffusion" y compañía), mucho más rápido.</p>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card accent">
+          <h3>Conceptos que verás</h3>
+          <ul class="tight">
+            <li><b>Pasos</b>: más pasos &#8594; más calidad y más tiempo.</li>
+            <li><b>Guidance / CFG</b>: cuánto se fuerza la adherencia al texto. Muy alto &#8594; imagen rígida y con artefactos.</li>
+            <li><b>Semilla</b>: misma semilla + mismo prompt = misma imagen (aquí sí hay reproducibilidad decente).</li>
+            <li><b>Inpainting / img2img / control</b>: editar zonas o guiar por boceto y pose.</li>
+          </ul>
+        </div>
+        <div class="callout">Vídeo = difusión sobre muchos fotogramas, con el problema añadido de la coherencia temporal. Audio y voz (síntesis, clonación) usan variantes similares.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Punto clave para el equipo: en generación visual el "no determinismo" es menor, pero el <b>derecho de uso</b> de imágenes y voces es un asunto serio.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="5 · Arquitecturas">
+  <h2>Cuando no necesitas un LLM: otras arquitecturas útiles</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <table>
+          <thead><tr><th>Problema</th><th>Herramienta razonable</th></tr></thead>
+          <tbody>
+            <tr><td>Predecir un número con datos tabulares (churn, riesgo, precio)</td><td>Gradient boosting (XGBoost, LightGBM) &mdash; sigue ganando a las redes en tablas</td></tr>
+            <tr><td>Buscar por significado en documentos</td><td>Modelos de embeddings + índice vectorial + reranker</td></tr>
+            <tr><td>Clasificar o etiquetar mucho texto</td><td>Encoder pequeño afinado (rápido y barato)</td></tr>
+            <tr><td>Series temporales (demanda, sensores)</td><td>Métodos estadísticos, árboles, LSTM, o los modelos de series recientes</td></tr>
+            <tr><td>Recomendar cosas</td><td>Filtrado colaborativo + embeddings de contenido</td></tr>
+            <tr><td>Relaciones entre entidades (fraude, conocimiento)</td><td>Grafos (GNN) y bases de datos de grafo</td></tr>
+            <tr><td>Detectar anomalías en logs o métricas</td><td>Estadística y reglas primero; ML si hace falta</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="col">
+        <div class="card bad">
+          <h3>Antipatrón frecuente</h3>
+          <p>Meter un LLM donde bastaba una consulta SQL, una regla o un modelo de 10 MB. Consecuencias: coste por llamada, latencia, no determinismo y errores difíciles de auditar.</p>
+        </div>
+        <div class="okbox">
+          <h3>Pregunta previa a cualquier proyecto de IA</h3>
+          <ul class="tight">
+            <li>¿Lo resuelve una regla o una consulta? Entonces no hace falta IA.</li>
+            <li>¿Necesito <em>entender</em> (clasificar/medir) o <em>generar</em>?</li>
+            <li>¿Cuánto me cuesta un error? Si es caro, necesito verificación humana o determinismo.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Este es el bloque que evita proyectos fracasados: elegir la herramienta correcta, no la de moda.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="5 · Arquitecturas">
+  <h2>Cómo leer el nombre de un modelo sin perderse</h2>
+  <div class="body">
+    <table class="sm">
+      <thead><tr><th>Lo que ves</th><th>Lo que suele significar</th></tr></thead>
+      <tbody>
+        <tr><td><code>base</code> / sin sufijo</td><td>Modelo crudo, sólo continúa texto. No sigue instrucciones bien.</td></tr>
+        <tr><td><code>instruct</code> / <code>chat</code></td><td>Ajustado para conversar y seguir instrucciones (lo que usamos).</td></tr>
+        <tr><td><code>thinking</code> / <code>reasoning</code> / <code>-r1</code></td><td>Modo con tokens de razonamiento: más lento y caro, mejor en problemas duros.</td></tr>
+        <tr><td><code>code</code> / <code>coder</code> / <code>devstral</code></td><td>Especializados en código (a menudo destilados para aguantar contextos de repo).</td></tr>
+        <tr><td><code>vl</code> / <code>vision</code> / <code>omni</code></td><td>Aceptan imagen, audio o vídeo además de texto.</td></tr>
+        <tr><td><code>7B</code>, <code>70B</code>, <code>2.4T</code></td><td>Parámetros totales. Con MoE, mira el sufijo <code>-A</code> de activos.</td></tr>
+        <tr><td><code>mini</code>, <code>flash</code>, <code>nano</code></td><td>Gama pequeña y barata: ideal para volumen y tareas simples.</td></tr>
+        <tr><td><code>pro</code>, <code>max</code>, <code>ultra</code>, <code>prime</code>, <code>opus</code></td><td>Gama alta: más caro, mejor en lo difícil.</td></tr>
+        <tr><td><code>preview</code> / fechas tipo <code>-0902</code>, <code>-1017</code></td><td>Instantáneas: <b>las versiones cambian y se deprecan</b>. Fija la que uses.</td></tr>
+        <tr><td><code>:free</code>, <code>:batch</code></td><td>Variantes de precio (gratis con límites; procesado sin prisa a mitad de precio).</td></tr>
+      </tbody>
+    </table>
+    <div class="okbox">Con esto ya puedes mirar cualquier catálogo de modelos y saber qué estás comprando. En el bloque siguiente lo aplicamos al panorama real de hoy.</div>
+  </div>
+  <aside class="notes"><ul><li>Ejercicio rápido: poner 5 nombres de modelos en pantalla y que el grupo los interprete.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="5 · Arquitecturas">
+  <h2>Idea clave del bloque</h2>
+  <div class="body center" style="justify-content:center">
+    <div class="quote" style="max-width:1020px;font-size:29px">La arquitectura decide <b>qué es posible</b>; los datos y la escala deciden <b>qué tan bien</b>. Y para cada problema existe una herramienta mejor que un LLM.</div>
+    <div class="cols c3" style="max-width:1150px">
+      <div class="card"><h3>Dense / MoE</h3><p>Total &#8800; activo. La VRAM la marca el total.</p></div>
+      <div class="card"><h3>CNN / LSTM / SSM</h3><p>Siguen vivas en visión, señales y tiempo real.</p></div>
+      <div class="card"><h3>Transformers</h3><p>Decoder-only para generar; encoder para entender.</p></div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Descanso de 15 minutos antes de la parte 2 (panorama + harness).</li></ul></aside>
+</section>

@@ -1,0 +1,420 @@
+<!-- ============ MÓDULO 4 · INFERENCIA EN LA PRÁCTICA ============ -->
+<section class="slide section" data-module="4 · Inferencia">
+  <div class="kicker">Bloque 4</div>
+  <h2>Inferencia: cómo se sirve esto a escala</h2>
+  <p class="lede">Latencia, coste, cuantización, razonamiento y herramientas.</p>
+  <aside class="notes"><ul><li>Aquí cambiamos de "qué es" a "cómo se opera". Es el bloque que explica precios, límites y comportamientos de los proveedores.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="4 · Inferencia">
+  <h2>Dos fases: leer (prefill) y escribir (decode)</h2>
+  <div class="body compact">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card accent">
+          <h3>Prefill &#8212; procesar tu entrada</h3>
+          <ul class="tight">
+            <li>Todo el prompt se procesa <b>en paralelo</b>: miles de tokens de golpe.</li>
+            <li>Es intensivo en <b>cómputo</b> (GPU a tope de cálculos).</li>
+            <li>Determina el <b>TTFT</b> (<em>time to first token</em>): lo que tardas en ver empezar la respuesta.</li>
+            <li>Un prompt de 100.000 tokens puede tardar segundos en estar "leído".</li>
+          </ul>
+        </div>
+        <div class="card ok">
+          <h3>Decode &#8212; generar la respuesta</h3>
+          <ul class="tight">
+            <li>Token a token, en secuencia: <b>no se puede paralelizar</b> dentro de una misma respuesta.</li>
+            <li>Es intensivo en <b>memoria</b>: cada token generado relee la caché de atención.</li>
+            <li>Determina los <b>tokens/segundo</b> (la velocidad de escritura que percibes).</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="pre" style="display:flex;flex-direction:column;gap:12px">
+          <div class="card">
+            <h3>Por qué esto te importa como usuario</h3>
+            <table style="font-size:17px">
+              <thead><tr><th>Si quieres&#8230;</th><th>Toca&#8230;</th></tr></thead>
+              <tbody>
+                <tr><td>Respuesta que empiece antes</td><td>Prompt más corto, menos ficheros, caché de prompt</td></tr>
+                <tr><td>Respuesta que termine antes</td><td>Menos tokens de salida, modelo más pequeño, no "razonar" de más</td></tr>
+                <tr><td>Más trabajo por euro</td><td>Modelos pequeños, batch, caché, menos ida y vuelta</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="callout">Las facturas separan <b>tokens de entrada</b> y <b>de salida</b>. La salida suele costar <b>3&#8211;5 veces más</b> porque es la parte lenta: explicar poco y bien sale más barato que pedir parrafadas.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Analogía: prefill = leer el dossier entero; decode = dictar la respuesta palabra a palabra.</li>
+    <li>TTFT y tokens/s son las dos métricas que percibe el usuario. Los proveedores las publican.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="4 · Inferencia">
+  <h2>La caché (KV cache): cómo se evita repetir trabajo</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card">
+          <h3>Qué guarda</h3>
+          <p>Para cada token ya procesado, el modelo guarda sus vectores internos de atención (K y V). Al generar un token nuevo, sólo calcula ese, y <b>reutiliza</b> todo lo anterior.</p>
+          <p class="small">Sin caché, generar el token 1.000 supondría reprocesar 999 tokens. Con caché, sólo uno.</p>
+        </div>
+        <div class="card warn">
+          <h3>El problema: tamaño</h3>
+          <ul class="tight">
+            <li>La caché crece con la longitud del contexto y hay que mantenerla en memoria (VRAM) por conversación.</li>
+            <li>Es el auténtico cuello de botella para servir a muchos usuarios con contextos largos.</li>
+            <li>De ahí técnicas como <b>PagedAttention</b> (gestionar la caché por páginas, como memoria virtual) o la cuantización de la propia caché.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card accent">
+          <h3>Caché de prompt (lo que ves en las facturas)</h3>
+          <ul class="tight">
+            <li>Si repites un <b>prefijo</b> idéntico entre peticiones (por ejemplo, un prompt de sistema largo o un fichero grande), el proveedor puede cobrarte ese prefijo más barato y responder antes.</li>
+            <li>Buena práctica: <b>lo estable primero, lo variable al final</b>. Ficheros y convenciones arriba, la pregunta concreta abajo.</li>
+            <li>Si reordenas tu prompt en cada llamada, rompes la caché y pagas completo.</li>
+          </ul>
+        </div>
+        <div class="okbox">Regla de oro para agentes: el orden del contexto es dinero. Los harness serios colocan reglas y ficheros grandes delante justamente por esto.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Se puede comprobar en las consolas de los proveedores: aparece "cached input tokens" con su precio.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="4 · Inferencia">
+  <h2>Servir a muchos: batching continuo y throughput</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card">
+          <h3>El truco de los servidores</h3>
+          <p>Generar un token para una petición deja la GPU medio vacía. Los motores de inferencia (vLLM, TensorRT-LLM, SGLang&#8230;) meten <b>muchas peticiones a la vez</b>, y van añadiendo y quitando peticiones en cada paso (<em>continuous batching</em>).</p>
+          <ul class="tight">
+            <li><b>Throughput</b>: tokens/segundo totales del servidor &#8594; determina el coste.</li>
+            <li><b>Latencia</b>: cuánto espera un usuario concreto.</li>
+            <li>Ambas se pelean: optimizar una empeora la otra. De ahí las colas y los niveles de servicio.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card accent">
+          <h3>Lo que esto explica de tu día a día</h3>
+          <ul class="tight">
+            <li>Por qué a las horas punta un servicio "va más lento" sin cambiar nada tuyo.</li>
+            <li>Por qué el <b>modo batch</b> (procesar sin prisa) es mucho más barato: el proveedor lo mete en huecos.</li>
+            <li>Por qué "temperatura 0" no es determinista: el resultado depende del lote y del orden de operaciones.</li>
+            <li>Por qué hay <b>límites por minuto</b> (RPM/TPM) además de los de contexto.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>No hace falta nombrar todos los motores; mencionar vLLM porque se usa en despliegues propios.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="4 · Inferencia">
+  <h2>Cuantización y compresión: la calidad se paga en bits</h2>
+  <div class="body">
+    <table>
+      <thead><tr><th>Formato</th><th>Bits por peso</th><th>Qué gana</th><th>Qué pierde</th></tr></thead>
+      <tbody>
+        <tr><td>BF16 / FP16</td><td class="num">16</td><td>Calidad de referencia; entrenamiento</td><td>El doble de memoria y de coste</td></tr>
+        <tr><td>FP8 / INT8</td><td class="num">8</td><td>Mitad de memoria, casi sin pérdida; estándar en producción</td><td>Requiere kernels y hardware que lo soporten</td></tr>
+        <tr><td>INT4 (por ejemplo, <em>4-bit</em>)</td><td class="num">4</td><td>Cabe en portátiles y GPUs pequeñas</td><td>Degradación perceptible, sobre todo en razonamiento y código</td></tr>
+        <tr><td>INT3/INT2 y formatos extremos</td><td class="num">2&#8211;3</td><td>Experimentos de laboratorio / investigación</td><td>Calidad frágil; no para trabajo serio</td></tr>
+      </tbody>
+    </table>
+    <div class="cols c2">
+      <div class="col"><div class="card ok"><h3>Regla práctica</h3><p>Para uso local: un modelo de 8B en 4 bits funciona razonablemente. Un modelo de 70B en 4 bits necesita una GPU de 48 GB o memoria unificada (Mac con 64 GB, por ejemplo).</p></div></div>
+      <div class="col"><div class="card accent"><h3>Otras compresiones de la misma familia</h3><ul class="tight"><li><b>Destilación</b>: un modelo pequeño aprende del grande.</li><li><b>Podado</b>: quitar estructuras poco útiles.</li><li><b>MoE</b>: muchas piezas, pocas activas por token (lo veremos en el siguiente bloque).</li></ul></div></div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Si alguien quiere correr algo local, aquí está la cuenta de memoria: parámetros &#215; bytes + caché + overhead.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="4 · Inferencia">
+  <h2>Modelos que "piensan": cómputo en inferencia</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card accent">
+          <h3>Qué es</h3>
+          <p>En lugar de responder directamente, el modelo genera <b>tokens de razonamiento</b> internos (a veces visibles, a veces no) y luego la respuesta. Se entrenan con refuerzo sobre tareas verificables (matemáticas, código, lógica).</p>
+          <ul class="tight">
+            <li>Más "pensamiento" &#8594; mejor en problemas difíciles, peor en coste y latencia.</li>
+            <li>Se puede ajustar el esfuerzo (bajo / medio / alto) en muchos modelos: <em>test-time compute</em>.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card bad">
+          <h3>Cuándo NO usar razonamiento</h3>
+          <ul class="tight">
+            <li>Tareas de formato: extraer, resumir, clasificar, reescribir. Es tirar dinero.</li>
+            <li>Cuando el problema es de <b>información</b>, no de lógica: ningún "pienso más" arregla no tener el dato.</li>
+            <li>Cuando la respuesta debe ser instantánea (autocompletado, chat de soporte).</li>
+          </ul>
+        </div>
+        <div class="warnbox">Ojo: los tokens de razonamiento <b>se facturan como salida</b>. Un modelo "pensador" puede multiplicar por 5-10 el coste de una tarea trivial.</div>
+      </div>
+    </div>
+    <div class="callout">Consejo de uso: usa el modelo pequeño y rápido por defecto, y sube a razonamiento cuando la tarea <em>se resista</em>. En un harness, esto se configura por tarea, no se deja al azar.</div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Esta es la tendencia de 2025-26: parte del progreso viene de más cómputo en inferencia, no de más parámetros.</li>
+    <li>Mencionar que en modelos ocultos el contenido de razonamiento puede no ser accesible, y que no siempre es fiable como justificación.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="4 · Inferencia">
+  <h2>Herramientas y salida estructurada: cuando el modelo deja de ser un oráculo</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card ok">
+          <h3>Tool calling / function calling</h3>
+          <p>El harness le declara herramientas (buscar, leer, ejecutar, consultar la base de datos) y el modelo responde con <b>una petición de uso</b>, no con texto libre. El harness la ejecuta y le devuelve el resultado.</p>
+          <ul class="tight">
+            <li>Así deja de "inventar" cálculos: los ejecuta.</li>
+            <li>Es la base de los agentes y de cualquier integración seria.</li>
+            <li>Un modelo puede encadenar varias llamadas antes de responder.</li>
+          </ul>
+        </div>
+        <div class="card accent">
+          <h3>Salida estructurada</h3>
+          <p>Se le obliga a emitir un JSON conforme a un esquema (gramáticas, <em>constrained decoding</em>). Garantiza que el parseo no falle: imprescindible para integrarlo en pipelines.</p>
+        </div>
+      </div>
+      <div class="col">
+        <pre><code>{
+  "herramienta": "consulta_sql",
+  "argumentos": {
+    "sql": "SELECT count(*) FROM pedidos
+            WHERE fecha &gt; '2026-10-01'"
+  }
+}</code></pre>
+        <div class="card warn">
+          <h3>Riesgos que debes controlar</h3>
+          <ul class="tight">
+            <li>El modelo <b>propone</b>, el harness <b>decide</b>: permisos, listas blancas, límites de tiempo y de gasto.</li>
+            <li>Nunca ejecutar SQL o comandos destructivos sin validación (SELECT sí, DROP jamás sin revisión).</li>
+            <li>Los resultados de las herramientas también pueden traer instrucciones maliciosas (inyección por dato).</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Demo mental: "¿cuántos pedidos hay este mes?" sin herramienta &#8594; se lo inventa; con herramienta &#8594; consulta y acierta.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="4 · Inferencia">
+  <h2>Contexto largo: 1 millón de tokens no es un millón de tokens útiles</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card">
+          <h3>Qué significa la cifra</h3>
+          <p>El "contexto" publicado (200k, 1M) es el máximo teórico. En la práctica:</p>
+          <ul class="tight">
+            <li>El rendimiento cae con contextos enormes: información enterrada en medio se pierde (<em>lost in the middle</em>).</li>
+            <li><b>Cuanto más contexto, más caro y más lento</b>: cada token de entrada se paga en cada turno.</li>
+            <li>El ruido compite con la señal: 20 ficheros irrelevantes empeoran la respuesta.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card accent">
+          <h3>Long context vs RAG</h3>
+          <table style="font-size:17px">
+            <thead><tr><th></th><th>Long context</th><th>RAG</th></tr></thead>
+            <tbody>
+              <tr><td>Coste por pregunta</td><td>Alto y creciente</td><td>Bajo</td></tr>
+              <tr><td>Precisión con ruido</td><td>Empeora</td><td>Mejora (filtras antes)</td></tr>
+              <tr><td>Datos siempre actualizados</td><td>Sí, si los metes</td><td>Sí, si reindexas</td></tr>
+              <tr><td>Esfuerzo de ingeniería</td><td>Bajo</td><td>Medio (chunking, ranking)</td></tr>
+            </tbody>
+          </table>
+          <p class="small">La respuesta sensata suele ser <b>híbrida</b>: recuperar poco y bien, y dar contexto de calidad.</p>
+        </div>
+      </div>
+    </div>
+    <div class="okbox">Aplicado a nuestro trabajo: en vez de "aquí está mi repositorio entero", funciona mucho mejor "aquí están los 3 ficheros que importan y por qué".</div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Contar el patrón que veo a menudo: prompts gigantes y respuesta mediocre; y al revés, 200 líneas justas y respuesta excelente.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="4 · Inferencia">
+  <h2>Memoria, compactación y trabajo largo</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card">
+          <h3>El modelo no recuerda nada</h3>
+          <p>La memoria de un chat la sostiene el programa: reenvía el historial. Cuando la conversación se acerca al límite, hay que decidir qué tirar:</p>
+          <ul class="tight">
+            <li><b>Resumir</b> lo antiguo y conservar lo reciente.</li>
+            <li><b>Persistir</b> hechos en ficheros (notas, decisiones, planes) y releerlos.</li>
+            <li><b>Reiniciar</b> la sesión con un buen contexto inicial y un resumen, en lugar de arrastrar 300.000 tokens de charla.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card accent">
+          <h3>Por qué los ficheros ganan a la memoria</h3>
+          <ul class="tight">
+            <li>Un fichero es <b>verificable</b>, versionable y compartible con el equipo.</li>
+            <li>Sobrevive al cierre de la sesión, al cambio de modelo y al cambio de herramienta.</li>
+            <li>Evita el peor antipatrón: "esto ya lo arreglamos en la conversación de ayer", perdido para siempre.</li>
+          </ul>
+        </div>
+        <div class="okbox">Regla del equipo: si una decisión importa, va al repositorio (ADR, README, notas). El chat no es un sistema de registro.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Esto enlaza directo con el bloque de skills y memoria del harness.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="4 · Inferencia">
+  <h2>El trilema: calidad, coste y latencia</h2>
+  <div class="body">
+    <div class="cols c3">
+      <div class="card"><h3>Cascada de modelos</h3><p>Empieza por el pequeño y barato; si la confianza es baja o la tarea falla, escala al grande. Ahorra dinero en el 80% de casos triviales.</p></div>
+      <div class="card"><h3>Enrutador (router)</h3><p>Un clasificador decide a qué modelo mandar cada petición según tipo y dificultad. Es una técnica de ingeniería pura, sin modelos nuevos.</p></div>
+      <div class="card"><h3>Cachés de aplicación</h3><p>Si la misma pregunta se repite (informes, FAQs, tests), no vuelvas a preguntar: guarda el resultado con una clave estable.</p></div>
+    </div>
+    <table>
+      <thead><tr><th>Patrón</th><th>Calidad</th><th>Coste</th><th>Latencia</th><th>Cuándo</th></tr></thead>
+      <tbody>
+        <tr><td>Modelo pequeño siempre</td><td>Media</td><td>Muy bajo</td><td>Baja</td><td>Clasificar, extraer, formato, autocompletar</td></tr>
+        <tr><td>Modelo grande siempre</td><td>Alta</td><td>Alto</td><td>Alta</td><td>Análisis complejo, código difícil, pocas llamadas</td></tr>
+        <tr><td>Cascada / enrutado</td><td>Alta</td><td>Medio-bajo</td><td>Media</td><td>Volumen alto y heterogéneo (el caso típico en producción)</td></tr>
+        <tr><td>Batch (sin prisa)</td><td>Igual</td><td>&#8776; mitad</td><td>Alta</td><td>Procesos nocturnos, informes, clasificación masiva</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <aside class="notes"><ul>
+    <li>Idea: la mayoría de las empresas sobrepagan porque usan el modelo más caro para todo.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="4 · Inferencia">
+  <h2>La economía en números reales <span class="tag ok">dato · OpenRouter, 17-oct-2026</span></h2>
+  <div class="body">
+    <table class="xs">
+      <thead><tr><th>Modelo (ejemplos reales del snapshot)</th><th>$ / M tokens entrada</th><th>$ / M tokens salida</th><th>Contexto</th></tr></thead>
+      <tbody>
+        <tr><td><code>openai/gpt-6.1-sol</code></td><td class="num">2,00</td><td class="num">10,00</td><td class="num">1.050.000</td></tr>
+        <tr><td><code>anthropic/claude-sonnet-5.5</code></td><td class="num">2,00</td><td class="num">10,00</td><td class="num">1.000.000</td></tr>
+        <tr><td><code>google/gemini-4-argon</code></td><td class="num">2,00</td><td class="num">10,00</td><td class="num">1.048.576</td></tr>
+        <tr><td><code>anthropic/claude-opus-5.5</code></td><td class="num">4,00</td><td class="num">20,00</td><td class="num">1.000.000</td></tr>
+        <tr><td><code>openai/gpt-6-astra</code></td><td class="num">10,00</td><td class="num">50,00</td><td class="num">1.050.000</td></tr>
+        <tr><td><code>qwen/qwen3.8-max-prime</code></td><td class="num">4,00</td><td class="num">12,00</td><td class="num">1.000.000</td></tr>
+        <tr><td><code>mistralai/mistral-large-4-0</code></td><td class="num">0,68</td><td class="num">2,09</td><td class="num">1.048.576</td></tr>
+        <tr><td><code>deepseek/deepseek-v4.1-flash</code></td><td class="num">0,15</td><td class="num">0,60</td><td class="num">1.048.576</td></tr>
+        <tr><td><code>z-ai/glm-5.3-flash</code></td><td class="num">0,15</td><td class="num">0,50</td><td class="num">1.048.576</td></tr>
+        <tr><td><code>anthropic/claude-haiku-5.5</code></td><td class="num">0,10</td><td class="num">0,50</td><td class="num">1.000.000</td></tr>
+        <tr><td><code>openai/gpt-6-luna</code></td><td class="num">0,10</td><td class="num">0,50</td><td class="num">1.050.000</td></tr>
+      </tbody>
+    </table>
+    <div class="warnbox" style="font-size:18px"><b>Cómo estimar rápido:</b> 1 llamada de agente que lee 50.000 tokens y escribe 3.000, con un modelo de la banda media (2 $/10 $), cuesta &#8776; <b>0,13 $</b>. Un bucle de 40 pasos de agente puede multiplicarse por 40. Los precios cambian, las versiones se deprecan: <b>fija el modelo por tarea y revisa trimestralmente</b>.</div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Estos precios son la "tarifa pública por API" vía OpenRouter (snapshot del repo). Los planes de suscripción cambian la cuenta por completo.</li>
+    <li>Consejo: poner un presupuesto por tarea y medirlo. La sorpresa de factura de fin de mes es un clásico.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="4 · Inferencia">
+  <h2>Hardware: dónde corre todo esto</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <table>
+          <thead><tr><th>Acelerador</th><th>De quién</th><th>Notas</th></tr></thead>
+          <tbody>
+            <tr><td>GPU (familia H/B/GB de NVIDIA)</td><td>NVIDIA</td><td>El estándar de facto en entrenamiento e inferencia; su software (CUDA) es el foso real</td></tr>
+            <tr><td>TPU</td><td>Google</td><td>Diseño propio, escala bien entre chips; uso interno y en su nube</td></tr>
+            <tr><td>LPU / aceleradores de inferencia</td><td>Groq, Cerebras y otros</td><td>Optimizados para tokens/segundo, no para entrenar</td></tr>
+            <tr><td>NPU y memoria unificada</td><td>Apple, AMD, Intel, Qualcomm</td><td>IA local en portátiles y móviles; menos VRAM, menos modelo</td></tr>
+            <tr><td>Silicio propio de los lab</td><td>OpenAI, Meta, Amazon, Microsoft&#8230;</td><td>Reducir dependencia y coste; esfuerzo a años vista</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="col">
+        <div class="card accent">
+          <h3>Tres conceptos que explican los límites</h3>
+          <ul class="tight">
+            <li><b>VRAM</b>: memoria del chip. Un modelo necesita caber con su caché; si no, no hay.</li>
+            <li><b>Ancho de banda de memoria</b>: en generar, el cuello de botella es mover datos, no calcular. Por eso las GPUs de datos decentes son caras.</li>
+            <li><b>Interconexión</b> (NVLink, redes del centro de datos): para repartir un modelo entre muchos chips hay que comunicarlos rápido.</li>
+          </ul>
+        </div>
+        <div class="warnbox">También es un problema de <b>energía y refrigeración</b>: los centros de datos de IA consumen como ciudades medianas. Cada vez pesa más en las decisiones (coste, regulación, ubicación).</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>No dar cifras concretas de consumo sin fuente; mencionar el orden de magnitud y que es un factor estratégico.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="4 · Inferencia">
+  <h2>¿API o modelo propio? Decisión en cuatro preguntas</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <table>
+          <thead><tr><th>Pregunta</th><th>Si la respuesta es sí&#8230;</th></tr></thead>
+          <tbody>
+            <tr><td>¿Los datos no pueden salir de casa (nivel legal o cliente)?</td><td>Despliegue propio o nube privada con pesos abiertos</td></tr>
+            <tr><td>¿Volumen enorme y estable? (millones de llamadas/mes)</td><td>Puede compensar montar inferencia propia</td></tr>
+            <tr><td>¿Latencia crítica o sin conexión (planta, vehículo, móvil)?</td><td>Modelo pequeño en local / en el borde</td></tr>
+            <tr><td>¿Necesitas fijar la versión durante años (certificación, auditoría)?</td><td>Pesos abiertos congelados</td></tr>
+            <tr><td>¿Todo lo anterior es "no"?</td><td><b>Usa API.</b> Nadie te premia por operar GPUs</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="col">
+        <div class="card ok">
+          <h3>Cómo empezar en local, hoy</h3>
+          <ul class="tight">
+            <li><b>Ollama</b> o <b>LM Studio</b>: un ejecutable y un comando. Ideal para probar y para tareas sin datos sensibles.</li>
+            <li><b>vLLM</b> o <b>llama.cpp</b>: cuando quieres servir a un equipo o integrarlo.</li>
+            <li>Modelos: familias abiertas de la banda 8B&#8211;120B según la máquina.</li>
+            <li>Herramientas como <em>Continue</em> o <em>Zed</em> permiten mezclar local y API en el mismo editor.</li>
+          </ul>
+        </div>
+        <div class="badbox">Lo que nadie te cuenta del modelo propio: <b>es un producto de software con mantenimiento</b>. Actualizaciones, cuantizaciones, GPUs, guardias, y un modelo que hoy brilla queda obsoleto en meses.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Postura honesta: para el 95% de los equipos, la API es la respuesta correcta; el on-premise es una decisión de cumplimiento, no técnica.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="4 · Inferencia">
+  <h2>Idea clave del bloque</h2>
+  <div class="body center" style="justify-content:center">
+    <div class="quote" style="max-width:1020px;font-size:29px">La inferencia es un problema de <b>ingeniería</b>: contexto bien ordenado, la herramienta adecuada, el modelo justo para cada tarea.</div>
+    <div class="cols c3" style="max-width:1180px">
+      <div class="card"><h3>Contexto ordenado</h3><p>Estable delante, variable detrás. Caché y calidad, gratis.</p></div>
+      <div class="card"><h3>Herramientas</h3><p>Lo que se puede calcular o consultar, no se le pide de memoria.</p></div>
+      <div class="card"><h3>El modelo justo</h3><p>Cascada y enrutado: pequeños para volumen, grandes para lo difícil.</p></div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Saltar al bloque de arquitecturas: cómo se comparan las familias de modelos por dentro.</li></ul></aside>
+</section>

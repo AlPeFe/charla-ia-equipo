@@ -1,0 +1,291 @@
+<!-- ============ MÓDULO 9 · IA EN EL DÍA A DÍA ============ -->
+<section class="slide section" data-module="9 · Día a día (código)">
+  <div class="kicker">Parte 3 · Práctica</div>
+  <h2>IA en el día a día</h2>
+  <p class="lede">Dónde ahorra horas de verdad en el trabajo de desarrollo&#8230; y dónde las hace perder.</p>
+  <aside class="notes"><ul><li>Cambio de tercio: ahora todo es aplicable al día siguiente. Pedir que apunten lo que quieran probar.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="9 · Día a día (código)">
+  <h2>El mapa del ahorro real</h2>
+  <div class="body">
+    <table class="xxs">
+      <thead><tr><th>Tarea</th><th>Ahorro típico</th><th>Riesgo</th><th>Verificación obligatoria</th></tr></thead>
+      <tbody>
+        <tr><td>Entender código heredado</td><td>Muy alto</td><td>Bajo (te explica, no cambia nada)</td><td>Contrastar con el comportamiento observado</td></tr>
+        <tr><td>Escribir tests que faltan</td><td>Alto</td><td>Medio (tests que no prueban nada)</td><td>Que fallen antes de arreglarlo</td></tr>
+        <tr><td>Revisión de código propia antes del PR</td><td>Alto</td><td>Bajo</td><td>Leer los hallazgos, no aceptarlos a ciegas</td></tr>
+        <tr><td>Refactors y migraciones mecánicas</td><td>Muy alto</td><td>Medio-alto</td><td>Tests + revisión del diff completo</td></tr>
+        <tr><td>Consultas SQL y análisis de datos</td><td>Alto</td><td>Medio (rendimiento, datos equivocados)</td><td>Explicar el plan, revisar cifras</td></tr>
+        <tr><td>Documentación y changelogs</td><td>Alto</td><td>Bajo</td><td>Que no invente lo que no hiciste</td></tr>
+        <tr><td>Diagnóstico de bugs y stack traces</td><td>Medio-alto</td><td>Medio (soluciones plausibles y falsas)</td><td>Reproducir y comprobar</td></tr>
+        <tr><td>Scripts puntuales, regex, one-liners</td><td>Muy alto</td><td>Bajo</td><td>Probar en un caso inocuo primero</td></tr>
+        <tr><td>Diseño de arquitectura</td><td>Medio</td><td>Alto (oscuridad bien argumentada)</td><td>Criterio humano y ADR</td></tr>
+      </tbody>
+    </table>
+    <div class="callout">Patrón: <b>ahorra mucho en lo mecánico y en lo que no sabes</b>; ahorra menos en lo que exige contexto de negocio y criterio, donde su papel es el de <em>sparring</em>, no el de decisor.</div>
+  </div>
+  <aside class="notes"><ul><li>Preguntar al grupo en qué tareas creen que pueden ahorrar; comparar con la tabla.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="9 · Día a día (código)">
+  <h2>Entender código heredado en una hora</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card accent">
+          <h3>Secuencia que funciona</h3>
+          <ol class="tight">
+            <li><b>Mapa</b>: "lista los módulos, su responsabilidad y sus dependencias".</li>
+            <li><b>Flujo crítico</b>: "explica el camino desde el endpoint X hasta la base de datos".</li>
+            <li><b>Riesgos</b>: "señala acoplamientos peligrosos y código muerto evidente".</li>
+            <li><b>Documento</b>: pide que lo escriba en <code>docs/arquitectura.md</code>.</li>
+            <li><b>Verificación</b>: elige una afirmación y compruébala en el código.</li>
+          </ol>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card ok">
+          <h3>Por qué esto es el caso de uso más rentable</h3>
+          <ul class="tight">
+            <li>Es lento y aburrido para humanos; para el agente es "leer ficheros y resumir".</li>
+            <li>Escribe el resultado donde nadie lo había escrito nunca.</li>
+            <li>El riesgo es bajísimo porque <b>no modifica nada</b>.</li>
+            <li>El siguiente que entre en ese módulo empieza con ventaja.</li>
+          </ul>
+        </div>
+        <div class="warnbox">Cuidado con la confianza excesiva: que explique no significa que <em>sea verdad</em>. Contradice siempre una afirmación con el código real antes de fiarte del resto.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Demo en vivo si hay tiempo: usar un repo grande y pedir el mapa en 3 minutos.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="9 · Día a día (código)">
+  <h2>Tests: el mejor uso (si se hace bien)</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card ok">
+          <h3>Uso bueno</h3>
+          <ul class="tight">
+            <li>Primero <b>caracterizar</b> el comportamiento actual (tests que documentan lo que hay, aunque sea feo).</li>
+            <li>Escribir el caso límite que nadie pensó: vacío, cero, negativo, muy largo, duplicado, concurrencia.</li>
+            <li>Convertir un bug en un test que falla <b>antes</b> de arreglarlo.</li>
+            <li>Generar datos de prueba realistas (respetando el RGPD).</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card bad">
+          <h3>Uso malo (muy habitual)</h3>
+          <ul class="tight">
+            <li>Tests que repiten la implementación línea a línea (si el código cambia, el test no protege nada).</li>
+            <li>Tests que pasan siempre, con <em>mocks</em> de todo: verde por construcción.</li>
+            <li>Cobertura como objetivo: se testea lo trivial para subir el porcentaje.</li>
+            <li>Tests que nunca has visto fallar: no valen nada.</li>
+          </ul>
+        </div>
+        <div class="callout"><b>Prueba del algodón:</b> rompe a propósito el código y comprueba que el test se pone rojo. Si no, ese test es decoración.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Regla del equipo: no se escribe un test porque "falta cobertura", sino porque hay un caso que importa.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="9 · Día a día (código)">
+  <h2>Revisión: IA revisando, IA revisada</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card">
+          <h3>Que la IA revise antes del PR</h3>
+          <ul class="tight">
+            <li>Pídele una <b>revisión hostil</b>: "busca el bug que se me ha colado, no me digas que está bien".</li>
+            <li>Revisión con criterios explícitos: seguridad, validación de entradas, manejo de errores, rendimiento, accesibilidad.</li>
+            <li>Que compare con el estilo del repositorio y señale desviaciones.</li>
+            <li>Que revise también los tests, no sólo el código.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card accent">
+          <h3>Revisar código escrito por IA</h3>
+          <ul class="tight">
+            <li><b>Lee el diff completo.</b> Es no negociable.</li>
+            <li>Preguntas rápidas: ¿qué asume que no está comprobado? ¿qué pasa si esto es <em>null</em>? ¿qué error se traga este <code>catch</code>?</li>
+            <li>Busca dependencias nuevas, licencias, llamadas a servicios externos y datos de prueba con datos reales.</li>
+            <li>Que exista test no es garantía: mira que el test pruebe lo que dice.</li>
+          </ul>
+        </div>
+        <div class="okbox">Es exactamente el mismo estándar que con un PR de un compañero de equipo. Ni más flojo ni más duro.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Insistir: la revisión es ahora la principal habilidad técnica. Revisar bien es más valioso que escribir rápido.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="9 · Día a día (código)">
+  <h2>Refactors y migraciones: aquí es donde gana por goleada</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card ok">
+          <h3>Casos ideales</h3>
+          <ul class="tight">
+            <li>Renombrar un concepto en 200 ficheros manteniendo coherencia.</li>
+            <li>Cambiar de librería (fechas, HTTP, test runner) con adaptación idiomática.</li>
+            <li>Subir versión de lenguaje o framework y arreglar el código afectado.</li>
+            <li>Convertir código repetido en funciones, o clases en funciones puras.</li>
+            <li>Añadir tipos a un proyecto sin tipos (poco a poco, no todo de golpe).</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card">
+          <h3>Protocolo seguro</h3>
+          <ol class="tight">
+            <li>Antes: asegura tests verdes y rama limpia.</li>
+            <li>Un <b>lote pequeño</b> primero (5 ficheros) y revisión exhaustiva.</li>
+            <li>Si el patrón es bueno, amplía el lote y marca el criterio por escrito.</li>
+            <li>Commits atómicos y revisables; nunca un diff de 4.000 líneas.</li>
+            <li>Al final: tests, lint, tipos y una lectura por encima del diff completo.</li>
+          </ol>
+        </div>
+        <div class="warnbox">Riesgo típico: el "refactor" cambia comportamiento sutil (orden de operaciones, manejo de errores). Los tests que sólo cubren el caso feliz no lo detectan.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Anécdota útil: por lotes de 5, la tasa de error baja drásticamente frente a "migra todo el repo".</li></ul></aside>
+</section>
+
+<section class="slide" data-module="9 · Día a día (código)">
+  <h2>Datos y SQL: rápido, pero verifica</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card">
+          <h3>En lo que ayuda</h3>
+          <ul class="tight">
+            <li>Traducir preguntas de negocio a SQL, incluidas ventanas y agregaciones complejas.</li>
+            <li>Explicar un plan de ejecución y proponer índices.</li>
+            <li>Escribir migraciones <b>reversibles</b> y con cuidado de los datos existentes.</li>
+            <li>Generar modelos de datos en herramientas analíticas y documentarlos.</li>
+            <li>Detectar duplicados, formatos raros y valores imposibles al explorar un dataset.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card bad">
+          <h3>Reglas duras</h3>
+          <ul class="tight">
+            <li><b>Sólo lectura</b> contra producción. Escrituras siempre en desarrollo, con revisión.</li>
+            <li>Las agregaciones se comprueban: contrasta totales con una consulta independiente.</li>
+            <li>Cuidado con los <em>joins</em> que multiplican filas: son el error clásico.</li>
+            <li>Nunca consultas que bloqueen tablas grandes en horario de servicio.</li>
+            <li>Datos personales: la consulta que le pegas a un modelo es una <b>transferencia de datos</b>.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Esta es la diapositiva que hay que recordar en equipos con datos personales: pegar un extracto es sacar datos de casa.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="9 · Día a día (código)">
+  <h2>Documentación, runbooks y comunicación</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card accent">
+          <h3>Lo que sale muy bien</h3>
+          <ul class="tight">
+            <li>README que de verdad sirve: arrancar el proyecto en 5 comandos.</li>
+            <li>Runbook de incidencias: síntomas, diagnóstico, mitigación, escalado.</li>
+            <li>ADRs a partir de una conversación de diseño (tú dictas, ella redacta).</li>
+            <li>Changelogs y notas de release a partir de los <em>commits</em> y PRs.</li>
+            <li>Traducir entre niveles: el mismo concepto explicado a negocio y a ingeniería.</li>
+            <li>Actas y tareas a partir de la transcripción de una reunión.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card warn">
+          <h3>El cuidado</h3>
+          <ul class="tight">
+            <li>Revisa siempre nombres, cifras, enlaces y fechas: es donde inventa.</li>
+            <li>No dejes que documente lo que no se ha implementado.</li>
+            <li>Evita el entusiasmo vacío: si el texto no aporta información nueva, sobra.</li>
+            <li>Documentación generada sin revisar es deuda técnica con buena prosa.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Consejo: que escriba, pero tú firmas el documento. La responsabilidad no se delega.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="9 · Día a día (código)">
+  <h2>Diagnóstico de bugs: hipótesis, no oráculos</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card accent">
+          <h3>Protocolo</h3>
+          <ol class="tight">
+            <li><b>Reproducir</b>: sin reproducción no hay diagnóstico, sólo opiniones.</li>
+            <li><b>Datos completos</b>: stack trace entero, versión, entorno, qué cambió recientemente (<code>git log</code>).</li>
+            <li><b>Pedir hipótesis ordenadas</b> con cómo comprobar cada una. El valor está en el "cómo comprobar".</li>
+            <li><b>Instrumentar</b>: que escriba logs o un script de reproducción mínimo.</li>
+            <li><b>Comprobar</b> la hipótesis ganadora antes de tocar código.</li>
+          </ol>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card bad">
+          <h3>Señales de alarma</h3>
+          <ul class="tight">
+            <li>Te da la solución sin haber visto el error real: está adivinando.</li>
+            <li>Propone "envolver en try/except" o subir una versión sin diagnóstico.</li>
+            <li>Afirma que un fallo es de la librería sin comprobarlo.</li>
+            <li>Cambia cinco cosas a la vez: aunque funcione, no has entendido nada.</li>
+          </ul>
+        </div>
+        <div class="okbox">Truco potente: pídele un <b>script mínimo de reproducción</b>. Suele encontrar el bug en el camino, incluso cuando su diagnóstico es malo.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Contar un caso real de "solución plausible" que era falsa y costó media tarde hasta reproducir.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="9 · Día a día (código)">
+  <h2>Anti-patrones del día a día</h2>
+  <div class="body">
+    <table>
+      <thead><tr><th>Anti-patrón</th><th>Por qué duele</th><th>Alternativa</th></tr></thead>
+      <tbody>
+        <tr><td>"Hazme esto entero" sin contexto</td><td>Borrador difuso que hay que tirar</td><td>Objetivo + criterio + ficheros concretos</td></tr>
+        <tr><td>Aceptar sin leer el diff</td><td>Deuda y bugs invisibles que aparecerán en producción</td><td>Revisión obligatoria, sin excepciones</td></tr>
+        <tr><td>Arrastrar una sesión de 4 horas</td><td>Contexto sucio, respuestas peores, coste alto</td><td>Sesión por tarea, contexto limpio</td></tr>
+        <tr><td>Preguntar por datos internos que no le has dado</td><td>Inventa con seguridad</td><td>Dar la fuente o usar RAG/herramientas</td></tr>
+        <tr><td>Usar el modelo más caro para todo</td><td>Factura y latencia innecesarias</td><td>Modelo por tarea, cascada</td></tr>
+        <tr><td>Confiar en la memoria del chat</td><td>Se pierde entre sesiones y personas</td><td>Ficheros, ADR, convenciones</td></tr>
+        <tr><td>Pedirle que "verifique su propia respuesta"</td><td>Casi siempre dice que está bien</td><td>Verificación externa: tests, fuentes, otra persona</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <aside class="notes"><ul><li>Elegir 2-3 anti-patrones e ilustrarlos con casos del propio equipo.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="9 · Día a día (código)">
+  <h2>Idea clave del bloque</h2>
+  <div class="body center" style="justify-content:center">
+    <div class="quote" style="max-width:1020px;font-size:29px">Úsala en lo <b>aburrido</b> y en lo que <b>no sabes</b>. Verifícala en lo <b>crítico</b>.</div>
+    <div class="cols c3" style="max-width:1150px">
+      <div class="card"><h3>Entender</h3><p>El mayor ahorro con el menor riesgo: leer, mapear, documentar.</p></div>
+      <div class="card"><h3>Mecanizar</h3><p>Migraciones, refactors y tests: mucho volumen, revisión por lotes.</p></div>
+      <div class="card"><h3>Decidir</h3><p>Arquitectura y negocio: aquí es sparring, no autoridad.</p></div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Siguiente bloque: llevarlo al despliegue, que es donde más tiempo perdemos a lo tonto.</li></ul></aside>
+</section>

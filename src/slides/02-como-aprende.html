@@ -1,0 +1,272 @@
+<!-- ============ MÓDULO 2 · CÓMO APRENDE ============ -->
+<section class="slide section" data-module="2 · Cómo aprende">
+  <div class="kicker">Bloque 2</div>
+  <h2>Cómo aprende una máquina</h2>
+  <p class="lede">Datos, pérdida, gradientes, preferencias.</p>
+  <aside class="notes"><ul><li>Objetivo del bloque: que "aprender" deje de ser una palabra mágica. Son 4 pasos mecánicos.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="2 · Cómo aprende">
+  <h2>Aprender = ajustar números para equivocarse menos</h2>
+  <div class="body">
+    <div class="flow">
+      <span class="node">1 · Datos de ejemplo</span><span class="arrow">&#8594;</span>
+      <span class="node">2 · Predecir</span><span class="arrow">&#8594;</span>
+      <span class="node">3 · Medir el error</span><span class="arrow">&#8594;</span>
+      <span class="node">4 · Corregir los pesos</span><span class="arrow">&#8594;</span>
+      <span class="node">repetir millones de veces</span>
+    </div>
+    <div class="cols c2">
+      <div class="col">
+        <div class="card">
+          <h3>La analogía de la niebla en la montaña</h3>
+          <p>Estás en una ladera con niebla y quieres bajar. No ves el valle: sólo notas la pendiente <em>bajo tus pies</em> y das un paso en esa dirección. Repites. Eso es el <b>descenso de gradiente</b>.</p>
+          <ul class="tight">
+            <li><b>Altura</b> = error (pérdida / loss).</li>
+            <li><b>Pendiente</b> = gradiente: en qué dirección cambia cada peso para reducir el error.</li>
+            <li><b>Tamaño del paso</b> = learning rate. Muy grande: rebotas; muy pequeño: tardas una eternidad.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card accent">
+          <h3>Qué NO hay aquí</h3>
+          <ul class="tight">
+            <li>No hay reglas escritas por humanos dentro del modelo.</li>
+            <li>No hay comprensión: hay correlación y optimización numérica.</li>
+            <li>No hay memoria de los ejemplos: sólo quedan los números ajustados.</li>
+          </ul>
+          <p class="small">Por eso el mismo algoritmo sirve para predecir texto, píxeles o proteínas: es matemática genérica de ajuste.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Pregunta al grupo: "¿dónde está el conocimiento en un modelo?". Respuesta: no está en un sitio concreto, está distribuido en los pesos.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="2 · Cómo aprende">
+  <h2>Los datos: la materia prima (y el verdadero foso)</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card">
+          <h3>Fases del dato</h3>
+          <ul class="tight">
+            <li><b>Recolección</b>: web rastreada, código, libros, papers, licencias, audio/subtítulos, datos sintéticos.</li>
+            <li><b>Filtrado y deduplicación</b>: quitar basura, spam, duplicados. La calidad pesa tanto como la cantidad.</li>
+            <li><b>Mezcla (mixture)</b>: proporción por dominio y por idioma. El <em>español</em> suele ser un porcentaje pequeño.</li>
+            <li><b>Anotación</b>: para fases posteriores, humanos etiquetan preferencias y correcciones.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card warn">
+          <h3>Implicaciones que nos afectan</h3>
+          <ul class="tight">
+            <li>Si un tema está poco representado en los datos, el modelo será débil ahí (idiomas minoritarios, dominios internos, normativa local).</li>
+            <li>El corte de conocimiento (<em>cutoff</em>) hace que el mundo posterior no exista para el modelo.</li>
+            <li>Datos internos de la empresa <b>no están</b> en el modelo: hay que dárselos (RAG, contexto, ficheros).</li>
+            <li>Los datos sintéticos (generados por modelos) ya son parte de la receta, con riesgo de degeneración si abusan.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="callout">Consecuencia 1: <b>el contexto le gana a la memoria</b>. Consecuencia 2: si quieres que sepa de lo tuyo, se lo tienes que dar tú.</div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Contar el caso español: pedir normativa autonómica o un framework interno y alucina; con el fichero delante, acierta.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="2 · Cómo aprende">
+  <h2>El truco del LLM: predecir lo que viene después</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <pre><code>Entrada:   "El gato se subió al ___"
+Objetivo:  predecir el siguiente token
+
+Salida (probabilidades del modelo):
+  tejado     0.41
+  árbol      0.22
+  sofá       0.13
+  techo      0.09
+  ...        (miles de candidatos)</code></pre>
+        <div class="card">
+          <h3>Por qué algo tan simple funciona</h3>
+          <p>Para predecir bien el siguiente token <em>en cualquier texto del mundo</em>, el modelo se ve obligado a aprender gramática, sintaxis, hechos, estilos, formato, razonamiento típico&#8230; La tarea es simple; el requisito para hacerla bien, enorme.</p>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card accent">
+          <h3>Auto-supervisado: la etiqueta es gratis</h3>
+          <p>Coge una frase y esconde el siguiente token: el propio texto es la respuesta correcta. No hay que etiquetar nada a mano &#8594; se puede entrenar con <b>billones</b> de tokens.</p>
+        </div>
+        <div class="card bad">
+          <h3>El lado oscuro de esta tarea</h3>
+          <ul class="tight">
+            <li>Optimiza <b>plausibilidad</b>, no verdad. "Suena bien" es el objetivo literal.</li>
+            <li>Por eso inventa con total seguridad (alucinación).</li>
+            <li>Por eso el arranque del texto condiciona todo: si empiezas con una premisa falsa, la continúa.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Dato útil: la palabra "alucinación" no es un fallo del sistema, es el comportamiento por defecto de un predictor.</li>
+    <li>Mencionar que también hay objetivos tipo "masked" (rellenar huecos, estilo BERT) además de "causal" (siguiente token).</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="2 · Cómo aprende">
+  <h2>Pérdida, gradiente y descenso: la maquinaria</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card">
+          <h3>Vocabulario que verás en cualquier charla técnica</h3>
+          <ul class="tight">
+            <li><b>Pérdida (loss)</b>: un número que mide cuánto se equivoca. Entropía cruzada en lenguaje.</li>
+            <li><b>Backpropagation</b>: la regla de la cadena de las derivadas, aplicada hacia atrás por las capas para saber cuánto culpar a cada peso.</li>
+            <li><b>Optimizador (Adam/AdamW)</b>: la receta para actualizar los pesos (media móvil del gradiente, etc.).</li>
+            <li><b>Batch</b>: cuántos ejemplos se miran antes de actualizar. <b>Época</b>: una pasada completa por los datos.</li>
+            <li><b>Learning rate y su calendario (warmup, cosine)</b>: cómo cambia el tamaño del paso durante el entrenamiento.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <pre><code>para cada batch de ejemplos:
+    y_pred = modelo(x)          # paso hacia delante
+    loss   = error(y_pred, y)   # ¿cuánto me equivoco?
+    grad   = backprop(loss)     # ¿quién tiene la culpa?
+    pesos  = pesos - lr * grad  # corregir un poquito</code></pre>
+        <div class="card ok">
+          <h3>Lo que sí puedes controlar tú</h3>
+          <p>Nada de esto se toca cuando usas un modelo: sólo importa en fine-tuning. Pero explica por qué el <b>mismo prompt da respuestas distintas</b> y por qué "temperatura" y "muestreo" no son lo mismo que "aprender".</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>No entrar en derivadas: la analogía de la niebla ya basta. Lo importante: es una optimización numérica iterativa.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="2 · Cómo aprende">
+  <h2>Generalizar: el único objetivo que importa</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card bad">
+          <h3>Sobreajuste (overfitting)</h3>
+          <p>El modelo se aprende de memoria los ejemplos de entrenamiento y falla con lo nuevo. Es el equivalente a estudiar sólo las respuestas del examen.</p>
+          <p class="small">Síntomas: error de entrenamiento bajísimo, error real alto.</p>
+        </div>
+        <div class="card">
+          <h3>Subajuste (underfitting)</h3>
+          <p>El modelo es demasiado simple o ha entrenado poco: le falla incluso lo visto. Error alto en ambos.</p>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card accent">
+          <h3>Las herramientas contra el sobreajuste</h3>
+          <ul class="tight">
+            <li><b>Conjunto de validación / test</b>: datos que el modelo nunca ve durante el entrenamiento.</li>
+            <li><b>Regularización</b>: penalizar pesos grandes, dropout.</li>
+            <li><b>Más datos y más variedad</b> &mdash; casi siempre la mejor respuesta.</li>
+            <li><b>Parada temprana</b>: parar cuando empeora la validación.</li>
+          </ul>
+          <p class="small">En modelos fundacionales, el "test" clásico se sustituye por evaluaciones (benchmarks) con todos sus problemas, que veremos en el bloque de panorama.</p>
+        </div>
+      </div>
+    </div>
+    <div class="warnbox">Traducción para el equipo: un test que pasa hoy no garantiza nada si los datos de entrada cambian. La IA también "sobreajusta" nuestro proceso si sólo la evaluamos con el caso feliz.</div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Esta idea conecta con la cultura de tests del equipo: validar con lo que no has visto.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="2 · Cómo aprende">
+  <h2>Las cuatro fases de un modelo moderno</h2>
+  <div class="body">
+    <div class="cols c4">
+      <div class="card">
+        <h3>1 · Preentrenamiento</h3>
+        <p>Predecir el siguiente token en billones de tokens. Meses de cómputo, coste enorme. Sale un modelo que <em>continúa</em> texto pero es un desastre como asistente: no sigue instrucciones.</p>
+      </div>
+      <div class="card accent">
+        <h3>2 · Ajuste supervisado (SFT)</h3>
+        <p>Miles o millones de conversaciones ejemplares (pregunta &#8594; buena respuesta) escritas o revisadas por humanos. Aquí nace el asistente.</p>
+      </div>
+      <div class="card ok">
+        <h3>3 · Preferencias (RLHF/DPO)</h3>
+        <p>Humanos comparan pares de respuestas: "esta es mejor". El modelo aprende a maximizar esas preferencias: ayuda, formato, tono, rechazos.</p>
+      </div>
+      <div class="card warn">
+        <h3>4 · Refuerzo con verificación</h3>
+        <p>Para razonamiento y agentes: se premia resolver problemas comprobables (tests, matemáticas, código). Así aparecen los modelos que "piensan" antes de responder.</p>
+      </div>
+    </div>
+    <div class="callout">El modelo que usas es el resultado de las cuatro. Cuando alguien dice "el modelo no me obedece", normalmente falla la fase 2/3 (alineación general) o su prompt está compitiendo contra ella.</div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Aclarar RLHF: refuerzo a partir de preferencias humanas. DPO: variante más barata que no necesita modelo de recompensa separado.</li>
+    <li>Nota: los pesos abiertos suelen publicarse tras las fases 2-3; las fases finales a veces no se liberan.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="2 · Cómo aprende">
+  <h2>Cuánto cuesta aprender esto (órdenes de magnitud)</h2>
+  <div class="body">
+    <div class="cols c3">
+      <div class="card"><div class="stat"><b>1e23&#8211;1e26</b><span>FLOPs para preentrenar un modelo frontera</span></div><p class="small">Cifras de orden de magnitud, no exactas: los labs no publican detalles.</p></div>
+      <div class="card"><div class="stat"><b>10&#185;&#8211;10&#179; M$</b><span>coste estimado de un entrenamiento frontera (cómputo + datos + personas)</span></div><p class="small">Estimaciones públicas de prensa e informes; tratar como orientativas.</p></div>
+      <div class="card"><div class="stat"><b>semanas&#8211;meses</b><span>de cómputo sostenido en miles de aceleradores</span></div><p class="small">Con paradas, reinicios y ajustes: es una operación industrial.</p></div>
+    </div>
+    <div class="cols c2">
+      <div class="col"><div class="card ok"><h3>Lo bueno</h3><p>Tú no pagas esto. Pagas sólo la <b>inferencia</b>, que cuesta órdenes de magnitud menos: unos céntimos por millón de tokens.</p></div></div>
+      <div class="col"><div class="card warn"><h3>Lo que sí puedes pagar</h3><ul class="tight"><li><b>Fine-tuning ligero</b> (LoRA): horas y unos euros a decenas de euros.</li><li><b>RAG y contexto</b>: coste de infraestructura, casi nada comparado.</li><li><b>Evaluaciones propias</b>: lo que casi nadie hace y más valor tiene.</li></ul></div></div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Insistir: la barrera de entrada para <em>usar</em> IA es prácticamente cero; para <em>entrenar</em> es brutal. Por eso el negocio está en el uso.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="2 · Cómo aprende">
+  <h2>Adaptar un modelo sin entrenar nada</h2>
+  <div class="body">
+    <table class="sm">
+      <thead><tr><th>Técnica</th><th>Qué cambia</th><th>Coste</th><th>Cuándo usarla</th></tr></thead>
+      <tbody>
+        <tr><td><b>Prompting</b></td><td>Nada: sólo la entrada</td><td>0</td><td>Siempre primero. El 80% de las mejoras están aquí.</td></tr>
+        <tr><td><b>Contexto / RAG</b></td><td>Lo que el modelo ve</td><td>Bajo (vector DB, indexado)</td><td>Cuando necesita datos tuyos, actuales o privados.</td></tr>
+        <tr><td><b>Ejemplos en el prompt</b> (<em>few-shot</em>)</td><td>Nada</td><td>0 (gasta tokens)</td><td>Cuando quieres formato muy concreto.</td></tr>
+        <tr><td><b>Herramientas / function calling</b></td><td>La salida del sistema</td><td>Bajo</td><td>Cuando hay que calcular, consultar o actuar.</td></tr>
+        <tr><td><b>LoRA / adaptadores</b></td><td>Una parte pequeña de los pesos</td><td>Bajo-medio</td><td>Estilo o tarea muy estable y repetitiva, con muchos ejemplos.</td></tr>
+        <tr><td><b>Fine-tuning completo</b></td><td>Todos los pesos</td><td>Alto</td><td>Casi nunca. Requiere datos, evaluación y alguien que lo mantenga.</td></tr>
+        <tr><td><b>Destilación</b></td><td>Entrenar un modelo pequeño imitando a uno grande</td><td>Medio</td><td>Cuando el coste por llamada o la latencia son críticos.</td></tr>
+      </tbody>
+    </table>
+    <div class="okbox">Orden correcto de intentos: <b>prompt &#8594; contexto &#8594; herramientas &#8594; adaptadores &#8594; entrenar</b>. La gente salta al último paso demasiado pronto.</div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Pregunta típica en empresas: "¿podemos entrenarlo con nuestros datos?". Respuesta: sí, pero casi nunca es lo primero que hay que hacer.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="2 · Cómo aprende">
+  <h2>Idea clave del bloque</h2>
+  <div class="body center" style="justify-content:center">
+    <div class="quote" style="max-width:1000px;font-size:30px">Un modelo no <b>sabe</b>: <b>predice</b>.<br>Y predice en función de lo que le has puesto delante.</div>
+    <div class="cols c2" style="max-width:1050px">
+      <div class="card"><h3>Si necesitas certeza</h3><p>Fuentes, herramientas, tests, cálculos verificables. Nunca la palabra del modelo.</p></div>
+      <div class="card accent"><h3>Si necesitas calidad</h3><p>Mejora el contexto y el proceso antes de cambiar de modelo.</p></div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Cerrar bloque y pasar a "cómo funciona por dentro" (tokens, atención, transformer).</li></ul></aside>
+</section>

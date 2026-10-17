@@ -1,0 +1,355 @@
+<!-- ============ MÓDULO 13 · TALLER Y ADOPCIÓN ============ -->
+<section class="slide section" data-module="13 · Taller y adopción">
+  <div class="kicker">Parte 4 · Manos en el teclado</div>
+  <h2>Taller y plan de adopción</h2>
+  <p class="lede">Seis ejercicios guiados, un plan a 90 días y diez reglas para llevarse.</p>
+  <aside class="notes"><ul><li>Pedir que abran el portátil. Los ejercicios son cortos a propósito: el objetivo es practicar el <em>método</em>.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="13 · Taller y adopción">
+  <h2>Taller 0 · Preparar el entorno (5 min)</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card accent">
+          <h3>Requisitos</h3>
+          <ul class="tight">
+            <li>Un harness instalado y con sesión iniciada (el que use el equipo).</li>
+            <li>Node.js disponible (versión 18 o superior).</li>
+            <li>Un repositorio de pruebas donde puedas romper cosas sin miedo.</li>
+            <li>El repositorio de esta presentación clonado (nos sirve de campo de juegos).</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Comprobación rápida</h3>
+          <pre><code>git --version
+node --version
+cd charla-ia-equipo
+node build.mjs</code></pre>
+        </div>
+      </div>
+      <div class="col">
+        <div class="okbox">
+          <h3>Primer acto: crear vuestro fichero de convenciones</h3>
+          <p>En el repo de pruebas, escribir <code>AGENTS.md</code> con: comandos de test, estructura de carpetas, estilo, y dos cosas prohibidas. Diez minutos, y vale para todo el taller.</p>
+        </div>
+        <div class="warnbox">Si algo falla en el entorno, no lo resolvemos aquí a mano: se lo pedimos al propio agente y observamos <b>cómo</b> diagnostica. Eso también es la lección.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Enviar los requisitos por correo el día antes. Es la diferencia entre un taller fluido y media hora de instalaciones.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="13 · Taller y adopción">
+  <h2>Taller 1 · Mapear un repositorio que no conoces (15 min)</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card">
+          <h3>Enunciado</h3>
+          <p>Elige un repositorio del equipo que no sea tuyo. Pide al agente:</p>
+          <pre style="font-size:15px"><code>Explora este repositorio y escribe
+docs/arquitectura.md con:
+1. los módulos principales y su responsabilidad
+2. el flujo de una petición de principio a fin
+3. los tres acoplamientos más peligrosos
+4. cómo se ejecutan los tests
+Señala con [duda] lo que no puedas
+comprobar leyendo el código.</code></pre>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card ok">
+          <h3>Criterio de éxito</h3>
+          <ul class="tight">
+            <li>Existe un documento que antes no existía.</li>
+            <li>Has comprobado a mano <b>una</b> afirmación (y has visto si era cierta).</li>
+            <li>Sabes estimar cuánto habrías tardado sin ayuda: apúntalo.</li>
+          </ul>
+        </div>
+        <div class="callout">Variante útil: pídele que dibuje el flujo como diagrama en texto (Mermaid) y que señale los puntos donde el código y la documentación existente se contradicen.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Puesta en común: ¿cuántas afirmaciones eran falsas? Suele aparecer alguna, y es la mejor lección del taller.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="13 · Taller y adopción">
+  <h2>Taller 2 · Un test que falta y un bug real (20 min)</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card">
+          <h3>Enunciado</h3>
+          <ol class="tight">
+            <li>Busca una función sin tests en tu repositorio.</li>
+            <li>Pide tests que <b>caractericen</b> el comportamiento actual.</li>
+            <li>Rompe a propósito el código: ¿se pone rojo el test?</li>
+            <li>Busca un fallo real: coge un caso límite que no se maneje.</li>
+          </ol>
+          <pre style="font-size:14.5px"><code>Escribe tests para la función X en
+tests/x.test.ts cubriendo: caso normal,
+vacío, cero, negativo, texto muy largo
+y valores duplicados.
+Ejecútalos. Muéstrame la salida.
+Si alguno pasa por construcción, dímelo.</code></pre>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card ok">
+          <h3>Criterio de éxito</h3>
+          <ul class="tight">
+            <li>Has visto un test <b>fallar</b> y luego pasar.</li>
+            <li>El test protege un caso real que antes no estaba cubierto.</li>
+            <li>No has añadido tests triviales sólo para subir cobertura.</li>
+          </ul>
+        </div>
+        <div class="warnbox">Trampa frecuente: la IA escribe tests que reproducen la implementación línea a línea. Si el test se rompe al refactorizar sin cambiar comportamiento, es un mal test.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Insistir en el paso 3: es la prueba del algodón y casi nadie la hace.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="13 · Taller y adopción">
+  <h2>Taller 3 · Vuestra primera skill del equipo (20 min)</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card accent">
+          <h3>Enunciado</h3>
+          <p>En parejas, elegid un procedimiento que se repita y escribid una skill:</p>
+          <pre style="font-size:14.5px"><code>carpeta: skills/&lt;nombre&gt;/
+  SKILL.md
+
+---
+nombre: &lt;nombre corto&gt;
+descripción: &lt;cuándo debe usarse,
+  con las palabras que usaría un humano&gt;
+---
+
+1. pasos concretos, con comandos
+2. criterio de terminado
+3. límites: qué NO debe tocar
+4. qué dejar por escrito al acabar</code></pre>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card ok">
+          <h3>Criterio de éxito</h3>
+          <ul class="tight">
+            <li>Otra persona del equipo la ejecuta sin ayuda.</li>
+            <li>La <b>descripción</b> funciona: el agente la carga sólo cuando toca.</li>
+            <li>El criterio de terminado es comprobable, no opinable.</li>
+          </ul>
+        </div>
+        <div class="callout">Ideas si no se os ocurre: preparar un PR, revisar migraciones, generar un informe, dar de alta un servicio, revisar accesibilidad de una pantalla, actualizar dependencias.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Recoger las skills creadas al final de la sesión: son el primer activo compartido del equipo.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="13 · Taller y adopción">
+  <h2>Taller 4 · Automatizar una tarea repetitiva (25 min)</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card">
+          <h3>Enunciado</h3>
+          <p>Elegid una tarea aburrida de verdad (de las del inventario) y convertidla en script:</p>
+          <ol class="tight">
+            <li>Escribid el <b>contrato</b> en papel: entrada, salida, casos raros.</li>
+            <li>Pedid el script con <code>--dry-run</code> y registro de lo que hace.</li>
+            <li>Probad con datos falsos, incluido un caso corrupto.</li>
+            <li>Añadid un párrafo al README con 3 ejemplos de uso.</li>
+          </ol>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card ok">
+          <h3>Criterio de éxito</h3>
+          <ul class="tight">
+            <li>Se ejecuta con un solo comando.</li>
+            <li>Se puede volver a ejecutar sin destrozar nada.</li>
+            <li>Cuando algo falla, lo dice con claridad y no a medias.</li>
+            <li>Has medido cuánto tiempo ahorra al mes.</li>
+          </ul>
+        </div>
+        <div class="okbox">Este ejercicio es el que más valor deja en el equipo. Si sobra tiempo, convertid el script en skill para que lo use cualquiera.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Insistir en el contrato antes del código: es el paso que se salta todo el mundo y el que evita rehacerlo.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="13 · Taller y adopción">
+  <h2>Taller 5 · Del código al despliegue (30 min)</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card">
+          <h3>Enunciado</h3>
+          <p>Coge una app pequeña (o un servicio del equipo) y completa el camino:</p>
+          <ol class="tight">
+            <li>Dockerfile multietapa, usuario no root, imagen razonable.</li>
+            <li>Pipeline con lint, tests y construcción de la imagen.</li>
+            <li>Despliegue a un entorno de pruebas con un comando.</li>
+            <li>Comprobación de salud y vuelta atrás de una línea.</li>
+            <li>Un README con el procedimiento completo.</li>
+          </ol>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card ok">
+          <h3>Criterio de éxito</h3>
+          <ul class="tight">
+            <li>Alguien que no ha participado despliega siguiendo el README.</li>
+            <li>El rollback está probado, no imaginado.</li>
+            <li>La imagen no lleva secretos ni pesa 2 GB.</li>
+            <li>Sabes cuánto se ha tardado y cuánto se habría tardado a mano.</li>
+          </ul>
+        </div>
+        <div class="warnbox">Nada de aplicar infraestructura en producción durante el taller. Entorno de pruebas o contenedor local.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Si el tiempo aprieta, este taller se puede dejar como tarea para casa de la semana.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="13 · Taller y adopción">
+  <h2>Taller 6 · Revisar un PR hecho con IA (15 min)</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card">
+          <h3>Enunciado</h3>
+          <ol class="tight">
+            <li>Pedid al agente que implemente una funcionalidad pequeña y prepare el PR.</li>
+            <li>Intercambiad los PRs entre parejas.</li>
+            <li>Revisadlos con la checklist del bloque de riesgos, buscando activamente el fallo.</li>
+            <li>Escribid al menos un comentario concreto (mejora o bug).</li>
+          </ol>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card bad">
+          <h3>Sospechas concretas que buscar</h3>
+          <ul class="tight">
+            <li>Validación de entradas ausente o superficial.</li>
+            <li>Errores tragados en silencio (except vacío, catch sin uso).</li>
+            <li>Cambios no pedidos "de propina".</li>
+            <li>Dependencias nuevas sin justificar.</li>
+            <li>Comentarios que dicen algo distinto de lo que hace el código.</li>
+            <li>Tests que no prueban lo que su nombre promete.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="okbox">Conclusión esperada: revisar bien cuesta, pero <b>cuesta mucho menos que escribir</b>. Eso es exactamente el ahorro.</div>
+  </div>
+  <aside class="notes"><ul><li>Cerrar el taller con la puesta en común de los bugs encontrados: gana quien encuentre el fallo más grave.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="13 · Taller y adopción">
+  <h2>Adopción 30 / 60 / 90 días</h2>
+  <div class="body">
+    <div class="cols c3">
+      <div class="card">
+        <h3>Primeros 30 días</h3>
+        <ul class="tight">
+          <li>Fichero de convenciones en cada repositorio principal.</li>
+          <li>Todo el equipo con harness instalado y cuenta de empresa.</li>
+          <li>3 skills compartidas (PR, tests, informes).</li>
+          <li>Mini-banco de pruebas: 30 casos reales.</li>
+          <li>Política mínima de datos escrita.</li>
+        </ul>
+      </div>
+      <div class="card accent">
+        <h3>Días 31&#8211;60</h3>
+        <ul class="tight">
+          <li>2 automatizaciones de tareas repetitivas en producción.</li>
+          <li>Revisión automática de PRs en los repos principales.</li>
+          <li>Plantilla de servicio nuevo (esqueleto oficial).</li>
+          <li>Medición: tiempo hasta producción, MTTR, horas ahorradas.</li>
+          <li>Un MCP interno de sólo lectura con los datos más pedidos.</li>
+        </ul>
+      </div>
+      <div class="card ok">
+        <h3>Días 61&#8211;90</h3>
+        <ul class="tight">
+          <li>Evaluación trimestral de modelos con datos propios.</li>
+          <li>Catálogo interno de skills y MCPs aprobados.</li>
+          <li>Un caso de uso con impacto de negocio medido.</li>
+          <li>Formación para quien se incorpora (esta charla vale).</li>
+          <li>Informe de resultados con cifras, no con opiniones.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout">Regla de oro del plan: <b>nada de proyectos grandes</b>. Muchas mejoras pequeñas, medibles y revisables. Lo contrario es lo que produce decepción.</div>
+  </div>
+  <aside class="notes"><ul><li>Proponer nombres concretos para cada punto: sin dueño y fecha, no se hace.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="13 · Taller y adopción">
+  <h2>Qué pedir (y qué ofrecer) en la empresa</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card accent">
+          <h3>Pedir</h3>
+          <ul class="tight">
+            <li><b>Licencias de equipo</b> con cuentas de empresa y política clara de datos.</li>
+            <li><b>Un presupuesto de experimentación</b> por persona, pequeño y explícito.</li>
+            <li><b>Tiempo</b>: 2&#8211;3 horas a la semana para automatizar (con resultado visible).</li>
+            <li><b>Entorno aislado</b> para ejecutar agentes sin riesgo.</li>
+            <li><b>Permiso para publicar</b> skills y automatizaciones internas sin papeleo.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card ok">
+          <h3>Ofrecer</h3>
+          <ul class="tight">
+            <li>Resultados medibles: tiempo ahorrado, menos incidencias, entregas más rápidas.</li>
+            <li>Disciplina: revisión siempre, nada a producción sin verificar.</li>
+            <li>Seguridad: sin datos personales en herramientas no autorizadas.</li>
+            <li>Conocimiento compartido: skills y convenciones en el repositorio, no en cabezas.</li>
+          </ul>
+        </div>
+        <div class="callout">El argumento que convence a la dirección no es "la IA es el futuro". Es: <b>"esta tarea nos costaba 6 horas al mes y ahora cuesta 20 minutos"</b>.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Adaptar según la organización: si hay equipo de plataforma, coordinar con ellos.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="13 · Taller y adopción">
+  <h2>Diez reglas para llevarse</h2>
+  <div class="body">
+    <ol class="tight" style="columns:2;display:block">
+      <li style="margin-bottom:9px"><b>El contexto manda.</b> Antes de cambiar de modelo, mejora lo que le das.</li>
+      <li style="margin-bottom:9px"><b>Dale herramientas.</b> Lo que se puede comprobar, que lo compruebe.</li>
+      <li style="margin-bottom:9px"><b>Verifica siempre.</b> Tests, fuentes, ejecución real. Nunca su palabra.</li>
+      <li style="margin-bottom:9px"><b>Revisa el diff completo.</b> Sin excepciones, sin prisa.</li>
+      <li style="margin-bottom:9px"><b>Lo importante va al repositorio.</b> El chat no es un sistema de registro.</li>
+      <li style="margin-bottom:9px"><b>Una tarea por sesión.</b> Cierra y reinicia: contexto limpio, respuestas mejores.</li>
+      <li style="margin-bottom:9px"><b>Escribe el procedimiento.</b> Si funciona dos veces, conviértelo en skill.</li>
+      <li style="margin-bottom:9px"><b>Automatiza lo repetitivo</b>, no lo que pasa una vez al año.</li>
+      <li style="margin-bottom:9px"><b>Modelo justo para la tarea.</b> Cascada y modelos pequeños por defecto.</li>
+      <li style="margin-bottom:9px"><b>Datos sensibles fuera.</b> Anonimiza, o usa sistemas autorizados.</li>
+    </ol>
+  </div>
+  <aside class="notes"><ul><li>Leerlas en voz alta y pedir que voten las tres que les parecen más difíciles de cumplir.</li></ul></aside>
+</section>
+
+<section class="slide end" data-module="13 · Taller y adopción">
+  <h1>Gracias</h1>
+  <p class="lede" style="max-width:900px;text-align:center">Preguntas, dudas y, sobre todo, la lista de tareas repetitivas que vais a automatizar la semana que viene.</p>
+  <div class="flow" style="justify-content:center;margin-top:18px">
+    <span class="node">Material: repositorio privado <code>charla-ia-equipo</code></span>
+    <span class="node">Notas del ponente: tecla <kbd>N</kbd></span>
+    <span class="node">PDF: <kbd>Ctrl</kbd>+<kbd>P</kbd></span>
+  </div>
+  <aside class="notes"><ul><li>Recoger compromisos concretos: cada persona se lleva una tarea a automatizar y una skill a escribir en las próximas dos semanas.</li></ul></aside>
+</section>

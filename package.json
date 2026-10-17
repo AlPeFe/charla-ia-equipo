@@ -1,0 +1,14 @@
+{
+  "name": "charla-ia-equipo",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Charla interna: qué es la IA, cómo funciona y cómo usarla (harness, skills, agentes) para productividad",
+  "scripts": {
+    "build": "node build.mjs",
+    "serve": "node serve.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

@@ -1,0 +1,338 @@
+<!-- ============ MÓDULO 7 · HARNESS Y AGENTES ============ -->
+<section class="slide section" data-module="7 · Harness y agentes">
+  <div class="kicker">Bloque 7</div>
+  <h2>El harness: el modelo como herramienta de trabajo</h2>
+  <p class="lede">Un bucle, unas herramientas, unas reglas y un control de contexto. Ese es el producto.</p>
+  <aside class="notes"><ul><li>Este es el bloque central de la parte práctica. Todo lo demás (skills, automatizaciones) se apoya aquí.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="7 · Harness y agentes">
+  <h2>Qué es un harness (y por qué importa más que el modelo)</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card accent">
+          <h3>Definición</h3>
+          <p>El <b>harness</b> es el programa que envuelve al modelo: le da herramientas, le administra el contexto, decide los permisos, controla el gasto y presenta los resultados.</p>
+          <p class="small">El modelo es el motor; el harness es el coche entero: volante, frenos, cuadro de instrumentos y cinturón.</p>
+        </div>
+        <div class="card">
+          <h3>Los cinco componentes del harness</h3>
+          <ol class="tight">
+            <li><b>Bucle</b>: repetir hasta terminar la tarea (no una sola respuesta).</li>
+            <li><b>Herramientas</b>: leer, escribir, ejecutar, buscar, consultar.</li>
+            <li><b>Contexto</b>: qué información entra y en qué orden.</li>
+            <li><b>Permisos</b>: qué puede hacer sin preguntar y qué no.</li>
+            <li><b>Interfaz</b>: cómo revisas, apruebas y corriges lo que hizo.</li>
+          </ol>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card ok">
+          <h3>Mismo modelo, resultados distintos</h3>
+          <p>El mismo modelo en un chat web y dentro de un harness con acceso a tu repositorio, tests y pipeline no es el mismo trabajador. Cambia lo que <em>puede hacer</em>, no lo que <em>sabe</em>.</p>
+        </div>
+        <div class="warnbox">
+          <h3>Consecuencia práctica</h3>
+          Si un compañero dice "la IA no me sirve", casi siempre es porque está usando el peor harness posible: una caja de texto sin contexto, sin herramientas y sin verificación.
+        </div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Preguntar al grupo: "¿cuántos habéis usado un chat al que le pegáis código a mano?". Ese es el punto de partida que vamos a mejorar.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="7 · Harness y agentes">
+  <h2>El bucle de un agente, paso a paso</h2>
+  <div class="body">
+    <div class="flow">
+      <span class="node">1 · Objetivo del humano</span><span class="arrow">&#8594;</span>
+      <span class="node">2 · Plan</span><span class="arrow">&#8594;</span>
+      <span class="node">3 · Elegir herramienta</span><span class="arrow">&#8594;</span>
+      <span class="node">4 · Ejecutar</span><span class="arrow">&#8594;</span>
+      <span class="node">5 · Leer resultado</span><span class="arrow">&#8594;</span>
+      <span class="node">6 · ¿Terminado?</span><span class="arrow">&#8594;</span>
+      <span class="node">&#8635; repetir</span>
+    </div>
+    <div class="cols c2">
+      <div class="col">
+        <div class="card">
+          <h3>Ejemplo real, con vueltas</h3>
+          <pre style="font-size:15px"><code>&#9654; "Arregla el test que falla en checkout"
+   &#9500;&#9472; grep "test.*falla"  &#8594; encuentra el fichero
+   &#9500;&#9472; leer el test y el código
+   &#9500;&#9472; ejecutar: pytest -k checkout  &#8594; error real
+   &#9500;&#9472; leer el stack trace, proponer hipótesis
+   &#9500;&#9472; editar src/checkout.py
+   &#9500;&#9472; volver a ejecutar  &#8594; falla otro caso
+   &#9492;&#9472; corregir y ejecutar toda la suite &#8594; verde</code></pre>
+          <p class="small">Ocho pasos, seis con resultado inesperado. Un chat no puede hacer esto; un harness sí.</p>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card accent">
+          <h3>Cuándo parar: lo más difícil de diseñar</h3>
+          <ul class="tight">
+            <li><b>Tarea completada</b>: tests en verde, criterio explícito cumplido.</li>
+            <li><b>Presupuesto agotado</b>: número de pasos, tiempo o tokens.</li>
+            <li><b>Requiere decisión humana</b>: toca algo irreversible, pide ayuda.</li>
+            <li><b>Sin progreso</b>: dos vueltas seguidas sin avance &#8594; parar y explicar.</li>
+          </ul>
+          <p class="small">Un harness maduro te dice "no lo he conseguido y esto es lo que probé" en lugar de inventarse una solución.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Dato importante: el valor está en las vueltas con verificación (ejecutar y leer el resultado), no en "acertar a la primera".</li></ul></aside>
+</section>
+
+<section class="slide" data-module="7 · Harness y agentes">
+  <h2>Las herramientas que le das (y por qué cambian todo)</h2>
+  <div class="body">
+    <table>
+      <thead><tr><th>Herramienta</th><th>Qué le permite</th><th>Riesgo si la das sin control</th></tr></thead>
+      <tbody>
+        <tr><td><code>read</code> / <code>glob</code> / <code>grep</code></td><td>Explorar el repositorio, encontrar lo relevante</td><td>Gastar contexto leyendo ficheros enormes</td></tr>
+        <tr><td><code>write</code> / <code>edit</code></td><td>Modificar código, documentación, configuración</td><td>Cambios no revisados, ficheros a medias</td></tr>
+        <tr><td><code>bash</code> / ejecutar tests</td><td>Comprobar de verdad si funciona</td><td>Comandos destructivos, borrados, <code>rm -rf</code></td></tr>
+        <tr><td>Git (diff, commit, rama)</td><td>Trabajar con red de seguridad y dejar rastro</td><td>Commits en rama equivocada, basura en el historial</td></tr>
+        <tr><td>Web / fetch</td><td>Documentación actual, APIs, versiones</td><td>Contenido no confiable (inyección de prompts), ruido</td></tr>
+        <tr><td>MCP externos</td><td>Jira, base de datos, cloud, herramientas internas</td><td>Accesos con más privilegios de los necesarios</td></tr>
+      </tbody>
+    </table>
+    <div class="cols c2">
+      <div class="col"><div class="okbox"><b>Regla de oro:</b> cada herramienta que añades multiplica la capacidad <em>y</em> la superficie de riesgo. Añade la siguiente sólo cuando tengas la anterior controlada.</div></div>
+      <div class="col"><div class="card"><h3>El multiplicador real</h3><p>Pasar de "sólo escribe texto" a "puede ejecutar los tests" es el salto de calidad más grande que existe. Pasa de opinar a comprobar.</p></div></div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Contar la experiencia típica: agentes que "arreglan" cosas sin compilar; cuando le das el comando de compilación, se autocorrigen.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="7 · Harness y agentes">
+  <h2>Contexto: el activo que sí controlas</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card accent">
+          <h3>Qué compone el contexto de una sesión</h3>
+          <ul class="tight">
+            <li><b>Prompt de sistema</b>: personalidad, reglas de la herramienta, formato de salida.</li>
+            <li><b>Instrucciones del proyecto</b>: el fichero de convenciones del repo (tipo <code>AGENTS.md</code>).</li>
+            <li><b>Skills</b>: procedimientos cargables bajo demanda.</li>
+            <li><b>Memoria</b>: decisiones y aprendizajes que se arrastran entre sesiones.</li>
+            <li><b>Lo que lee</b>: ficheros, salidas de comandos, resultados de herramientas.</li>
+            <li><b>Tu mensaje</b> y el historial de la conversación.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card ok">
+          <h3>Reglas de higiene del contexto</h3>
+          <ul class="tight">
+            <li><b>Lo estable primero</b>: aprovecha la caché de prompt y reduce coste.</li>
+            <li><b>Lo relevante, no todo</b>: 3 ficheros bien elegidos ganan a 30.</li>
+            <li><b>Un objetivo por sesión</b>: mezclar tareas degrada todas.</li>
+            <li><b>Reinicia</b> cuando la sesión se ensucia; no arrastres basura.</li>
+            <li><b>Corrige por escrito</b>: si algo debe recordarse, va al fichero de convenciones, no al chat.</li>
+          </ul>
+        </div>
+        <div class="callout">Un fichero de convenciones bien escrito es la mejora más barata que existe: se escribe una vez y vale para todas las sesiones de todo el equipo.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Enseñar un AGENTS.md real en pantalla: convenciones de estilo, comandos de test, qué no tocar.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="7 · Harness y agentes">
+  <h2>Permisos, sandbox y red de seguridad</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card">
+          <h3>Modos de confianza</h3>
+          <table style="font-size:17px">
+            <thead><tr><th>Modo</th><th>Qué hace</th><th>Cuándo</th></tr></thead>
+            <tbody>
+              <tr><td><b>Sugerir</b></td><td>Propone, tú aplicas</td><td>Empezar, código crítico</td></tr>
+              <tr><td><b>Aprobar cambios</b></td><td>Edita, pero pide permiso para comandos</td><td>El modo por defecto sensato</td></tr>
+              <tr><td><b>Automático con lista blanca</b></td><td>Ejecuta libremente lo permitido (tests, lint, grep)</td><td>Tareas repetitivas en repos conocidos</td></tr>
+              <tr><td><b>Sin supervisión</b></td><td>Todo permitido</td><td>Entornos aislados, contenedores, nunca en producción</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card ok">
+          <h3>Las tres redes de seguridad obligatorias</h3>
+          <ol class="tight">
+            <li><b>Git</b>: rama aparte, commits pequeños, nunca <code>push --force</code> sin revisar.</li>
+            <li><b>Aislamiento</b>: contenedor, máquina virtual o <em>worktree</em> para que no toque lo que no debe.</li>
+            <li><b>Revisión del diff</b>: cero líneas sin leer. Si no entiendes un cambio, no se mergea.</li>
+          </ol>
+        </div>
+        <div class="badbox"><b>Lo que nunca</b>: dar credenciales de producción, acceso de escritura a bases de datos productivas, o permisos de despliegue a un agente sin supervisión humana. Los accidentes graves siempre pasan por ahí.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Insistir en el worktree: es la forma barata de paralelizar y aislar agentes en el mismo repositorio.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="7 · Harness y agentes">
+  <h2>El ecosistema: para qué sirve cada tipo</h2>
+  <div class="body">
+    <table>
+      <thead><tr><th>Categoría</th><th>Ejemplos</th><th>Fuerte en</th><th>Débil en</th></tr></thead>
+      <tbody>
+        <tr><td><b>Chat web</b></td><td>Interfaces de OpenAI, Anthropic, Google, DeepSeek&#8230;</td><td>Consultas, redacción, análisis puntual, multimodal</td><td>No conoce tu repo, no ejecuta nada</td></tr>
+        <tr><td><b>Autocompletado en el editor</b></td><td>GitHub Copilot, asistentes de IDE</td><td>Escribir código rápido, líneas y funciones</td><td>No tiene visión de conjunto ni verifica</td></tr>
+        <tr><td><b>IDE con agente</b></td><td>Cursor, Windsurf, Zed, VS Code con agente</td><td>Edición guiada, contexto del proyecto, revisión</td><td>Depende de la ventana; menos automatizable</td></tr>
+        <tr><td><b>Harness de terminal</b></td><td>Claude Code, Codex CLI, Gemini CLI, HanniPI/PI, OpenCode</td><td>Tareas completas con herramientas, scripts, CI, paralelismo</td><td>Requiere disciplina de contexto y de permisos</td></tr>
+        <tr><td><b>Agentes en la nube</b></td><td>Agentes que toman un issue y devuelven un PR</td><td>Delegación en volumen, trabajo de fondo</td><td>Poca interacción, difícil de guiar en detalle</td></tr>
+        <tr><td><b>Herramientas de nicho</b></td><td>Aider (diffs y git), Cline/Continue (extensiones), revisores automáticos de PR</td><td>Un caso muy concreto y bien resuelto</td><td>Sólo eso</td></tr>
+      </tbody>
+    </table>
+    <div class="okbox">No hay que elegir uno: lo normal es <b>chat para pensar, IDE para escribir, terminal para ejecutar</b>. Cada uno tiene su momento.</div>
+  </div>
+  <aside class="notes"><ul><li>Si la empresa tiene licencia de alguna herramienta, mencionarla y ofrecer una configuración de equipo.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="7 · Harness y agentes">
+  <h2>MCP: el enchufe estándar para conectar herramientas</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card accent">
+          <h3>Qué es</h3>
+          <p><b>Model Context Protocol</b>: un protocolo abierto para que una aplicación de IA descubra y use herramientas, datos y plantillas de forma estándar. En lugar de escribir una integración por cada par (modelo &#215; sistema), escribes un servidor MCP y cualquiera lo consume.</p>
+          <ul class="tight">
+            <li>Expone: herramientas (acciones), recursos (datos) y plantillas (prompts).</li>
+            <li>Se puede ejecutar en local (proceso) o en remoto (HTTP).</li>
+            <li>Es el mecanismo que permite mezclar MCPs de terceros con los tuyos.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card">
+          <h3>Usos razonables en una empresa</h3>
+          <ul class="tight">
+            <li>Consulta de bases de datos internas (con permisos de sólo lectura).</li>
+            <li>Gestión de tickets y documentación (Jira, Confluence, wiki interna).</li>
+            <li>Infraestructura (cloud, Kubernetes, monitorización).</li>
+            <li>Herramientas propias: un MCP con los cuatro comandos de verdad de tu equipo.</li>
+          </ul>
+        </div>
+        <div class="warnbox"><b>Higiene mínima</b>: principio de mínimo privilegio, credenciales propias y auditables (no tus claves personales), lista blanca de acciones, registro de uso. Un MCP es una API con un modelo apretando el botón.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Comentar que también hay riesgo de "servidores MCP" de origen desconocido: instalar sólo lo que revisas.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="7 · Harness y agentes">
+  <h2>Paralelizar: subagentes, worktrees y orquestación</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card">
+          <h3>Cuándo tiene sentido</h3>
+          <ul class="tight">
+            <li>Tareas <b>independientes</b> sobre ficheros distintos (migrar 10 módulos).</li>
+            <li>Tareas <b>de lectura</b>: investigar 5 alternativas en paralelo y sintetizar.</li>
+            <li>Tareas <b>largas de fondo</b>: lanzar y revisar después.</li>
+          </ul>
+        </div>
+        <div class="card bad">
+          <h3>Cuándo es un error</h3>
+          <ul class="tight">
+            <li>Ficheros compartidos: dos agentes se pisan y el resultado es peor que secuencial.</li>
+            <li>Sin aislamiento (misma carpeta): conflicto garantizado.</li>
+            <li>Sin revisión humana: el paralelismo multiplica también los errores.</li>
+            <li>Cuando no sabes aún qué hay que hacer: primero explorar, después paralelizar.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card accent">
+          <h3>Cómo se hace bien</h3>
+          <ol class="tight">
+            <li><b>Worktree</b> o rama por agente: aislamiento físico del sistema de ficheros.</li>
+            <li><b>Contrato claro</b>: qué toca, qué no toca, cómo se valida.</li>
+            <li><b>Presupuesto</b>: límite de pasos/tiempo por agente.</li>
+            <li><b>Integración</b>: rebase y resolución de conflictos por una persona (o por un agente con supervisión).</li>
+          </ol>
+          <p class="small">Los sistemas de orquestación serios son esencialmente gestores de <em>tareas, mensajes y esperas</em> con estados claros.</p>
+        </div>
+        <div class="callout">En el taller lo probaremos: dos agentes en dos worktrees distintos del mismo repo, y veremos cómo se integran.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Contar un caso: dividir una migración por módulos; 4 agentes, revisión final a mano.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="7 · Harness y agentes">
+  <h2>Lo que cuesta: tokens, tiempo y paciencia</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card bad">
+          <h3>Dónde se va el dinero</h3>
+          <ul class="tight">
+            <li><b>Leer ficheros enormes</b> una y otra vez: el gasto número uno.</li>
+            <li><b>Ejecutar la suite completa</b> en cada iteración innecesariamente.</li>
+            <li><b>Sesiones largas sin reiniciar</b>: contexto inflado en cada paso, que se paga en cada paso.</li>
+            <li><b>Reintentos sin estrategia</b>: el mismo error quince veces.</li>
+            <li><b>Modelo grande para tareas triviales</b> (renombrar, formatear).</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card ok">
+          <h3>Disciplina que reduce coste 5&#215;</h3>
+          <ul class="tight">
+            <li>Objetivos acotados: "arregla este test", no "mejora el proyecto".</li>
+            <li>Decirle dónde mirar: ficheros concretos en vez de "busca por ahí".</li>
+            <li>Cerrar y reiniciar sesiones entre tareas.</li>
+            <li>Modelo pequeño por defecto; subir sólo si se atasca.</li>
+            <li>Cuidar el fichero de convenciones: menos vueltas de exploración.</li>
+          </ul>
+        </div>
+        <div class="okbox">Métrica útil por tarea: <b>tokens por tarea completada</b>. Es fácil de medir con las herramientas actuales y baja muy rápido al principio.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Tranquilizar: como todo en ingeniería, mejora con práctica y con métricas. Los primeros días se gastan tokens de más.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="7 · Harness y agentes">
+  <h2>Cómo evaluar un harness antes de adoptarlo</h2>
+  <div class="body">
+    <table>
+      <thead><tr><th>Criterio</th><th>Qué mirar</th></tr></thead>
+      <tbody>
+        <tr><td><b>Control del contexto</b></td><td>¿Puedes decidir qué entra? ¿Compacta? ¿Respeta ficheros de convenciones? ¿Soporta skills?</td></tr>
+        <tr><td><b>Herramientas y extensibilidad</b></td><td>¿Leer, escribir, ejecutar, git, web? ¿MCP? ¿Puedes añadir tus propias herramientas?</td></tr>
+        <tr><td><b>Permisos y aislamiento</b></td><td>¿Listas blancas? ¿Sandbox? ¿Se puede ejecutar sin supervisión?</td></tr>
+        <tr><td><b>Trabajo con git</b></td><td>¿Diffs claros? ¿Worktrees? ¿Commits atómicos? ¿Puedes revisar antes de aplicar?</td></tr>
+        <tr><td><b>Automatización</b></td><td>¿Se usa desde el terminal y desde CI? ¿Tiene hooks? ¿Modo no interactivo?</td></tr>
+        <tr><td><b>Varios modelos</b></td><td>¿Puedes elegir modelo por tarea? ¿Local + API?</td></tr>
+        <tr><td><b>Coste y observabilidad</b></td><td>¿Muestra tokens y coste? ¿Hay límites? ¿Se pueden auditar acciones?</td></tr>
+        <tr><td><b>Equipo</b></td><td>¿Se comparten skills y convenciones por git? ¿Onboarding en una tarde?</td></tr>
+      </tbody>
+    </table>
+    <div class="callout">Y la prueba final, que vale por las ocho anteriores: <b>coge una tarea real de tu backlog, cronométrala y revísala con la misma exigencia que un PR de un compañero</b>.</div>
+  </div>
+  <aside class="notes"><ul><li>Estos criterios son la checklist para decidir herramientas en la empresa, no una comparativa cerrada.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="7 · Harness y agentes">
+  <h2>Idea clave del bloque</h2>
+  <div class="body center" style="justify-content:center">
+    <div class="quote" style="max-width:1020px;font-size:29px">El modelo es el motor. <b>El harness es el coche</b>: contexto, herramientas, permisos y revisión.<br>Y el conductor sigues siendo tú.</div>
+    <div class="cols c3" style="max-width:1150px">
+      <div class="card"><h3>Da herramientas</h3><p>Lo que se puede comprobar, se comprueba: tests, ejecución, consultas.</p></div>
+      <div class="card"><h3>Cuida el contexto</h3><p>Convenciones en fichero, poco y relevante, sesiones limpias.</p></div>
+      <div class="card"><h3>Revisa siempre</h3><p>Git, aislamiento y diff leído línea a línea.</p></div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Siguiente bloque: cómo se escriben esos ficheros de contexto y esas skills para que el equipo los comparta.</li></ul></aside>
+</section>

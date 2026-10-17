@@ -1,0 +1,206 @@
+<!-- ============ MÓDULO 1 · QUÉ ES LA IA ============ -->
+<section class="slide" data-module="1 · Qué es la IA">
+  <div class="kicker">01 · Tres definiciones</div>
+  <h2>Qué es la IA, en tres niveles</h2>
+  <div class="body">
+    <div class="cols c3">
+      <div class="card">
+        <h3>1 · El campo</h3>
+        <p>Rama de la informática que construye sistemas capaces de realizar tareas que asociamos a la inteligencia: percibir, decidir, predecir, generar lenguaje, jugar, conducir.</p>
+        <p class="small">1956, conferencia de Dartmouth: nace el término.</p>
+      </div>
+      <div class="card">
+        <h3>2 · La técnica dominante hoy</h3>
+        <p><b>Aprendizaje automático</b> (machine learning): en lugar de programar reglas, se ajustan parámetros a partir de ejemplos, y el sistema generaliza.</p>
+        <p class="small">Dentro: deep learning, redes neuronales profundas.</p>
+      </div>
+      <div class="card accent">
+        <h3>3 · Lo que usamos</h3>
+        <p><b>Modelos generativos</b> entrenados a escala (LLM, imagen, audio, vídeo, multimodal) que predicen el siguiente fragmento de datos.</p>
+        <p class="small">Este es el objeto de esta charla.</p>
+      </div>
+    </div>
+    <div class="callout">Truco mnemotécnico: <b>IA</b> &#8835; <b>Machine Learning</b> &#8835; <b>Deep Learning</b> &#8835; <b>modelos fundacionales</b> &#8835; <b>LLM</b>. Lo que los medios llaman "IA" es casi siempre el último eslabón.</div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Mucha confusión viene de mezclar los niveles: "la IA se equivoca" vs "el modelo se equivoca" vs "tu prompt era malo".</li>
+    <li>Subrayar: no hay reglas escritas a mano dentro de un LLM; hay millones de números ajustados.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="1 · Qué es la IA">
+  <h2>Ochenta años en una diapositiva</h2>
+  <div class="body">
+    <table>
+      <thead><tr><th>Momento</th><th>Hito</th><th>Por qué importa</th></tr></thead>
+      <tbody>
+        <tr><td class="num">1950</td><td>Test de Turing</td><td>Se plantea la pregunta: ¿puede una máquina conversar como un humano?</td></tr>
+        <tr><td class="num">1956</td><td>Dartmouth</td><td>Nace el nombre y el optimismo fundacional.</td></tr>
+        <tr><td class="num">1965&#8211;85</td><td>Sistemas expertos y <b>los dos inviernos</b></td><td>Las reglas a mano no escalan: lección que se repite en cada ciclo.</td></tr>
+        <tr><td class="num">1997</td><td>Deep Blue vs Kasparov</td><td>Búsqueda + fuerza bruta: no es aprendizaje.</td></tr>
+        <tr><td class="num">2012</td><td>AlexNet (ImageNet)</td><td>GPUs + redes convolucionales: el deep learning despega de verdad.</td></tr>
+        <tr><td class="num">2017</td><td>&laquo;Attention is all you need&raquo;</td><td>El <b>transformer</b>: la arquitectura que hace posible todo lo demás.</td></tr>
+        <tr><td class="num">2020&#8211;22</td><td>GPT-3, difusión, ChatGPT</td><td>Escala + alineación + interfaz de chat: la IA llega al público.</td></tr>
+        <tr><td class="num">2023&#8211;24</td><td>Multimodal, contexto largo, MoE, open weights</td><td>Se convierte en infraestructura: precios bajan, capacidades suben.</td></tr>
+        <tr><td class="num">2025&#8211;26</td><td><b>Agentes y harness</b></td><td>El modelo aprende a usar herramientas, ejecutar código y trabajar por objetivos.</td></tr>
+      </tbody>
+    </table>
+    <div class="callout">Fíjate en el patrón: cada vez que se intentó <em>programar el conocimiento a mano</em>, fracasó. Lo que ha funcionado es <b>aprender de datos</b> y luego <b>dar herramientas</b>.</div>
+  </div>
+  <aside class="notes"><ul>
+    <li>No detenerse mucho: es contexto. Lo importante es el patrón (reglas a mano vs aprendizaje).</li>
+    <li>Si el grupo es joven: explicar brevemente qué era un "sistema experto".</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="1 · Qué es la IA">
+  <h2>Taxonomía: el mapa que conviene tener en la cabeza</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card">
+          <h3>Por capacidad (el eje clásico)</h3>
+          <ul class="tight">
+            <li><b>ANI / IA estrecha</b> — buena en una tarea concreta. Es el 100% de lo que existe.</li>
+            <li><b>AGI</b> — capacidad general comparable a la humana. No existe; se discute qué significaría.</li>
+            <li><b>ASI</b> — superinteligencia. Territorio de especulación y de la ciencia ficción.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Por enfoque</h3>
+          <ul class="tight">
+            <li><b>Simbólico</b>: reglas y lógica explícita (motores de reglas, planificadores, SMT).</li>
+            <li><b>Estadístico</b>: aprende de datos (todo lo generativo de hoy).</li>
+            <li><b>Híbrido</b>: el que de verdad se usa en producción (un LLM dentro de un flujo con reglas).</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card accent">
+          <h3>Por paradigma de aprendizaje</h3>
+          <ul class="tight">
+            <li><b>Supervisado</b> — ejemplos etiquetados (clasificar tickets).</li>
+            <li><b>No supervisado</b> — buscar estructura (clustering, embeddings, anomalías).</li>
+            <li><b>Auto-supervisado</b> — la etiqueta la produce el propio dato (<em>el truco del LLM</em>: predecir lo siguiente).</li>
+            <li><b>Por refuerzo</b> — aprender de recompensa por ensayo y error (juegos, robótica, agentes, y también <em>RLHF</em> para alinear).</li>
+          </ul>
+        </div>
+        <div class="okbox">El salto de 2022 no fue un paradigma nuevo: fue <b>auto-supervisión + escala + una interfaz usable</b>.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Insistir en auto-supervisado: es lo que permite usar internet entera como dataset sin etiquetar nada.</li>
+    <li>El ANI/AGI: evitar la discusión filosófica, pero reconocerla; en la práctica trabajamos con IA estrecha.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="1 · Qué es la IA">
+  <h2>Qué se le da bien y qué se le da mal</h2>
+  <div class="body">
+    <table>
+      <thead><tr><th>Se le da bien <span class="tag ok">úsalo</span></th><th>Se le da mal <span class="tag bad">verifica</span></th></tr></thead>
+      <tbody>
+        <tr><td>Transformar y reescribir información (resumir, traducir, cambiar formato)</td><td>Saber si algo es verdad: produce lo más <em>plausible</em>, no lo más cierto</td></tr>
+        <tr><td>Generar código nuevo con patrones conocidos y API públicas</td><td>Conocer tu código, tus convenciones o tus datos si no se los das</td></tr>
+        <tr><td>Explicar, comparar, resumir documentación larga</td><td>Contar bien (aritmética, fechas, contadores) sin herramientas</td></tr>
+        <tr><td>Ampliar tu borrador: ideas, alternativas, casos límite</td><td>Autoevaluarse: casi siempre dice que su respuesta está bien</td></tr>
+        <tr><td>Tareas masivas y repetitivas sobre muchos ficheros</td><td>Decisiones irreversibles, cumplimiento normativo, criterio ético</td></tr>
+        <tr><td>Rellenar huecos aburridos: tests, boilerplate, migraciones</td><td>Información reciente o de nicho sin acceso a fuentes</td></tr>
+      </tbody>
+    </table>
+    <div class="warnbox">Regla práctica: la IA es excelente en <b>forma</b> y en <b>volumen</b>; es floja en <b>verdad</b> y en <b>contexto que no le has dado</b>. Casi todos los desastres vienen de olvidar esto.</div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Ejemplo cotidiano: pedir "cuántas líneas tiene este CSV" — se lo inventará; se le da la herramienta de contar.</li>
+    <li>La segunda columna no significa "no usarlo", significa "usarlo con verificación".</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="1 · Qué es la IA">
+  <h2>¿Por qué funciona ahora y no en 1990?</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card">
+          <h3>Cuatro multiplicadores que se alinearon</h3>
+          <ul class="tight">
+            <li><b>Datos</b>: la web, el código público y los corpus digitalizados son enormes y gratuitos.</li>
+            <li><b>Cómputo</b>: GPUs y TPUs (hoy en clusters de decenas de miles de chips) hacen viable entrenar con miles de millones de parámetros.</li>
+            <li><b>Arquitectura</b>: el transformer entrena en paralelo y escala con la profundidad (las RNN no).</li>
+            <li><b>Algoritmo + dinero</b>: las leyes de escala dieron una receta predecible: más cómputo &#8594; mejor pérdida.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card accent">
+          <h3>Leyes de escala (scaling laws) <span class="tag ok">dato</span></h3>
+          <p>El error de un modelo cae de forma predecible (ley de potencias) al crecer <b>parámetros</b>, <b>datos</b> y <b>cómputo</b>, siempre que los tres crezcan equilibrados.</p>
+          <p class="small">El trabajo de Kaplan et al. (2020) y el ajuste de Chinchilla (2022) — más datos que parámetros — cambiaron la práctica de todo el sector.</p>
+        </div>
+        <div class="callout">Consecuencia práctica: <b>la escala es una estrategia industrial</b>. Por eso importan tanto los chips, la energía y los centros de datos.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Si preguntan por "fin de las leyes de escala": en 2024-26 ha habido debate sobre rendimientos decrecientes en pretraining, y un desplazamiento a <b>cómputo en inferencia</b> (modelos que "piensan" más).</li>
+    <li>No dar cifras de entrenamiento concretas sin fuente; son volátiles.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="1 · Qué es la IA">
+  <h2>Glosario mínimo (vamos a usar estas palabras toda la charla)</h2>
+  <div class="body compact">
+    <div class="cols c4">
+      <div class="card"><h3>Token</h3><p>Fragmento de texto (no una palabra) que el modelo trata como unidad. Unas 3&#8211;4 letras de media en español.</p></div>
+      <div class="card"><h3>Parámetro / peso</h3><p>Número ajustado durante el entrenamiento. "7B" = 7.000 millones de parámetros.</p></div>
+      <div class="card"><h3>Contexto</h3><p>Todo lo que el modelo "ve" en una petición: prompt + historial + ficheros. Se mide en tokens.</p></div>
+      <div class="card"><h3>Prompt</h3><p>Tu entrada. Incluye instrucciones, ejemplos y datos.</p></div>
+      <div class="card"><h3>Inferencia</h3><p>Ejecutar el modelo para generar una respuesta. Es lo que se paga por uso.</p></div>
+      <div class="card"><h3>Entrenamiento</h3><p>Ajustar los parámetros con datos. Caro, se hace una vez por versión.</p></div>
+      <div class="card"><h3>Embedding</h3><p>Vector que representa el significado de un texto. Base de búsqueda semántica y RAG.</p></div>
+      <div class="card"><h3>RAG</h3><p>Recuperar información de tus fuentes y meterla en el contexto antes de preguntar.</p></div>
+      <div class="card"><h3>Fine-tuning</h3><p>Reentrenar un poco un modelo con tus datos para cambiar su comportamiento o estilo.</p></div>
+      <div class="card"><h3>Harness</h3><p>El programa que envuelve al modelo: bucle, herramientas, permisos, contexto. <em>Nuestro protagonista.</em></p></div>
+      <div class="card"><h3>Agente</h3><p>Un modelo ejecutándose en bucle con herramientas y un objetivo, no una sola pregunta-respuesta.</p></div>
+      <div class="card"><h3>MoE</h3><p>Mezcla de expertos: muchas subredes y sólo unas pocas activas por token. Abarata inferencia.</p></div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>No hace falta memorizar: al final está repetido en un anexo. Pero conviene fijar token / contexto / inferencia.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="1 · Qué es la IA">
+  <h2>La idea que lo cambia todo (para nosotros)</h2>
+  <div class="body">
+    <div class="quote">Un LLM no es una base de datos de respuestas: es un <b>motor de probabilidades sobre secuencias</b> al que se le puede dar contexto y herramientas.</div>
+    <div class="cols c2">
+      <div class="col">
+        <div class="card bad">
+          <h3>Modelo mental equivocado</h3>
+          <ul class="tight">
+            <li>"Sabe cosas" &#8594; lo buscará en los pesos y a veces se lo inventará.</li>
+            <li>"Piensa como yo" &#8594; no tiene intención ni comprensión del mundo; tiene patrones.</li>
+            <li>"Cuanto más largo el prompt, mejor" &#8594; ruido en el contexto degrada la respuesta.</li>
+            <li>"Da igual repetir la pregunta" &#8594; el muestreo hace que cambie la salida.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card ok">
+          <h3>Modelo mental útil</h3>
+          <ul class="tight">
+            <li>Es un <b>becario brillante, incansable y sin memoria</b>: sabe muchísimo, no conoce tu contexto y no admite que no sabe.</li>
+            <li>Rinde en función de la <b>información que le das</b> y de las <b>herramientas</b> que le dejas usar.</li>
+            <li>Su producto es un borrador. La <b>revisión es tuya</b>.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Esta diapositiva es el contrato mental de toda la charla. Retomarla varias veces.</li>
+    <li>La metáfora del becario la usan muchos equipos; funciona bien porque implica supervisión.</li>
+  </ul></aside>
+</section>

@@ -1,0 +1,312 @@
+<!-- ============ MÓDULO 3 · CÓMO FUNCIONA UN LLM ============ -->
+<section class="slide section" data-module="3 · Anatomía de un LLM">
+  <div class="kicker">Bloque 3</div>
+  <h2>Anatomía de un LLM</h2>
+  <p class="lede">Tokens, embeddings, atención y por qué el orden de tu prompt importa.</p>
+  <aside class="notes"><ul><li>Este bloque es el más técnico de la primera parte; merece la pena porque explica casi todos los comportamientos raros.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="3 · Anatomía de un LLM">
+  <h2>La cadena completa, de tu texto a la respuesta</h2>
+  <div class="body">
+    <div class="flow" style="row-gap:12px">
+      <span class="node">Texto</span><span class="arrow">&#8594;</span>
+      <span class="node">Tokenizador</span><span class="arrow">&#8594;</span>
+      <span class="node">Embeddings</span><span class="arrow">&#8594;</span>
+      <span class="node">+ posición</span><span class="arrow">&#8594;</span>
+      <span class="node">N bloques transformer<br><span class="small">(atención + red)</span></span><span class="arrow">&#8594;</span>
+      <span class="node">Probabilidades</span><span class="arrow">&#8594;</span>
+      <span class="node">Muestreo</span><span class="arrow">&#8594;</span>
+      <span class="node">Token nuevo</span><span class="arrow">&#8594;</span>
+      <span class="node">&#8630; repetir</span>
+    </div>
+    <div class="cols c3" style="margin-top:6px">
+      <div class="card"><h3>Determinista</h3><p>De texto a probabilidades: mismas entradas &#8594; mismas probabilidades.</p></div>
+      <div class="card accent"><h3>Estocástico</h3><p>De probabilidades a token: aquí entra el azar (temperatura, top-p).</p></div>
+      <div class="card ok"><h3>Incremental</h3><p>La respuesta se construye token a token. Por eso "escribe" y por eso hay latencia por token.</p></div>
+    </div>
+    <div class="callout">Consecuencia inmediata: <b>el modelo no lee tu mensaje y luego piensa</b>. Va generando, y cada token que genera pasa a formar parte de su propia entrada.</div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Comparar con un humano: leemos y después hablamos; aquí se genera y se va leyendo a sí mismo.</li>
+    <li>Esto explica que un buen comienzo de respuesta (o pedir "piensa paso a paso") mejore el resultado.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="3 · Anatomía de un LLM">
+  <h2>Tokens: la unidad real (y la que se factura)</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <pre><code>"Hola, mundo"        &#8594;  ["Hola", ",", " mundo"]
+"desarrollo"         &#8594;  ["des", "arrollo"]
+"tokenización"       &#8594;  ["token", "ización"]
+"2026-10-17"         &#8594;  ["2026", "-", "10", "-", "17"]
+"&#128512;"              &#8594;  varios tokens</code></pre>
+        <div class="card">
+          <h3>Consecuencias prácticas</h3>
+          <ul class="tight">
+            <li><b>El coste y la latencia se miden en tokens</b>, no en palabras.</li>
+            <li>En español suele haber <b>más tokens por palabra</b> que en inglés: pagas más por lo mismo.</li>
+            <li>Números, fechas, rutas y hashes se rompen en trozos raros &#8594; <em>de ahí</em> que cuente mal y que no sea fiable comparando identificadores.</li>
+            <li>El código se tokeniza bastante bien, pero la indentación cuenta.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card accent">
+          <h3>Vocabulario y BPE</h3>
+          <p>El tokenizador se aprende de los datos (algoritmos tipo <b>Byte-Pair Encoding</b>): las secuencias más frecuentes acaban siendo un solo token. Vocabularios típicos: <b>50.000&#8211;250.000</b> entradas.</p>
+          <p class="small">El mismo tokenizador lo comparten muchos experimentos; su calidad afecta al rendimiento del modelo en cada idioma.</p>
+        </div>
+        <div class="card warn">
+          <h3>Regla de estimación útil</h3>
+          <table style="font-size:17px">
+            <tr><td>1 token (inglés)</td><td class="num">&#8776; 0,75 palabras</td></tr>
+            <tr><td>1 token (español)</td><td class="num">&#8776; 0,5&#8211;0,7 palabras</td></tr>
+            <tr><td>1 página A4</td><td class="num">&#8776; 500&#8211;800 tokens</td></tr>
+            <tr><td>1 fichero de 500 líneas</td><td class="num">&#8776; 5.000&#8211;8.000 tokens</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Truco: casi ningún modelo sabe contar letras ("¿cuántas r tiene 'ferrocarril'?") porque no ve letras, ve tokens.</li>
+    <li>Si en el equipo se usa mucho español, el coste por palabra sube: tenerlo en cuenta en las estimaciones.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="3 · Anatomía de un LLM">
+  <h2>Embeddings: el significado como geometría</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card">
+          <h3>La idea</h3>
+          <p>Cada token se convierte en un vector de cientos o miles de números. Entrenando, palabras con usos parecidos acaban <b>cerca</b> en ese espacio: "coche" y "automóvil" quedan próximos; "coche" y "plátano", lejos.</p>
+          <p class="small">Clásico de los años 50-90 (las analogías tipo rey &#8722; hombre + mujer &#8776; reina) siguen siendo una buena intuición, aunque hoy los vectores son contextuales: la misma palabra cambia según la frase.</p>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card accent">
+          <h3>Para qué sirve esto en el mundo real</h3>
+          <ul class="tight">
+            <li><b>Búsqueda semántica</b>: encontrar por significado, no por palabra exacta. Es la base de un RAG decente.</li>
+            <li><b>Clustering y deduplicación</b>: agrupar tickets, detectar duplicados, clasificar sin etiquetas.</li>
+            <li><b>Recomendación y similitud</b>: "parecido a esto".</li>
+            <li><b>Reranking</b>: reordenar resultados por relevancia real.</li>
+          </ul>
+        </div>
+        <div class="okbox">Los modelos de embeddings son pequeños, baratos y rapidísimos. Muchas veces <b>no necesitas un LLM</b>: necesitas un embedding y un umbral.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Adelantar: el RAG que funciona no es "meter el documento entero", es trocear, embeber, recuperar los 5 mejores fragmentos y <em>entonces</em> preguntar.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="3 · Anatomía de un LLM">
+  <h2>Atención: el mecanismo que lo cambió todo</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card">
+          <h3>Traducción a lenguaje humano</h3>
+          <p>Para cada token, el modelo se pregunta: <em>"¿a qué otras partes de la frase debo mirar para entender esto?"</em> y mezcla información de las relevantes, con más o menos peso.</p>
+          <ul class="tight">
+            <li><b>Query (Q)</b>: qué busco.</li>
+            <li><b>Key (K)</b>: qué ofrezco.</li>
+            <li><b>Value (V)</b>: la información que aporto si me eligen.</li>
+          </ul>
+          <p class="small">La compatibilidad Q&#183;K decide los pesos; el resultado es una suma ponderada de los V. Después, <em>softmax</em> convierte puntuaciones en proporciones que suman 1.</p>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card accent">
+          <h3>Detalles que importan</h3>
+          <ul class="tight">
+            <li><b>Multi-head</b>: muchos "puntos de vista" a la vez (uno mira sintaxis, otro correferencia, otro formato&#8230;).</li>
+            <li><b>Máscara causal</b>: en un modelo de chat, cada token sólo ve los anteriores. No puede ver el futuro de su propia respuesta.</li>
+            <li><b>Coste cuadrático</b>: doblar el contexto multiplica por cuatro el trabajo de atención. De ahí la pelea por arquitecturas eficientes y por el KV cache.</li>
+            <li><b>El orden se inyecta con posiciones</b> (posicional clásico o RoPE): sin ellas, la atención sería un saco de palabras.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="callout">Esta es la razón por la que cosas importantes tienden a "pesar" más <b>al principio o al final</b> del contexto, y por la que perderse en medio de un prompt enorme es un riesgo real.</div>
+  </div>
+  <aside class="notes"><ul>
+    <li>No hace falta la fórmula; sí la intuición de pesos y de mixtura de información.</li>
+    <li>Detalle curioso: cabezas de atención especializadas (una para comillas, otra para sangría en código) — se han observado en modelos reales.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="3 · Anatomía de un LLM">
+  <h2>El bloque transformer, apilado N veces</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <pre><code>bloque(x):
+    a = atencion_multi_cabeza(x)   # se relaciona con el resto
+    x = x + a                      # conexion residual (suma)
+    x = normalizar(x)              # estabiliza
+
+    f = red_ffn(x)                 # procesa cada token por separado
+    x = x + f                      # otra residual
+    x = normalizar(x)
+    return x
+
+modelo = [bloque] * N_capas</code></pre>
+        <div class="card">
+          <h3>Reparto de papeles</h3>
+          <ul class="tight">
+            <li><b>Atención</b>: mezcla información <em>entre</em> tokens (contexto).</li>
+            <li><b>FFN</b>: transforma cada token <em>por separado</em>; aquí vive gran parte del "conocimiento". Es la parte con más parámetros.</li>
+            <li><b>Residuales y normalización</b>: lo que permite apilar decenas o cientos de capas sin que el entrenamiento se desmorone.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card accent">
+          <h3>Parámetros típicos <span class="tag warn">orientativo</span></h3>
+          <table style="font-size:17px">
+            <thead><tr><th>Modelo</th><th>Capas</th><th>Dimensión</th><th>Contexto</th></tr></thead>
+            <tbody>
+              <tr><td>7B</td><td class="num">32</td><td class="num">4.096</td><td class="num">8k&#8211;128k</td></tr>
+              <tr><td>70B</td><td class="num">80</td><td class="num">8.192</td><td class="num">128k</td></tr>
+              <tr><td>Frontera (MoE)</td><td class="num">60&#8211;120</td><td class="num">7k&#8211;16k</td><td class="num">200k&#8211;1M</td></tr>
+            </tbody>
+          </table>
+          <p class="small">Los números exactos varían: los labs publican poco. Lo relevante: <b>profundidad</b> (más capas &#8594; más abstracción), <b>anchura</b> (más capacidad por capa) y <b>contexto</b> (cuánto cabe).</p>
+        </div>
+        <div class="okbox">El bloque es sorprendentemente simple y repetitivo. La magia no está en una pieza secreta: está en <b>escala + datos + repetición</b>.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Insistir en FFN como almacén de conocimiento: muchos experimentos tocan el FFN para editar hechos.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="3 · Anatomía de un LLM">
+  <h2>De probabilidades a texto: el muestreo</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <table>
+          <thead><tr><th>Parámetro</th><th>Qué hace</th><th>Efecto</th></tr></thead>
+          <tbody>
+            <tr><td><b>temperatura</b></td><td>Aplana o agudiza la distribución</td><td>&#8595; = predecible y repetitivo; &#8593; = creativo y errático</td></tr>
+            <tr><td><b>top_p</b> (nucleus)</td><td>Sólo considera el conjunto de tokens que suma p de probabilidad</td><td>0,9&#8211;0,95 típico en chat</td></tr>
+            <tr><td><b>top_k</b></td><td>Sólo los k tokens más probables</td><td>Menos usado hoy; útil en código</td></tr>
+            <tr><td><b>penalizaciones</b></td><td>Castiga repetir tokens o temas</td><td>Evita bucles; en exceso degrada el estilo</td></tr>
+            <tr><td><b>semilla / seed</b></td><td>Fija el azar</td><td>Reproducible <em>hasta cierto punto</em> (no garantizado por el proveedor)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="col">
+        <div class="card warn">
+          <h3>Recomendación práctica</h3>
+          <ul class="tight">
+            <li>Tareas con formato estricto (JSON, código, extracción): <b>temperatura baja</b> (0&#8211;0,3).</li>
+            <li>Ideas, nombres, copy, alternativas: temperatura alta (0,8&#8211;1,0).</li>
+            <li>Nunca dependas de que la salida sea idéntica: si necesitas reproducibilidad, <b>valida el resultado</b>, no la cadena.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Por qué el chat</h3>
+          <p>El historial completo se reenvía en cada turno: el modelo no recuerda, el harness le reconstruye la memoria. Cuando algo se sale del contexto, se olvida literalmente.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Dato que sorprende: "temperatura 0" no garantiza determinismo por el batching y el orden de operaciones en GPU.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="3 · Anatomía de un LLM">
+  <h2>Multimodalidad: cómo entra una imagen o un audio</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card">
+          <h3>La receta habitual</h3>
+          <div class="flow" style="font-size:17px">
+            <span class="node">Imagen</span><span class="arrow">&#8594;</span>
+            <span class="node">Encoder visual<br>(ViT)</span><span class="arrow">&#8594;</span>
+            <span class="node">Proyector</span><span class="arrow">&#8594;</span>
+            <span class="node">Tokens visuales</span>
+          </div>
+          <p>Esos tokens entran en el mismo transformer junto al texto. Una imagen puede costar cientos o miles de tokens: <b>las imágenes también se facturan</b>.</p>
+          <p class="small">Audio: se convierte en espectrograma o en tokens discretos. Vídeo: fotogramas + audio, mucho más caro.</p>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card accent">
+          <h3>Uso práctico en el trabajo</h3>
+          <ul class="tight">
+            <li>Capturas de un error de CI o de un dashboard &#8594; diagnóstico.</li>
+            <li>Foto de una pizarra o de un diagrama &#8594; borrador de documentación o de esquema.</li>
+            <li>PDFs y hojas de cálculo como fuente directa (modelos que leen ficheros).</li>
+            <li>Transcripción de reuniones y notas automáticas (audio &#8594; texto &#8594; resumen y tareas).</li>
+          </ul>
+        </div>
+        <div class="warnbox">Un modelo multimodal <b>no mide</b>: si le pides coordenadas o dimensiones exactas de una imagen, verifica. Es un descriptor, no un instrumento.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Truco para la charla: subir una captura de pantalla con un error de compilación y dejar que diagnostique en vivo.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="3 · Anatomía de un LLM">
+  <h2>Plantilla de chat y tokens especiales (por qué rompo el modelo si le doy texto raro)</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <pre><code>&lt;|system|&gt; Eres un ingeniero senior...
+&lt;|user|&gt; Revisa este fichero...
+&lt;|assistant|&gt; Vale, primero...
+&lt;|user|&gt; ...</code></pre>
+        <div class="card">
+          <h3>Lo que esto significa en la práctica</h3>
+          <ul class="tight">
+            <li>El modelo distingue <b>sistema</b> (reglas), <b>usuario</b> (petición) y <b>asistente</b> (respuesta).</li>
+            <li>Las instrucciones de sistema pesan más y las aplica el propio harness: por eso hay que configurarlas bien.</li>
+            <li>Si copias y pegas texto que contiene esos delimitadores (por ejemplo, contenido de una web), puedes <b>inyectar instrucciones</b>. Es un ataque real: <em>prompt injection</em>.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card accent">
+          <h3>Tokens de control modernos</h3>
+          <ul class="tight">
+            <li><b>Llamada a herramienta</b>: el modelo emite un token/JSON estructurado pidiendo ejecutar algo.</li>
+            <li><b>Modo razonamiento</b>: tokens "de pensamiento" que se generan antes de la respuesta.</li>
+            <li><b>Salida estructurada</b>: gramáticas o esquemas JSON que fuerzan formato válido.</li>
+          </ul>
+        </div>
+        <div class="okbox">Cuando un prompt "obedece raro", la causa habitual es que has mezclado contenido no confiable con instrucciones, o que has dado formato contradictorio. El modelo prioriza lo que más se parece a sus datos de entrenamiento.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Conectar con el bloque de riesgos (prompt injection) que llega más tarde.</li>
+    <li>Mencionar que el RAG y la lectura de webs son las vías típicas de entrada de texto no confiable.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="3 · Anatomía de un LLM">
+  <h2>Idea clave del bloque</h2>
+  <div class="body center" style="justify-content:center">
+    <div class="quote" style="max-width:1020px;font-size:29px">Es un sistema de <b>dos fases</b>: entender (atención, determinista) y escribir (muestreo, estocástico).<br>Todo lo raro que ves viene de la segunda.</div>
+    <div class="cols c3" style="max-width:1150px">
+      <div class="card"><h3>¿Cuenta mal?</h3><p>No hay calculadora: dale una herramienta.</p></div>
+      <div class="card"><h3>¿Ignora el final de mi documento?</h3><p>Contexto largo &#8800; contexto atendido: trocea y ordena.</p></div>
+      <div class="card"><h3>¿Cambia la respuesta?</h3><p>Muestreo: baja la temperatura y valida el resultado.</p></div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Puente al bloque de inferencia: qué pasa cuando llevamos esto a producción.</li></ul></aside>
+</section>

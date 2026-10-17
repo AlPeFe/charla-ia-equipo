@@ -1,0 +1,143 @@
+<!-- ============ MÓDULO 14 · ANEXO ============ -->
+<section class="slide section" data-module="14 · Anexo">
+  <div class="kicker">Anexo</div>
+  <h2>Recursos, plantillas y glosario</h2>
+  <p class="lede">Para el día después: qué leer, qué copiar y qué recordar.</p>
+  <aside class="notes"><ul><li>Este anexo no se presenta: queda en el PDF y en el repositorio como material de consulta.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="14 · Anexo">
+  <h2>Recursos recomendados</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card">
+          <h3>Documentación oficial (lo primero)</h3>
+          <ul class="tight">
+            <li>Guías de ingeniería y de prompting de OpenAI y Anthropic: las mejores prácticas de contexto y de uso de herramientas.</li>
+            <li>Documentación de Google sobre Gemini y buenas prácticas multimodales.</li>
+            <li>Especificación de <b>MCP</b> (Model Context Protocol): cómo se conectan herramientas y datos.</li>
+            <li>Documentación del harness que use el equipo: hooks, skills, permisos, subagentes.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card accent">
+          <h3>Para entender el fondo (lectura técnica)</h3>
+          <ul class="tight">
+            <li><em>Attention is all you need</em> (2017): el paper del transformer.</li>
+            <li>Trabajos sobre leyes de escala y el ajuste de Chinchilla.</li>
+            <li>Artículos sobre RLHF y sobre aprendizaje por preferencias.</li>
+            <li>Introducciones a difusión (generación de imágenes) y a los modelos de estado (SSM/Mamba).</li>
+            <li>Descripciones de arquitecturas MoE publicadas por los propios laboratorios.</li>
+          </ul>
+          <p class="small">Con los cuatro primeros se entiende el 90% de lo que se publica hoy.</p>
+        </div>
+      </div>
+    </div>
+    <div class="callout">En el repositorio: <code>datos/actualizar-modelos.mjs</code> para refrescar el panorama, y <code>src/slides/</code> para editar esta presentación.</div>
+  </div>
+  <aside class="notes"><ul><li>Recomendar no leer todo: elegir dos y aplicarlos.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="14 · Anexo">
+  <h2>Plantilla: fichero de convenciones para un repositorio</h2>
+  <div class="body">
+    <pre style="font-size:14px"><code># Convenciones del proyecto (AGENTS.md)
+
+## Comandos
+- instalar:    npm ci
+- desarrollo:  npm run dev   (puerto 3000)
+- tests:       npm test -- --run
+- tipos:       npm run typecheck
+- lint:        npm run lint -- --fix
+
+## Arquitectura (5 líneas)
+- src/domain   lógica de negocio pura (sin IO, sin frameworks)
+- src/infra    adaptadores: base de datos, colas, servicios externos
+- src/http     controladores y validación de entrada
+- src/jobs     tareas programadas
+- los tests viven junto al fichero probado (foo.test.ts)
+
+## Reglas
+- TypeScript estricto. Prohibido el tipo "any" salvo justificación en comentario.
+- No añadir dependencias sin preguntar.
+- No modificar nada en /migrations ni en .github/workflows sin permiso explícito.
+- Los commits van en español, en imperativo, y uno por cambio lógico.
+- Nunca hacer push a main.
+
+## Cómo trabajamos
+- Antes de implementar algo no trivial: escribir el plan y los criterios de terminado.
+- Terminar siempre con: tests + tipos + lint en verde y un resumen de lo hecho.
+- Si algo no se puede comprobar, decirlo explícitamente en lugar de asumirlo.
+
+## Dónde mirar
+- Documentación: docs/
+- Decisiones de arquitectura: docs/adr/
+- Datos de ejemplo: fixtures/
+- Errores conocidos: docs/incidencias-conocidas.md</code></pre>
+  </div>
+  <aside class="notes"><ul><li>Copiar esta plantilla tal cual y adaptarla: es el primer paso del plan de 30 días.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="14 · Anexo">
+  <h2>Glosario ampliado</h2>
+  <div class="body">
+    <table class="xs" style="font-size:14px">
+      <thead><tr><th>Término</th><th>Definición corta</th><th>Término</th><th>Definición corta</th></tr></thead>
+      <tbody>
+        <tr><td><b>Agente</b></td><td>Modelo en bucle con herramientas y un objetivo</td><td><b>KV cache</b></td><td>Memoria de atención reutilizada al generar</td></tr>
+        <tr><td><b>Atención</b></td><td>Mecanismo que relaciona cada token con los demás</td><td><b>LoRA</b></td><td>Ajuste ligero de una parte de los pesos</td></tr>
+        <tr><td><b>Batch</b></td><td>Lote de ejemplos o de peticiones procesadas juntas</td><td><b>MoE</b></td><td>Muchos expertos, pocos activos por token</td></tr>
+        <tr><td><b>Chunking</b></td><td>Trocear documentos para recuperarlos mejor</td><td><b>Prompt</b></td><td>La entrada que das al modelo</td></tr>
+        <tr><td><b>Contexto</b></td><td>Todo lo que el modelo ve en una petición</td><td><b>RAG</b></td><td>Recuperar tus datos e insertarlos en el contexto</td></tr>
+        <tr><td><b>Cuantización</b></td><td>Reducir bits por peso para ahorrar memoria</td><td><b>RLHF / DPO</b></td><td>Alinear el modelo con preferencias humanas</td></tr>
+        <tr><td><b>Destilación</b></td><td>Un modelo pequeño imita a uno grande</td><td><b>SSM / Mamba</b></td><td>Modelos de estado, coste lineal</td></tr>
+        <tr><td><b>Embedding</b></td><td>Vector que representa significado</td><td><b>Temperatura</b></td><td>Azar del muestreo al generar</td></tr>
+        <tr><td><b>FFN</b></td><td>Red densa del bloque transformer</td><td><b>Token</b></td><td>Unidad de texto que el modelo procesa</td></tr>
+        <tr><td><b>Fine-tuning</b></td><td>Reentrenar con tus datos</td><td><b>Tool calling</b></td><td>El modelo pide ejecutar una herramienta</td></tr>
+        <tr><td><b>Harness</b></td><td>Programa que envuelve al modelo con herramientas y reglas</td><td><b>Transformer</b></td><td>Arquitectura basada en atención</td></tr>
+        <tr><td><b>Inferencia</b></td><td>Ejecutar el modelo para obtener una respuesta</td><td><b>TTFT</b></td><td>Tiempo hasta el primer token</td></tr>
+        <tr><td><b>Inyección de prompt</b></td><td>Contenido externo que introduce instrucciones</td><td><b>Ventana de contexto</b></td><td>Máximo de tokens admitidos</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <aside class="notes"><ul><li>Material de consulta; se puede imprimir como una página de referencia.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="14 · Anexo">
+  <h2>Cómo editar esta presentación</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card">
+          <h3>Estructura del repositorio</h3>
+          <pre style="font-size:14px"><code>charla-ia-equipo/
+  index.html           &lt;- el fichero que se abre (generado)
+  abrir.cmd / abrir.sh &lt;- arrancar en local
+  serve.mjs            &lt;- servidor local + auto-build
+  build.mjs            &lt;- ensambla index.html
+  src/
+    meta.json          &lt;- título y autor
+    styles.css         &lt;- aspecto visual
+    deck.js            &lt;- navegación, notas, índice
+    slides/            &lt;- un fichero por módulo
+  datos/               &lt;- snapshots del panorama de modelos</code></pre>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card accent">
+          <h3>Flujo de trabajo</h3>
+          <ol class="tight">
+            <li>Edita o añade un fichero en <code>src/slides/</code>: cada diapositiva es una etiqueta <code>&lt;section class="slide"&gt;</code>.</li>
+            <li>Añade tus notas del ponente dentro de <code>&lt;aside class="notes"&gt;</code>.</li>
+            <li>Ejecuta <code>node build.mjs</code> (o <code>node serve.mjs</code>, que ya lo hace solo).</li>
+            <li>Recarga el navegador. Vuelve a commitear.</li>
+          </ol>
+        </div>
+        <div class="okbox">Sin dependencias, sin internet y sin compilación pesada: HTML, CSS y JavaScript a secas. Funciona abriendo <code>index.html</code> con doble clic, en cualquier sistema operativo.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Recordar: la presentación también es una demo del método (artefacto versionado, generado con ayuda de un harness, revisado por una persona).</li></ul></aside>
+</section>

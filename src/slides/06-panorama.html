@@ -1,0 +1,348 @@
+<!-- ============ MÓDULO 6 · PANORAMA ============ -->
+<section class="slide section" data-module="6 · Panorama 2026">
+  <div class="kicker">Parte 2 · Panorama</div>
+  <h2>Quién es quién en IA, hoy</h2>
+  <p class="lede">Laboratorios, familias de modelos, precios y licencias. Snapshot: 17 de octubre de 2026.</p>
+  <aside class="notes"><ul><li>Antes del descanso o justo después. Este bloque es informativo: no hace falta memorizar nombres, sí entender la estructura del mercado.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="6 · Panorama 2026">
+  <h2>De dónde salen estos datos (y cómo refrescarlos)</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card accent">
+          <h3>Fuente de este snapshot <span class="tag ok">dato</span></h3>
+          <ul class="tight">
+            <li>API pública de <b>OpenRouter</b> (<code>GET /api/v1/models</code>), consultada el <b>17-oct-2026</b>: <b>470 modelos</b> en catálogo con precios, contexto y modalidades.</li>
+            <li>Es una foto de un agregador: no es la lista oficial de cada laboratorio, pero permite comparar peras con peras (precio, contexto, fecha de publicación).</li>
+            <li>El fichero crudo está en el repo: <code>datos/panorama-openrouter-2026-10-17.json</code>.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Actualizarlo en 10 segundos</h3>
+          <pre><code>node datos/actualizar-modelos.mjs</code></pre>
+          <p class="small">Vuelve a descargar el catálogo, guarda un snapshot con la fecha de hoy y te imprime una tabla comparativa. Es el mismo script con el que se hizo esta parte.</p>
+        </div>
+      </div>
+      <div class="col">
+        <div class="warnbox">
+          <h3 style="margin-top:0">Tres advertencias honestas</h3>
+          <ul class="tight">
+            <li><b>Caduca en semanas.</b> Las versiones cambian cada pocos meses; los precios bajan con el tiempo.</li>
+            <li><b>Un catálogo no es un benchmark.</b> Que un modelo esté disponible no dice nada de si es bueno para tu caso.</li>
+            <li><b>Las etiquetas son marketing.</b> "Prime", "Ultra", "Wonder": no son arquitecturas ni garantías.</li>
+          </ul>
+        </div>
+        <div class="okbox">Lo que sí es estable y vale la pena retener: <b>estructura del mercado</b> (quién investiga, quién libera pesos, quién revende), <b>cómo se compara</b> (contexto, precio, licencia, modalidad) y <b>cómo elegir por tarea</b>.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Abro el repo en pantalla y enseño el JSON y el script: práctica real, no diapositiva.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="6 · Panorama 2026">
+  <h2>Los laboratorios: quién hace qué</h2>
+  <div class="body">
+    <table class="xxs">
+      <thead><tr><th>Laboratorio</th><th>Señal de identidad</th><th>Pesos abiertos</th></tr></thead>
+      <tbody>
+        <tr><td><b>OpenAI</b> <span class="dim">EE. UU.</span></td><td>La referencia de producto y de ecosistema; familia GPT con gamas por tamaño</td><td>No (sólo algunos modelos pequeños)</td></tr>
+        <tr><td><b>Anthropic</b> <span class="dim">EE. UU.</span></td><td>Fuerte en código, agentes y uso de herramientas; enfoque explícito en seguridad</td><td>No</td></tr>
+        <tr><td><b>Google DeepMind</b> <span class="dim">R. Unido / EE. UU.</span></td><td>Multimodalidad (texto, imagen, audio, vídeo) + infraestructura propia (TPU)</td><td>Sí, familia pequeña (Gemma)</td></tr>
+        <tr><td><b>Meta</b> <span class="dim">EE. UU.</span></td><td>Histórico impulsor del código abierto; nueva generación de modelos propia</td><td>Parcial (abierto/cerrado)</td></tr>
+        <tr><td><b>xAI</b> <span class="dim">EE. UU.</span></td><td>Escala de cómputo agresiva, modelos con contexto muy largo</td><td>No</td></tr>
+        <tr><td><b>DeepSeek</b> <span class="dim">China</span></td><td>Pesos abiertos de gama alta a precio bajo: forzó la bajada de precios del sector</td><td>Sí</td></tr>
+        <tr><td><b>Alibaba (Qwen)</b> <span class="dim">China</span></td><td>La familia abierta más completa: tamaños, visión, omni y MoE</td><td>Sí</td></tr>
+        <tr><td><b>Z.ai (GLM)</b> <span class="dim">China</span></td><td>Alternativas abiertas muy competitivas en código</td><td>Sí</td></tr>
+        <tr><td><b>Moonshot, MiniMax, Tencent, Xiaomi, ByteDance, Baidu</b> <span class="dim">China</span></td><td>Ecosistema muy activo en pesos abiertos y modelos eficientes</td><td>Mayoritariamente sí</td></tr>
+        <tr><td><b>Mistral</b> <span class="dim">Francia</span></td><td>El campeón europeo; mezcla de API y pesos abiertos</td><td>Parcial</td></tr>
+        <tr><td><b>NVIDIA</b> <span class="dim">EE. UU.</span></td><td>Vende el hardware <em>y</em> modelos abiertos (Nemotron) para que el hardware se use</td><td>Sí</td></tr>
+        <tr><td><b>Amazon / Microsoft</b> <span class="dim">EE. UU.</span></td><td>Nube + modelos propios (Nova, Phi) sobre todo para sus plataformas</td><td>Parcial</td></tr>
+        <tr><td><b>Cohere, AI21, Perplexity, Sakana, Thinking Machines, Poolside, Liquid, Allen AI</b> <span class="dim">varios</span></td><td>Nicho: empresa, búsqueda, ciencia, código, eficiencia, investigación abierta</td><td>Varios sí</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <aside class="notes"><ul>
+    <li>No leer la tabla entera: destacar OpenAI/Anthropic/Google/Meta/xAI + el bloque chino + Mistral y decir "el resto son nichos rentables".</li>
+    <li>Punto clave: el código abierto ya no es "lo que hace el segundón", es una estrategia comercial.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="6 · Panorama 2026">
+  <h2>Los modelos punteros de cada casa <span class="tag ok">snapshot 17-oct-2026</span></h2>
+  <div class="body">
+    <table class="xxs">
+      <thead><tr><th>Casa</th><th>Gama alta</th><th>Gama media / económica</th><th>Abierto</th></tr></thead>
+      <tbody>
+        <tr><td>OpenAI</td><td><code>gpt-6-astra</code>, <code>gpt-6.1-sol</code></td><td><code>gpt-5.6-terra</code>, <code>gpt-6-luna</code></td><td>&mdash;</td></tr>
+        <tr><td>Anthropic</td><td><code>claude-opus-5.5</code>, <code>claude-fable-5.1</code></td><td><code>claude-sonnet-5.5</code>, <code>claude-haiku-5.5</code></td><td>&mdash;</td></tr>
+        <tr><td>Google</td><td><code>gemini-4-argon</code></td><td><code>gemini-3.8-flash</code>, <code>gemini-3.5-flash-lite</code></td><td><code>gemma-4-31b-it</code></td></tr>
+        <tr><td>Meta</td><td><code>muse-wonder</code></td><td><code>muse-spark-1.3</code>, <code>…-contributor</code></td><td><code>muse-spark-open</code>, <code>muse-glimmer-30b</code></td></tr>
+        <tr><td>xAI</td><td><code>grok-4.7</code></td><td><code>grok-build-0.1</code></td><td>&mdash;</td></tr>
+        <tr><td>DeepSeek</td><td><code>deepseek-v4-pro</code></td><td><code>deepseek-v4.1-flash</code></td><td><code>deepseek-v4-*</code></td></tr>
+        <tr><td>Alibaba (Qwen)</td><td><code>qwen3.8-max-prime</code></td><td><code>qwen3.8-flash</code></td><td><code>qwen3.8-2.4t-a95b</code>, <code>qwen3.8-27b</code></td></tr>
+        <tr><td>Z.ai (GLM)</td><td><code>glm-5.3-prime</code></td><td><code>glm-5.3-flashx</code>, <code>glm-5.3-flash</code></td><td><code>glm-5.3</code>, <code>glm-5.2</code></td></tr>
+        <tr><td>Moonshot (Kimi)</td><td><code>kimi-k3</code></td><td><code>kimi-k2.7-code</code></td><td><code>kimi-k3</code></td></tr>
+        <tr><td>MiniMax</td><td><code>minimax-m3</code></td><td><code>minimax-m2.7</code></td><td>toda la familia M</td></tr>
+        <tr><td>Mistral</td><td><code>mistral-large-4-0</code></td><td><code>mistral-medium-3-5</code>, <code>ministral-8b</code></td><td><code>devstral</code>, <code>ministral</code></td></tr>
+        <tr><td>NVIDIA</td><td><code>nemotron-3-ultra-550b</code></td><td><code>nemotron-3.5-lightning</code></td><td>toda la familia Nemotron</td></tr>
+        <tr><td>Llama 4 (generación previa de Meta)</td><td>&mdash;</td><td><code>llama-4-maverick</code>, <code>llama-4-scout</code></td><td>sí</td></tr>
+      </tbody>
+    </table>
+    <div class="callout">Fíjate en el patrón: <b>todas las casas tienen tres gamas</b> (grande, media, barata). Elegir bien la gama es el 80% del ahorro. Y en 2026 casi todas las casas tienen ya algo abierto, salvo OpenAI, Anthropic y xAI.</div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Insistir: no es un ranking de calidad, es un mapa de oferta. La calidad se mide con tus datos.</li>
+    <li>Mencionar que OpenRouter lista <code>grok-4.7</code> bajo el nombre de proveedor "SpaceXAI" (cambio societario/marca) — dato del catálogo, a verificar en la web oficial.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="6 · Panorama 2026">
+  <h2>Precios: la horquilla real en octubre de 2026 <span class="tag ok">dato</span></h2>
+  <div class="body">
+    <table>
+      <thead><tr><th>Gama</th><th>Ejemplo</th><th>Entrada $/M</th><th>Salida $/M</th><th>Contexto</th></tr></thead>
+      <tbody>
+        <tr><td><span class="tag">económica</span> clasificar, extraer, autocompletar</td><td><code>claude-haiku-5.5</code>, <code>gpt-6-luna</code>, <code>glm-5.3-flash</code>, <code>deepseek-v4.1-flash</code></td><td class="num">0,10&#8211;0,15</td><td class="num">0,50&#8211;0,60</td><td class="num">1M</td></tr>
+        <tr><td><span class="tag acc">media</span> el caballo de batalla de los agentes</td><td><code>gpt-6.1-sol</code>, <code>claude-sonnet-5.5</code>, <code>gemini-4-argon</code>, <code>mistral-large-4</code>, <code>grok-4.7</code></td><td class="num">0,68&#8211;2,00</td><td class="num">2,09&#8211;10,00</td><td class="num">0,5&#8211;1M</td></tr>
+        <tr><td><span class="tag warn">alta</span> lo más difícil, pocas llamadas</td><td><code>claude-opus-5.5</code>, <code>qwen3.8-max-prime</code></td><td class="num">4,00</td><td class="num">12,00&#8211;20,00</td><td class="num">1M</td></tr>
+        <tr><td><span class="tag bad">frontera</span> investigación y casos extremos</td><td><code>gpt-6-astra</code>, <code>gpt-5.4-pro</code></td><td class="num">10&#8211;30</td><td class="num">50&#8211;180</td><td class="num">1M</td></tr>
+      </tbody>
+    </table>
+    <div class="cols c2">
+      <div class="col"><div class="okbox">Tendencias observadas en el snapshot: <b>precios a la baja</b> en la banda media, <b>contextos de 1M tokens como estándar</b> en las gamas altas, y muchos modelos con descuento del <b>50% en modo batch</b>.</div></div>
+      <div class="col"><div class="card"><h3>Truco de comparación</h3><p>Divide el precio de salida por el de entrada: si el ratio supera 5, el proveedor te está cobrando caro por "escribir". En tareas de mucho texto generado (documentación, informes), ese ratio manda.</p></div></div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Aclarar: son tarifas de API; los planes de suscripción (uso "ilimitado" con cuotas) no son comparables con esto.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="6 · Panorama 2026">
+  <h2>Modelos abiertos: qué hay de verdad <span class="tag ok">dato</span></h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card ok">
+          <h3>Familias con pesos descargables (ejemplos del snapshot)</h3>
+          <ul class="tight">
+            <li><b>Qwen 3.8</b>: desde 27B hasta MoE de 2,4B parámetros totales (95B activos). Familia más completa.</li>
+            <li><b>DeepSeek V4</b>: pro y flash, licencia permisiva, orientados a código.</li>
+            <li><b>GLM 5.x</b> (Z.ai), <b>Kimi K3</b> (Moonshot), <b>MiniMax M3</b>: competidores directos de la gama media cerrada.</li>
+            <li><b>Gemma 4</b> (Google): 26B y 31B, multimodales, licencia propia.</li>
+            <li><b>Nemotron 3.5</b> (NVIDIA), <b>Muse</b> (Meta, familia "open"/"glimmer"), <b>Mistral/Devstral</b>, <b>Tencent Hy4</b>, <b>Xiaomi MiMo</b>, <b>Ling 3</b>, <b>Inkling</b> (Thinking Machines), <b>Laguna</b> (Poolside), <b>LFM 2.5</b> (Liquid).</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card warn">
+          <h3>"Abierto" significa muchas cosas</h3>
+          <ul class="tight">
+            <li><b>Pesos abiertos</b> &#8800; código abierto &#8800; datos abiertos. Casi nunca se publican los datos ni el proceso completo.</li>
+            <li>Las licencias varían: Apache/MIT (permisivas), licencias comunitarias con <b>límites de uso comercial</b> o de usuarios.</li>
+            <li>Puede haber <b>cláusulas de uso aceptable</b> que restrinjan sectores o aplicaciones.</li>
+            <li>Algunos "abiertos" se publican <b>semanas o meses después</b> del modelo cerrado equivalente.</li>
+          </ul>
+        </div>
+        <div class="okbox">Cuándo el abierto es la respuesta: <b>datos que no pueden salir</b>, volumen muy alto, necesidad de fijar versión durante años, o querer evitar dependencia comercial. A cambio: tú operas, tú actualizas, tú pagas las GPUs.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Pregunta frecuente en empresas: "¿podemos usar modelos abiertos para no enviar datos fuera?". Sí, y es una decisión de cumplimiento más que de calidad.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="6 · Panorama 2026">
+  <h2>Especializados por modalidad</h2>
+  <div class="body">
+    <table class="sm">
+      <thead><tr><th>Modalidad</th><th>Ejemplos del snapshot</th><th>Uso típico en una empresa</th></tr></thead>
+      <tbody>
+        <tr><td><b>Código</b></td><td><code>gpt-5.3-codex</code>, <code>kimi-k2.7-code</code>, <code>devstral</code>, <code>seed-2.0-code</code>, <code>north-mini-code</code>, <code>laguna-s</code></td><td>Agentes de repositorio, revisión de PRs, migraciones, tests</td></tr>
+        <tr><td><b>Imagen</b></td><td><code>gemini-nano-banana-2.1</code>, <code>gpt-5.4-image-2</code>, <code>gemini-3-pro-image</code></td><td>Mockups, ilustración de documentación, material de marketing, diagramas</td></tr>
+        <tr><td><b>Vídeo</b></td><td>Familias de generación de vídeo (varios proveedores; cambian muy rápido)</td><td>Vídeo corto, demos de producto, formación interna</td></tr>
+        <tr><td><b>Audio y voz</b></td><td><code>gpt-audio</code>, <code>lyria-3</code> (música), modelos de transcripción y de voz</td><td>Transcripción de reuniones, locuciones, atención telefónica</td></tr>
+        <tr><td><b>Omni / multimodal</b></td><td><code>gemini-4-argon</code>, <code>qwen3.8-omni-flash</code>, <code>muse-wonder</code></td><td>Leer capturas, PDFs, vídeo de una incidencia, tickets con adjuntos</td></tr>
+        <tr><td><b>Agentes y navegación</b></td><td><code>grok-build-0.1</code>, <code>sonar-pro-search</code> (Perplexity), routers tipo <code>openrouter/auto</code></td><td>Ejecutar tareas con herramientas, búsqueda con fuentes, enrutado por coste</td></tr>
+        <tr><td><b>Seguridad / moderación</b></td><td><code>llama-guard-4-12b</code>, <code>nemotron-3.5-content-safety</code></td><td>Filtrar entradas y salidas de tus propias aplicaciones</td></tr>
+      </tbody>
+    </table>
+    <div class="callout">Consejo: <b>no uses un solo modelo para todo</b>. Un modelo de código para el repositorio, uno económico para clasificar, uno multimodal para capturas, y el grande sólo cuando se atasca.</div>
+  </div>
+  <aside class="notes"><ul><li>Aviso sobre vídeo: es la modalidad que cambia más rápido y la más difícil de verificar en un catálogo; comprobar antes de citar marcas.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="6 · Panorama 2026">
+  <h2>Benchmarks: para qué sirven y por qué no deciden</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card">
+          <h3>Las familias clásicas</h3>
+          <ul class="tight">
+            <li><b>Conocimiento general</b> (tipo MMLU): preguntas de múltiples asignaturas. Hoy casi todos van sobrados: poca señal.</li>
+            <li><b>Ciencia y razonamiento</b> (tipo GPQA): preguntas de nivel experto.</li>
+            <li><b>Matemáticas</b> (tipo AIME): problemas con respuesta exacta, sensibles al "pensamiento".</li>
+            <li><b>Código real</b> (tipo SWE-bench): ¿arregla issues de repositorios auténticos? Es el más relevante para nosotros.</li>
+            <li><b>Agentes</b>: terminal, navegador, herramientas, varias vueltas.</li>
+            <li><b>Preferencia humana / arenas</b>: comparaciones a ciegas por votación.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card bad">
+          <h3>Los cinco problemas</h3>
+          <ul class="tight">
+            <li><b>Contaminación</b>: las respuestas pueden estar en los datos de entrenamiento.</li>
+            <li><b>Sobreajuste al benchmark</b>: optimizar la métrica deja de medir lo que importa.</li>
+            <li><b>Formato y azar</b>: cambiar el orden de las opciones cambia el resultado.</li>
+            <li><b>El "voto humano" premia el estilo</b>: respuestas largas y seguras ganan aunque sean peores.</li>
+            <li><b>Cero relación con tu caso</b>: tu código, tu idioma, tu normativa.</li>
+          </ul>
+        </div>
+        <div class="okbox"><b>La única evaluación que vale es la tuya.</b> 30&#8211;50 casos reales de tu dominio, con respuesta esperada, y comparas modelos en una tarde. Eso es más útil que cualquier leaderboard.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Proponer al equipo: montar un mini-set de evaluación propio (tareas reales) y repetirlo cada trimestre. Es la práctica con mejor relación esfuerzo/valor.</li>
+    <li>No citar puntuaciones concretas: caducan y no las hemos verificado aquí.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="6 · Panorama 2026">
+  <h2>Cómo elegir modelo para una tarea (sin perder la tarde)</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <table>
+          <thead><tr><th>Pregunta</th><th>Decisión</th></tr></thead>
+          <tbody>
+            <tr><td>¿Datos sensibles o prohibido salir?</td><td>Modelo abierto en infraestructura propia</td></tr>
+            <tr><td>¿Mucho volumen y tarea simple?</td><td>Gama económica + caché + batch</td></tr>
+            <tr><td>¿Código de repositorio con herramientas?</td><td>Modelo de código de gama media/alta con harness</td></tr>
+            <tr><td>¿Problemas difíciles de lógica o matemáticas?</td><td>Modelo con modo razonamiento, esfuerzo alto</td></tr>
+            <tr><td>¿Imágenes, PDFs, vídeo?</td><td>Modelo multimodal (coste por imagen)</td></tr>
+            <tr><td>¿Latencia crítica (chat en vivo)?</td><td>Modelo pequeño o de inferencia muy rápida</td></tr>
+            <tr><td>¿Necesitas citar fuentes?</td><td>Búsqueda + RAG con enlaces, no memoria del modelo</td></tr>
+            <tr><td>¿Todo lo demás?</td><td>Gama media por defecto y sube sólo cuando falle</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="col">
+        <div class="card accent">
+          <h3>Método de 4 pasos</h3>
+          <ol class="tight">
+            <li><b>Corta</b> por requisitos duros: privacidad, licencia, modalidad, idioma.</li>
+            <li><b>Prueba</b> de 3 a 5 candidatos con 30 casos propios.</li>
+            <li><b>Mide</b>: aciertos, coste por 1.000 tareas, latencia percibida.</li>
+            <li><b>Fija</b> el elegido por tarea y revisa cada trimestre (o cuando salga algo mejor).</li>
+          </ol>
+        </div>
+        <div class="warnbox">Anota la <b>versión exacta</b> que usas en producción. Los proveedores actualizan en silencio y lo que funcionaba puede cambiar de comportamiento.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Este método es reutilizable para cualquier decisión técnica: requisitos duros, evaluación propia, medición, fijar versión.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="6 · Panorama 2026">
+  <h2>Dónde comprar esto: los tres caminos</h2>
+  <div class="body">
+    <div class="cols c3">
+      <div class="card">
+        <h3>1 · Directo del laboratorio</h3>
+        <ul class="tight">
+          <li>API de OpenAI, Anthropic, Google, Mistral&#8230;</li>
+          <li><b>Ventajas</b>: funciones completas (herramientas, caché, batch), soporte, datos de uso.</li>
+          <li><b>Contras</b>: contratos y facturación por proveedor, migrar cuesta.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>2 · A través de la nube</h3>
+        <ul class="tight">
+          <li>Azure, AWS Bedrock, Google Vertex.</li>
+          <li><b>Ventajas</b>: proveedor ya homologado, residencia de datos, facturación integrada, cumplimiento.</li>
+          <li><b>Contras</b>: catálogo limitado y a veces más caro.</li>
+        </ul>
+      </div>
+      <div class="card accent">
+        <h3>3 · Agregadores / inferencia</h3>
+        <ul class="tight">
+          <li>OpenRouter, Together, Fireworks, Groq, Cerebras&#8230;</li>
+          <li><b>Ventajas</b>: una sola API para cientos de modelos, comparar es trivial, enrutado por coste.</li>
+          <li><b>Contras</b>: una capa más en medio, latencias variables, cuidado con datos sensibles.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="okbox">Estrategia sensata: <b>abstrae tu código del proveedor</b> (una capa de cliente propia con la misma interfaz) y no te cases con ninguno. Hoy hay más de 400 modelos disponibles: la portabilidad es una ventaja competitiva.</div>
+  </div>
+  <aside class="notes"><ul><li>Consejo técnico: envuelve las llamadas en tu propio módulo; cuando cambies de modelo, cambias una línea.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="6 · Panorama 2026">
+  <h2>La cadencia: cómo no volverse loco</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card bad">
+          <h3>Lo que agota</h3>
+          <ul class="tight">
+            <li>Perseguir cada lanzamiento semanal: imposible y sin retorno.</li>
+            <li>Reescribir tu integración por cada modelo nuevo.</li>
+            <li>Leer hilos de redes sociales como si fueran evaluación técnica.</li>
+            <li>Comprar herramientas por moda y no por cuello de botella real.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card ok">
+          <h3>Lo que funciona</h3>
+          <ul class="tight">
+            <li><b>Revisión trimestral</b> con datos: ¿alguna tarea mejoraría? ¿algún precio ha bajado?</li>
+            <li><b>Un mini-banco de pruebas propio</b> (30&#8211;50 casos) para comparar en una tarde.</li>
+            <li><b>Versionado fijo</b> y cambios anunciados internamente, como cualquier dependencia.</li>
+            <li><b>Priorizar por cuello de botella</b>: primero lo que duele cada semana.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="callout">En el bloque de talleres veremos cómo montar ese banco de pruebas en una hora. Es el activo que hace que todo lo demás sea racional.</div>
+  </div>
+  <aside class="notes"><ul><li>Mensaje: la ventaja no es saber qué modelo salió ayer, es tener criterios y un proceso.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="6 · Panorama 2026">
+  <h2>Riesgos estructurales del mercado</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <table>
+          <thead><tr><th>Riesgo</th><th>Mitigación</th></tr></thead>
+          <tbody>
+            <tr><td><b>Deprecación</b> de la versión exacta que usas</td><td>Fijar versión, tener plan B probado, capa de abstracción</td></tr>
+            <tr><td><b>Subidas de precio</b> o cambios de límites</td><td>Medir coste por tarea, tener alternativa evaluada</td></tr>
+            <tr><td><b>Concentración</b>: dependes de 1&#8211;2 proveedores</td><td>Dos proveedores en caliente para lo crítico</td></tr>
+            <tr><td><b>Filtros y rechazos</b> que rompen tu caso de uso legítimo</td><td>Modelo propio o proveedor con política clara</td></tr>
+            <tr><td><b>Geopolítica y regulación</b> (exportación, residencia de datos)</td><td>Nube regional, on-premise para lo sensible</td></tr>
+            <tr><td><b>Cambios de licencia</b> en modelos abiertos</td><td>Guardar copia de los pesos y del texto de la licencia</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="col">
+        <div class="okbox">
+          <h3>La conclusión de todo el bloque</h3>
+          <p>Los modelos son un <b>componente intercambiable</b>. El valor de tu sistema está en:</p>
+          <ul class="tight">
+            <li>Tu <b>contexto</b>: datos, convenciones, documentación, reglas de negocio.</li>
+            <li>Tu <b>proceso</b>: cómo evalúas, cómo verificas, cómo despliegas.</li>
+            <li>Tus <b>integraciones</b>: herramientas, permisos, flujos reales de trabajo.</li>
+          </ul>
+          <p>Eso no lo tiene ningún laboratorio y no caduca cada trimestre.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Esta diapositiva es la tesis de la charla: el modelo es commodity, el contexto y el proceso son el activo. Puente perfecto al bloque de harness.</li></ul></aside>
+</section>

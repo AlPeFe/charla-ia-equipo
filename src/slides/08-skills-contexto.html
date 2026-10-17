@@ -1,0 +1,233 @@
+<!-- ============ MÓDULO 8 · SKILLS Y CONTEXTO ============ -->
+<section class="slide" data-module="8 · Skills y contexto">
+  <h2>Skills: procedimientos que el equipo comparte</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card accent">
+          <h3>Qué es una skill</h3>
+          <p>Un paquete de instrucciones (y opcionalmente scripts, plantillas y ficheros de referencia) que el agente carga <b>sólo cuando la tarea lo requiere</b>.</p>
+          <ul class="tight">
+            <li>Se escribe una vez y la usa todo el equipo: vive en el repositorio y se revisa como el código.</li>
+            <li>Se carga bajo demanda: no infla el contexto de todas las conversaciones.</li>
+          </ul>
+        </div>
+        <div class="card bad">
+          <h3>Lo que NO es</h3>
+          <ul class="tight">
+            <li>Un prompt gigante que pegas siempre: eso es ruido permanente.</li>
+            <li>Un documento de 30 páginas que nadie lee: una skill es una <b>receta</b>, no un manual.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <pre style="font-size:15px"><code>skills/
+  revisar-pr/
+    SKILL.md          &#8592; instrucciones + cuándo usarla
+    checklist.md      &#8592; referencia
+    scripts/lint.sh   &#8592; herramienta auxiliar
+  migrar-a-python3/
+    SKILL.md
+  informe-mensual/
+    SKILL.md
+    plantilla.md</code></pre>
+        <div class="callout">Anatomía habitual de <code>SKILL.md</code>: un encabezado con <b>nombre + descripción</b> (es lo que el agente lee para decidir si la carga) y el cuerpo con el procedimiento paso a paso, criterios de aceptación y ejemplos.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>El truco de las skills es la <b>descripción</b>: debe decir claramente cuándo aplicarla, o nunca se cargará.</li>
+    <li>Comparar con "runbooks" de operaciones: mismo concepto, ahora legible por una máquina.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="8 · Skills y contexto">
+  <h2>Escribir una buena skill (y una mala, para comparar)</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card bad">
+          <h3>Mala skill</h3>
+          <pre style="font-size:15px"><code>nombre: ayuda
+descripción: ayuda con el código
+
+Haz un buen trabajo, revisa el código
+y arregla los problemas importantes.
+Usa las mejores prácticas.</code></pre>
+          <p class="small">Vago, sin criterios, sin pasos, sin verificación. El agente hará lo que quiera.</p>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card ok">
+          <h3>Skill útil</h3>
+          <pre style="font-size:15px"><code>nombre: revisar-pr
+descripción: Revisa un PR antes de pedir
+  revisión humana. Úsala cuando el usuario
+  diga "revisa este PR" o "prepara el PR".
+
+1. Ejecuta: npm test &amp;&amp; npm run lint
+2. Si falla &#8594; corrige y repite (máx. 3 vueltas)
+3. Comprueba contra checklist.md
+4. Resume: qué cambiaste y qué debe
+   revisar un humano
+No toques migraciones ni ficheros de
+configuración de despliegue.</code></pre>
+        </div>
+      </div>
+    </div>
+    <div class="callout">Cinco ingredientes de una skill que funciona: <b>cuándo usarla</b> · <b>pasos concretos con comandos</b> · <b>criterio de terminado</b> · <b>límites explícitos</b> · <b>lugar donde dejar constancia</b>.</div>
+  </div>
+  <aside class="notes"><ul><li>Regla: si no puedes escribir el criterio de "terminado" en una línea, la tarea no está lista para delegarse.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="8 · Skills y contexto">
+  <h2>El fichero de convenciones del proyecto</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card accent">
+          <h3>Qué poner (y qué no)</h3>
+          <ul class="tight">
+            <li><b>Sí</b>: comandos exactos (build, test, lint, migraciones), arquitectura en 5 líneas, convenciones de nombres, idioma de los commits, prohibiciones ("no toques <code>/migrations</code>" sin pedir permiso).</li>
+            <li><b>Sí</b>: dónde mirar para cada tipo de tarea (mapa del repo).</li>
+            <li><b>No</b>: la historia del proyecto, la filosofía, la orgánica del equipo, ni párrafos motivacionales.</li>
+            <li><b>No</b>: cosas que el código ya dice (el agente lo puede leer).</li>
+            <li><b>Regla</b>: si algo falla dos veces, se añade una línea aquí.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <pre style="font-size:15px"><code># Convenciones
+
+## Comandos
+- test:      npm test -- --run
+- lint:      npm run lint
+- tipo:      npm run typecheck
+- dev:       npm run dev  (puerto 3000)
+
+## Estructura
+- src/domain       lógica pura, sin IO
+- src/infra        adaptadores externos
+- src/http         controladores
+- no tocar /migrations sin permiso
+
+## Estilo
+- TypeScript estricto, sin any
+- tests junto al fichero (foo.test.ts)
+- commits en español, imperativo</code></pre>
+      </div>
+    </div>
+    <div class="okbox">Este fichero (con distintos nombres según la herramienta: <code>AGENTS.md</code>, <code>CLAUDE.md</code>, <code>.github/copilot-instructions.md</code>&#8230;) es el mejor retorno de esfuerzo de todo lo que veremos hoy: <b>20 minutos de escritura mejoran todas las sesiones del equipo</b>.</div>
+  </div>
+  <aside class="notes"><ul><li>Enseñar el fichero real de un proyecto conocido y contar qué se añadió después de cada error repetido.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="8 · Skills y contexto">
+  <h2>Memoria y decisiones: lo que hay que recordar entre sesiones</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card">
+          <h3>El problema</h3>
+          <p>Cada sesión empieza en blanco. Sin un mecanismo, repites el mismo contexto cada vez y el equipo aprende nada.</p>
+        </div>
+        <div class="card accent">
+          <h3>La solución: dos tipos de memoria</h3>
+          <ul class="tight">
+            <li><b>Decisiones</b> (tipo ADR): "usamos Postgres, no Mongo, por X". El agente debe respetarlas siempre.</li>
+            <li><b>Aprendizajes y notas</b>: descubrimientos, trampas conocidas, patrones del proyecto.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <pre style="font-size:15px"><code># decisión: ADR-014 cola de trabajos
+Fecha: 2026-09-02
+Estado: aceptada
+
+Contexto: los informes tardan 40 min y bloquean
+la API.
+Decisión: cola en Redis + workers propios.
+Consecuencias: +1 servicio; reintentos idempotentes.
+Alternativas descartadas: cron por cliente.</code></pre>
+        <div class="callout">Un ADR no es burocracia: es <b>el prompt más barato del mundo</b>. Cien palabras que evitan que la IA (y el nuevo compañero) vuelva a proponer lo que ya se descartó.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Idea: la memoria del agente debería ser mayoritariamente los ficheros del repositorio, no bases de datos opacas.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="8 · Skills y contexto">
+  <h2>Escribir la decisión antes de codificar</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card accent">
+          <h3>Especificar primero, en serio</h3>
+          <ol class="tight">
+            <li><b>Objetivo</b>: qué problema resuelve, en una frase.</li>
+            <li><b>Criterios de aceptación</b>: cómo sabremos que está bien (comprobables).</li>
+            <li><b>Restricciones</b>: rendimiento, compatibilidad, normativa, presupuesto.</li>
+            <li><b>Decisiones abiertas</b>: lo que aún no sabemos y hay que resolver.</li>
+            <li><b>Plan</b>: los pasos, en orden, con verificación en cada uno.</li>
+          </ol>
+          <p class="small">Con un agente, esto no es papeleo: es la diferencia entre 3 vueltas y 30.</p>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card ok">
+          <h3>Por qué funciona mejor con IA que sin ella</h3>
+          <ul class="tight">
+            <li>El agente no adivina tu intención: sigue lo que está escrito.</li>
+            <li>Puedes revisar el <b>plan</b> antes de gastar tokens en la ejecución.</li>
+            <li>Los criterios de aceptación se convierten en tests de forma natural.</li>
+            <li>Si la sesión se pierde, otro (o tú mañana) retoma el trabajo.</li>
+          </ul>
+        </div>
+        <div class="warnbox">Antipatrón extendido: "hazme una app de gestión de tareas" y esperar magia. Con un objetivo difuso el agente produce un borrador difuso, y luego nadie sabe por qué se decidió cada cosa.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Conectar con metodologías conocidas (spec-driven, design docs): no es nuevo, es la misma disciplina con un ejecutor incansable enfrente.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="8 · Skills y contexto">
+  <h2>Prompts que funcionan: la anatomía en seis piezas</h2>
+  <div class="body">
+    <table>
+      <thead><tr><th>Pieza</th><th>Pregunta que responde</th><th>Ejemplo</th></tr></thead>
+      <tbody>
+        <tr><td><b>Rol y objetivo</b></td><td>¿Quién eres y qué resultado quiero?</td><td>"Actúa como revisor de código. Quiero detectar bugs antes del merge."</td></tr>
+        <tr><td><b>Contexto</b></td><td>¿Qué necesitas saber?</td><td>"Este módulo gestiona facturación; los importes son en céntimos."</td></tr>
+        <tr><td><b>Entradas</b></td><td>¿Con qué trabajas?</td><td>Los ficheros, el error, el ejemplo, la captura.</td></tr>
+        <tr><td><b>Restricciones</b></td><td>¿Qué límites hay?</td><td>"Sin dependencias nuevas. Compatible con Python 3.11. No toques migraciones."</td></tr>
+        <tr><td><b>Formato de salida</b></td><td>¿Cómo quiero la respuesta?</td><td>"Tabla con: fichero, línea, problema, gravedad, propuesta."</td></tr>
+        <tr><td><b>Verificación</b></td><td>¿Cómo comprobamos que es correcto?</td><td>"Ejecuta los tests y muéstrame la salida. Si no puedes, dilo."</td></tr>
+      </tbody>
+    </table>
+    <div class="cols c2">
+      <div class="col"><div class="okbox">Si te falta tiempo, prioriza <b>objetivo + criterio de terminado + verificación</b>. Con eso solo ya estás por encima de la media.</div></div>
+      <div class="col"><div class="card"><h3>Truco del ejemplo</h3><p>Un ejemplo de entrada y salida esperada ahorra párrafos de explicación. Es la forma más barata de especificar formato y estilo.</p></div></div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Hacer el ejercicio en vivo: convertir una petición mala en una buena con las seis piezas.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="8 · Skills y contexto">
+  <h2>El stack completo: cómo encajan las piezas</h2>
+  <div class="body">
+    <div class="cols c4">
+      <div class="card"><h3>Modelo</h3><p>El motor. Se elige por tarea y se cambia cuando conviene.</p></div>
+      <div class="card accent"><h3>Harness</h3><p>Bucle, herramientas, permisos, contexto. Decide lo que es posible.</p></div>
+      <div class="card ok"><h3>Skills + convenciones</h3><p>El conocimiento del equipo, versionado en el repo.</p></div>
+      <div class="card warn"><h3>MCP / integraciones</h3><p>Los sistemas reales: tickets, datos, infraestructura, nube.</p></div>
+    </div>
+    <div class="flow" style="margin-top:4px">
+      <span class="node">Repositorio (convenciones, skills, ADRs)</span><span class="arrow">+</span>
+      <span class="node">Harness</span><span class="arrow">+</span>
+      <span class="node">Modelo adecuado</span><span class="arrow">=</span>
+      <span class="node">Trabajo verificable</span>
+    </div>
+    <div class="callout">Todo lo que rodea al modelo es <b>tuyo, portable y acumulativo</b>. Cambiar de modelo mañana es una línea de configuración; perder tus skills y convenciones sería empezar de cero.</div>
+  </div>
+  <aside class="notes"><ul><li>Cerrar la parte 2 con esta imagen: es la arquitectura de trabajo que vamos a aplicar en la parte 3.</li></ul></aside>
+</section>

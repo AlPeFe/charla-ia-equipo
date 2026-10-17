@@ -1,0 +1,306 @@
+<!-- ============ MÓDULO 10 · DESPLIEGUE Y APLICACIONES ============ -->
+<section class="slide" data-module="10 · Despliegue y apps">
+  <h2>Del "funciona en mi máquina" a producción</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card">
+          <h3>Dónde se va el tiempo de verdad</h3>
+          <ul class="tight">
+            <li>Montar el esqueleto de un servicio nuevo (otra vez desde cero).</li>
+            <li>Escribir y depurar Dockerfiles, Helm charts, Terraform.</li>
+            <li>Pelearse con la pipeline: cachés, matrices, secretos, permisos.</li>
+            <li>Entender por qué algo falla en el entorno de pruebas y no en local.</li>
+            <li>Diagnosticar en logs y métricas a las 3 de la mañana.</li>
+            <li>Repetir tareas de mantenimiento: dependencias, certificados, cuotas, backups.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card accent">
+          <h3>Tres principios para automatizar sin romper nada</h3>
+          <ol class="tight">
+            <li><b>Idempotencia</b>: ejecutarlo dos veces no puede ser peor que una.</li>
+            <li><b>Todo como código</b>: si no está en el repositorio, no existe.</li>
+            <li><b>Un entorno igual a producción</b>: los "y en local va" cuestan semanas al año.</li>
+          </ol>
+        </div>
+        <div class="callout">La IA acelera muchísimo el <b>texto</b> de la infraestructura (Dockerfile, YAML, pipelines). Para los cambios de estado reales, revisión y plan antes de aplicar.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Preguntar: ¿cuál es el mayor dolor de despliegue del equipo? Anotarlo y usarlo como ejemplo en el taller.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="10 · Despliegue y apps">
+  <h2>Esqueletos y plantillas: empezar a la décima parte del tiempo</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card ok">
+          <h3>Qué automatizar</h3>
+          <ul class="tight">
+            <li>Un <b>servicio nuevo</b> con la estructura del equipo: carpetas, lint, tests, CI, Dockerfile, healthcheck, logs.</li>
+            <li>Un <b>módulo o caso de uso</b> dentro de un proyecto existente.</li>
+            <li>Una <b>migración</b> de base de datos con su versión de vuelta atrás.</li>
+            <li>Un <b>endpoint</b> con validación, errores y tests.</li>
+            <li>Un <b>informe</b> o exportación periódica.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card accent">
+          <h3>El formato que mejor funciona</h3>
+          <p>Una <b>skill</b> con la plantilla de verdad (ficheros dentro) + un comando de generación. Resultado: 20 minutos en lugar de un día, y con las decisiones ya tomadas (observabilidad, configuración, seguridad).</p>
+          <p class="small">Ventaja secundaria enorme: todos los servicios nacen iguales, con lo que mantenerlos también se vuelve más barato.</p>
+        </div>
+        <div class="okbox">Es el mejor sitio para empezar: riesgo casi nulo, beneficio inmediato y visible para todo el equipo.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Idea para el taller: crear juntos el "esqueleto oficial" del equipo.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="10 · Despliegue y apps">
+  <h2>Contenedores sin dolor</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card">
+          <h3>En lo que ayuda mucho</h3>
+          <ul class="tight">
+            <li>Dockerfile multietapa optimizado (imágenes de 1,2 GB &#8594; 120 MB).</li>
+            <li>Caché de capas bien ordenada (dependencias antes que código).</li>
+            <li>Usuario no root, imagen base mínima, <code>.dockerignore</code> decente.</li>
+            <li>Diagnóstico de "por qué el contenedor arranca y se muere".</li>
+            <li>Compose para desarrollo local con bases de datos y colas.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card bad">
+          <h3>Lo que hay que revisar siempre</h3>
+          <ul class="tight">
+            <li><b>Secretos</b> dentro de la imagen o en capas intermedias.</li>
+            <li>Dependencias nuevas sin licencia compatible.</li>
+            <li>Etiquetas <code>latest</code>: fija versiones o no podrás reproducir nada.</li>
+            <li>Escaneo de vulnerabilidades de la imagen antes de subirla.</li>
+          </ul>
+        </div>
+        <div class="warnbox">Regla: la IA propone el Dockerfile, tú revisas <b>qué se instala, de dónde y con qué permisos</b>. Es una frontera de seguridad, no un fichero de texto más.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Comentar el clásico: contenedor de 2 GB con compiladores y credenciales dentro.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="10 · Despliegue y apps">
+  <h2>Infraestructura como código: el plan manda</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card accent">
+          <h3>Flujo seguro con IaC</h3>
+          <ol class="tight">
+            <li>Escribir o modificar el módulo (Terraform, Pulumi, Helm, Ansible&#8230;).</li>
+            <li><b>Leer el plan/diff</b>: qué se crea, qué se destruye, qué se reemplaza.</li>
+            <li>Revisión de otra persona para cambios destructivos.</li>
+            <li>Aplicar en desarrollo, luego en producción.</li>
+            <li>Detectar y corregir la deriva (<em>drift</em>) entre código y realidad.</li>
+          </ol>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card bad">
+          <h3>Que la IA revisione el plan, sí; que lo aplique, no</h3>
+          <ul class="tight">
+            <li>Un <code>plan</code> con 12 recursos a destruir es la señal de alarma número uno.</li>
+            <li>Cambios de red, permisos IAM y borrado de discos: siempre con humano delante.</li>
+            <li>Los bucles de "aplicar y rezar" queman cuotas y credibilidad.</li>
+          </ul>
+        </div>
+        <div class="okbox">Uso excelente: pedirle que <b>lea el plan</b> y explique en lenguaje claro qué va a pasar, qué es irreversible y qué no. Reduce sustos considerablemente.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Experiencia típica: agentes que aplican cambios de infra sin leer el plan. Prohibido.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="10 · Despliegue y apps">
+  <h2>CI/CD: donde más se nota</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card ok">
+          <h3>Tareas ideales</h3>
+          <ul class="tight">
+            <li>Escribir la pipeline desde cero para un proyecto nuevo.</li>
+            <li>Añadir etapas de calidad: lint, tipos, tests, cobertura, escaneo de dependencias.</li>
+            <li>Acelerar: cachés, paralelización, matrices, saltar trabajos irrelevantes.</li>
+            <li>Arreglar workflows rojos intermitentes (la pesadilla recurrente).</li>
+            <li>Automatizar versionado y publicación de releases con notas generadas.</li>
+            <li>Gestionar secretos correctamente (nunca en el YAML).</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card">
+          <h3>Y el salto cualitativo</h3>
+          <ul class="tight">
+            <li><b>Hooks</b>: que un agente revise cada PR automáticamente y comente hallazgos.</li>
+            <li><b>Corrección de fallos sencillos</b> en CI por el propio agente (formato, imports, versiones).</li>
+            <li><b>Informe semanal</b>: tiempo de pipeline, fallos por causa, deuda acumulada.</li>
+            <li><b>Actualización de dependencias</b> con revisión de cambios incompatibles.</li>
+          </ul>
+        </div>
+        <div class="callout">Métrica para defender este trabajo: <b>tiempo desde el commit hasta producción</b>. Es fácil de medir y baja muchísimo con estas automatizaciones.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Si el equipo usa GitHub/GitLab, mencionar los workflows concretos y el bot de revisión.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="10 · Despliegue y apps">
+  <h2>Observabilidad y diagnóstico: la IA como compañera de guardia</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card accent">
+          <h3>Lo que hace muy bien</h3>
+          <ul class="tight">
+            <li>Resumir 5.000 líneas de log y señalar la anomalía.</li>
+            <li>Correlacionar un pico de latencia con errores concretos y con el último despliegue.</li>
+            <li>Proponer consultas para el sistema de métricas o búsquedas de trazas.</li>
+            <li>Escribir dashboards y alertas a partir de una descripción.</li>
+            <li>Redactar el postmortem sin culpa a partir de la cronología real.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card warn">
+          <h3>Precauciones</h3>
+          <ul class="tight">
+            <li>Los logs contienen datos personales, tokens y direcciones: <b>revisa antes de pegarlos</b> (o usa herramientas con acceso controlado).</li>
+            <li>Un resumen sin el contexto del sistema puede llevar a conclusiones falsas.</li>
+            <li>Las alertas generadas hay que calibrarlas: alertas ruidosas se ignoran y entonces no sirven.</li>
+          </ul>
+        </div>
+        <div class="okbox">Buen patrón: guardar los <b>runbooks</b> como skills del repositorio, con los comandos exactos de diagnóstico del equipo. En una incidencia nadie quiere improvisar.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Recordar el punto de datos personales: es el riesgo legal más común y más fácil de evitar.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="10 · Despliegue y apps">
+  <h2>Entornos, datos y vuelta atrás</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card">
+          <h3>Lo aburrido que hay que tener resuelto</h3>
+          <ul class="tight">
+            <li><b>Datos de prueba</b> realistas y sin datos personales (generados o anonimizados).</li>
+            <li><b>Migraciones</b> idempotentes y con plan de reversión probado.</li>
+            <li><b>Interruptores de funcionalidad</b> (<em>feature flags</em>) para poder apagar sin desplegar.</li>
+            <li><b>Rollback</b> de una línea, y probado de vez en cuando.</li>
+            <li><b>Paridad</b> entre entornos: mismas versiones, misma configuración, misma infraestructura.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card accent">
+          <h3>Dónde encaja la IA</h3>
+          <ul class="tight">
+            <li>Generar los datos de prueba y los <em>seeds</em> de desarrollo.</li>
+            <li>Revisar migraciones en busca de bloqueos, pérdida de datos o cambios incompatibles.</li>
+            <li>Documentar el procedimiento de rollback y convertirlo en skill.</li>
+            <li>Detectar diferencias de configuración entre entornos (una fuente inagotable de fallos).</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Preguntar: ¿cuántas veces habéis rodado atrás en producción? ¿Estaba probado?</li></ul></aside>
+</section>
+
+<section class="slide" data-module="10 · Despliegue y apps">
+  <h2>Seguridad en el camino a producción</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card bad">
+          <h3>Los cinco fallos clásicos (todos evitables)</h3>
+          <ol class="tight">
+            <li><b>Secretos</b> en el repositorio, en imágenes o en chats de IA.</li>
+            <li><b>Permisos excesivos</b>: el pipeline puede borrar lo que no debería.</li>
+            <li><b>Dependencias</b> sin auditar, con licencias incompatibles o abandonadas.</li>
+            <li><b>Infraestructura expuesta</b>: buckets abiertos, puertos a internet, bases de datos sin autenticación.</li>
+            <li><b>Confiar en la salida de un agente</b> que tiene credenciales reales.</li>
+          </ol>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card ok">
+          <h3>Automatización defensiva</h3>
+          <ul class="tight">
+            <li>Escaneo de secretos en cada PR (y rotación inmediata si algo se cuela).</li>
+            <li>Escaneo de dependencias y generación de inventario (SBOM).</li>
+            <li>Análisis de IaC antes de aplicar (configuraciones inseguras).</li>
+            <li>Permisos de la pipeline por entorno, con aprobación manual para producción.</li>
+            <li>Credenciales efímeras para agentes, nunca tus claves personales.</li>
+          </ul>
+        </div>
+        <div class="callout">Esto es exactamente lo que un agente puede <b>redactar y mantener</b> muy bien: la configuración es texto y los criterios son conocidos.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Si hay equipo de seguridad, invitarles a revisar la parte de pipeline antes de adoptarla.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="10 · Despliegue y apps">
+  <h2>Métricas: cómo sabemos si esto sirve</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <table>
+          <thead><tr><th>Métrica</th><th>Qué mide</th><th>Cómo obtenerla</th></tr></thead>
+          <tbody>
+            <tr><td>Tiempo de commit a producción</td><td>Fricción total del proceso</td><td>Del sistema de CI/CD</td></tr>
+            <tr><td>Frecuencia de despliegue</td><td>Ritmo real del equipo</td><td>Historial de releases</td></tr>
+            <tr><td>Tiempo de restauración (MTTR)</td><td>Calidad de la respuesta a incidentes</td><td>Registro de incidencias</td></tr>
+            <tr><td>Fallos de pipeline por causa</td><td>Dónde invertir en automatizar</td><td>Logs de CI</td></tr>
+            <tr><td>Horas manuales por tarea repetitiva</td><td>El retorno de automatizarla</td><td>Estimación honesta + cronómetro</td></tr>
+            <tr><td>Coste de tokens por tarea</td><td>Eficiencia del uso de IA</td><td>Paneles del proveedor</td></tr>
+            <tr><td>% de PRs con revisión asistida</td><td>Adopción real</td><td>Etiqueta en el PR</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="col">
+        <div class="card accent">
+          <h3>Cómo presentarlo a la dirección</h3>
+          <ul class="tight">
+            <li>Antes / después, con la misma tarea y la misma persona.</li>
+            <li>Una cifra que duele: horas al mes perdidas en algo concreto.</li>
+            <li>Nada de "hemos usado IA": cifras de proceso, ahorro de tiempo, reducción de incidentes.</li>
+          </ul>
+        </div>
+        <div class="okbox">Regla honesta: no midas "líneas generadas". Mide <b>tiempo hasta un resultado verificado</b>.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Evitar métricas vanidosas. Es la mejor forma de que la adopción no se convierta en un circo.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="10 · Despliegue y apps">
+  <h2>Idea clave del bloque</h2>
+  <div class="body center" style="justify-content:center">
+    <div class="quote" style="max-width:1020px;font-size:29px">Automatiza el <b>camino a producción</b>, no sólo el código.<br>Ahí está el tiempo que el equipo pierde cada semana.</div>
+    <div class="cols c3" style="max-width:1150px">
+      <div class="card"><h3>Empieza por plantillas</h3><p>Servicio nuevo, endpoint nuevo, migración: riesgo cero, beneficio inmediato.</p></div>
+      <div class="card"><h3>Sigue por la pipeline</h3><p>Etapas, cachés, escaneos, releases: texto puro, muy automatizable.</p></div>
+      <div class="card"><h3>Y mide</h3><p>Tiempo hasta producción y MTTR. Si no baja, no ha servido.</p></div>
+    </div>
+  </div>
+  <aside class="notes"><ul><li>Puente al bloque de automatización general: llevar el mismo enfoque a todo lo repetitivo, no sólo a la infraestructura.</li></ul></aside>
+</section>
