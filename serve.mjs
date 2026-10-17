@@ -7,7 +7,8 @@ import { fileURLToPath } from 'node:url';
 import { spawn } from 'node:child_process';
 
 const root = path.dirname(fileURLToPath(import.meta.url));
-const port = Number(process.argv[2] || process.env.PORT || 5180);
+const args = process.argv.slice(2).filter((a) => !a.startsWith('-'));
+const port = Number(args[0] || process.env.PORT || 5180) || 5180;
 const mime = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8',
   '.json': 'application/json; charset=utf-8', '.md': 'text/markdown; charset=utf-8', '.png': 'image/png', '.jpg': 'image/jpeg',
   '.svg': 'image/svg+xml', '.pdf': 'application/pdf', '.ico': 'image/x-icon' };
