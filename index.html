@@ -913,7 +913,7 @@ r = 8, 16, 32, 64...  &#8594; 0,1%&#8211;1% de los parámetros</code></pre>
         </div>
       </div>
     </div>
-    <div class="callout">Variantes de la misma familia: <b>DoRA</b> (separa magnitud y dirección), <b>LoHa/LoKr</b>, adaptadores clásicos, <em>prefix/prompt tuning</em> (sólo aprende vectores) e <b>IA3</b>. Todas comparten la idea: tocar poquísimo para cambiar mucho.</div>
+    <div class="callout">Si vas a entrenar de verdad, el taller concreto está en las tres diapositivas siguientes. Variantes de la misma familia: <b>DoRA</b> (separa magnitud y dirección), <b>LoHa/LoKr</b>, adaptadores clásicos, <em>prefix/prompt tuning</em> (sólo aprende vectores) e <b>IA3</b>. Todas comparten la idea: tocar poquísimo para cambiar mucho.</div>
   </div>
   <aside class="notes"><ul>
     <li>Herramientas habituales: PEFT/TRL, Unsloth, Axolotl. En imagen: kohya-ss / OneTrainer.</li>
@@ -966,6 +966,119 @@ r = 8, 16, 32, 64...  &#8594; 0,1%&#8211;1% de los parámetros</code></pre>
   <aside class="notes"><ul>
     <li>Cerrar: el adaptador es un artefacto de software más, con dueño, versión y evaluación.</li>
     <li>Si nadie lo va a mantener, no se entrena: se resuelve con contexto.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="2 · Cómo aprende">
+  <div class="kicker">Entrenamiento · herramientas</div>
+  <h2>El taller: con qué se entrena hoy</h2>
+  <div class="body compact">
+    <table class="xxs" style="font-size:13.2px">
+      <thead><tr><th>Herramienta</th><th>Qué rol cumple</th><th>La eliges cuando&#8230;</th></tr></thead>
+      <tbody>
+        <tr><td><b>Transformers</b> (Hugging Face)</td><td>El estándar para cargar modelos y tokenizadores de casi todo el ecosistema</td><td>Siempre está debajo; es la base sobre la que trabajan las demás</td></tr>
+        <tr><td><b>PEFT</b></td><td>Implementación de referencia de adaptadores (LoRA, QLoRA y familia)</td><td>Quieres control fino y no depender de nada más</td></tr>
+        <tr><td><b>TRL</b></td><td>Entrenamiento y alineación: ajuste supervisado, DPO, RL (GRPO&#8230;)</td><td>Cuando el objetivo no es sólo imitar ejemplos, sino optimizar preferencias o recompensas</td></tr>
+        <tr><td><b>Unsloth</b></td><td>Núcleos optimizados y flujo simplificado: mucho menos tiempo y memoria, con la misma precisión</td><td><b>Cuando tu GPU es modesta</b> y quieres resultados sin montar un clúster (lo vemos en la siguiente diapositiva)</td></tr>
+        <tr><td><b>Axolotl</b></td><td>Pipelines de entrenamiento completos descritos en un fichero de configuración</td><td>Quieres repetir y versionar la receta sin escribir código</td></tr>
+        <tr><td><b>torchtune</b></td><td>Recetas nativas de PyTorch, más orientadas a quien quiere entender cada pieza</td><td>Preferís estar cerca del framework base</td></tr>
+        <tr><td><b>Accelerate / DeepSpeed / FSDP</b></td><td>Repartir el entrenamiento entre varias GPUs y ahorrar memoria</td><td>El modelo o el lote no caben en una sola tarjeta</td></tr>
+        <tr><td><b>Diffusers</b>, <b>kohya</b>, <b>OneTrainer</b></td><td>El equivalente para modelos de imagen y vídeo (LoRAs de estilo o personaje)</td><td>Entrenas difusión, no lenguaje (bloque de ComfyUI)</td></tr>
+        <tr><td><b>llama.cpp</b>, <b>Ollama</b>, <b>vLLM</b></td><td>Servir e inferir el modelo resultante (local o en servidor)</td><td>Ya has entrenado y quieres usarlo desde una app o un harness</td></tr>
+      </tbody>
+    </table>
+    <div class="okbox">La mayoría de los equipos no necesita más de dos de estas piezas: <b>algo que entrene</b> (Unsloth, PEFT+TRL o Axolotl) y <b>algo que sirva</b> (Ollama o vLLM). El resto es para casos concretos.</div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Mensaje: el ecosistema es maduro. Entrenar un adaptador hoy es una tarde de trabajo, no un proyecto de investigación.</li>
+    <li>Si preguntan por diferencias entre PEFT y Unsloth: el primero es la implementación de referencia, el segundo optimiza para que quepa y corra rápido.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="2 · Cómo aprende">
+  <div class="kicker">Entrenamiento · Unsloth</div>
+  <h2>Unsloth: el atajo para entrenar (y ejecutar) en local <span class="tag ok">datos de su repositorio</span></h2>
+  <div class="body compact">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card accent">
+          <h3>Qué es</h3>
+          <p>Un proyecto de código abierto que acelera el entrenamiento de modelos con <b>núcleos propios y un flujo simplificado</b>: menos memoria y menos tiempo para el mismo resultado. Hoy se distribuye de tres maneras:</p>
+          <ul class="tight">
+            <li><b>Unsloth Desktop</b>: aplicación de escritorio para ejecutar <em>y</em> entrenar modelos.</li>
+            <li><b>Unsloth Studio</b>: interfaz web (incluida en contenedor, con soporte de GPU).</li>
+            <li><b>Unsloth Core</b>: la librería, para integrarla en tu propio código.</li>
+          </ul>
+          <p class="small">Sus cifras publicadas: hasta <b>2&#215; más rápido con alrededor de un 70% menos de memoria</b>, sin pérdida de precisión, y ahorros aún mayores en configuraciones de refuerzo. Son sus números, no una medición independiente.</p>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card">
+          <h3>Qué cubre (y por qué importa)</h3>
+          <ul class="tight">
+            <li><b>Métodos</b>: LoRA, QLoRA, entrenamiento completo, preentrenamiento, <b>RL (GRPO, DPO)</b> y FP8.</li>
+            <li><b>Tipos de modelo</b>: lenguaje, difusión de imagen y vídeo, decisión, voz y embeddings.</li>
+            <li><b>Dónde corre</b>: Windows, Linux, WSL y macOS; varias GPUs; NVIDIA, AMD, Intel, CPU y Vulkan; también imagen de contenedor oficial.</li>
+            <li><b>Datos</b>: utilidades para construir conjuntos de entrenamiento desde PDF, CSV o documentos de texto.</li>
+            <li><b>Salida</b>: exporta a <b>GGUF</b> (para Ollama y llama.cpp), FP8, NVFP4&#8230; y sirve con API compatible con la de OpenAI, en local o por red.</li>
+            <li><b>Puente con el harness</b>: incluye comandos para enchufar un modelo local a agentes como Claude Code, Codex o Pi (el nuestro).</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="warnbox">Y lo de siempre, que el rendimiento no arregla: <b>el resultado depende del dataset y de la evaluación</b>. Entrenar rápido datos malos sólo produce basura antes.</div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Por qué lo menciono aquí: es lo que hace realista el QLoRA para un equipo sin clúster. Entrenas en tu GPU y ejecutas en tu máquina.</li>
+    <li>Detalle bonito para el equipo: el modelo local se puede enchufar al harness que ya usamos.</li>
+    <li>Nota de honestidad: las cifras (2&#215; velocidad, ~70% menos memoria) son las que publica el propio proyecto.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="2 · Cómo aprende">
+  <div class="kicker">Entrenamiento · receta</div>
+  <h2>Receta mínima: de tu dataset a un modelo que funciona</h2>
+  <div class="body compact">
+    <div class="cols c2">
+      <div class="col">
+        <ol class="tight" style="font-size:17.2px;gap:6px">
+          <li><b>Objetivo y criterio</b>: qué debe mejorar y cómo se comprueba.</li>
+          <li><b>Dataset</b>: cientos de ejemplos buenos y limpios, no miles de dudosos. Aquí está el 80% del resultado.</li>
+          <li><b>Base</b>: un modelo reciente y pequeño de la familia que ya uses. Mejor base, mejor adaptador.</li>
+          <li><b>Cargar y configurar</b>: base en 4 bits si el QLoRA, adaptador con r y alpha moderados.</li>
+          <li><b>Entrenar</b>: pocas épocas, ritmo de aprendizaje bajo, lotes pequeños con acumulación de gradiente.</li>
+          <li><b>Evaluar</b>: tu banco de casos, comparando base contra adaptador y buscando regresiones.</li>
+          <li><b>Exportar</b>: adaptador suelto o fusionado; formato cuantizado para uso local.</li>
+          <li><b>Servir y versionar</b>: API o runner local, y al repositorio la receta, el dataset y el informe.</li>
+        </ol>
+      </div>
+      <div class="col">
+        <pre style="font-size:13.5px"><code>modelo, tok = cargar("&lt;base&gt;", 4bits=True)      # QLoRA
+modelo = aplicar_lora(modelo, r=16, alpha=16,
+                      dropout=0.05)              # sólo ~1% pesos
+entrenar(modelo, dataset, epocas=2, lr=1e-4,
+         batch=1, acumulacion=8)
+evaluar(modelo, banco_propio)                    # base vs adaptador
+exportar(modelo, formato="gguf", cuant="Q4")     # Ollama / llama.cpp</code></pre>
+        <div class="card">
+          <h3>Puntos de partida razonables <span class="tag warn">orientativo</span></h3>
+          <table style="font-size:15px">
+            <tbody>
+              <tr><td>rank / alpha</td><td class="num">16 / 16&#8211;32</td></tr>
+              <tr><td>dropout</td><td class="num">0,05</td></tr>
+              <tr><td>épocas</td><td class="num">1&#8211;3</td></tr>
+              <tr><td>ritmo de aprendizaje</td><td class="num">1e-4&#8211;2e-4</td></tr>
+              <tr><td>ejemplos mínimos útiles</td><td class="num">cientos</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>El paso 2 es donde se gana o se pierde el proyecto. Lo demás es mecánica.</li>
+    <li>Si alguien quiere probar este fin de semana: modelo pequeño + dataset propio de 200 ejemplos + evaluación de 30 casos. Es alcanzable.</li>
+    <li>El bloque de código es un esquema: la API exacta de cada librería, en su documentación (cambian a menudo).</li>
   </ul></aside>
 </section>
 
@@ -2908,6 +3021,7 @@ modelo = [bloque] * N_capas</code></pre>
             <li>Modelo abierto + runner local + un cliente que hable con él.</li>
             <li>Para datos que no pueden salir y para probar sin gastar cuota.</li>
             <li>Menos calidad que un modelo frontera: elige bien la tarea.</li>
+            <li>Cada vez hay atajos para enchufar ese modelo local a un harness (por ejemplo, los comandos de Unsloth para Claude Code, Codex o Pi).</li>
           </ul>
         </div>
       </div>

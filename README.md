@@ -45,13 +45,13 @@ Enlace directo a una diapositiva: `index.html#/42`.
 
 ---
 
-## Contenido: 167 diapositivas en 16 módulos
+## Contenido: 170 diapositivas en 16 módulos
 
 | Módulo | Diapositivas | Contenido |
 |---|---|---|
 | 0 · Encuadre | 6 | Objetivos, agenda de 4 h, reglas del juego |
 | 1 · Qué es la IA | 8 | Definiciones, los tres saltos (transformer, ChatGPT, agentes), taxonomía, glosario |
-| 2 · Cómo aprende | 14 | Datos, pérdida, gradientes, sobreajuste, las 4 fases, **fine-tuning, LoRA y QLoRA** |
+| 2 · Cómo aprende | 17 | Datos, pérdida, gradientes, sobreajuste, las 4 fases, **fine-tuning, LoRA y QLoRA**, **herramientas de entrenamiento (Unsloth, PEFT, TRL, Axolotl…)**, Unsloth en detalle y receta mínima paso a paso |
 | 3 · Anatomía de un LLM | 10 | Tokens, embeddings, atención, bloques, muestreo, multimodalidad |
 | 4 · Inferencia | 14 | Prefill/decode, KV cache, cuantización, razonamiento, precios, hardware, API vs propio |
 | 5 · Arquitecturas | 11 | Densa vs MoE, CNN, RNN/LSTM, tres familias de transformer, alternativas, otros modelos |
@@ -112,6 +112,15 @@ Clases útiles: `cols c2` / `c3` / `c4` (columnas), `card`, `callout`, `okbox`, 
 > recorta lo que no cabe. Cambia a `body compact` o divide la diapositiva en dos.
 
 ---
+
+## Fuentes de las cifras (y su fecha)
+
+- **Panorama de modelos** (laboratorios, precios, contexto, pesos abiertos): API pública de OpenRouter,
+  snapshot del **17-oct-2026**, guardado en `datos/`.
+- **Unsloth** (velocidad, memoria, formatos, plataformas): datos publicados por el propio proyecto en su
+  repositorio, consultados en la misma fecha. En la diapositiva se indica que son sus cifras.
+- **Arquitecturas, inferencia, difusión y buenas prácticas**: conocimiento estable, sin cifras volátiles.
+- Todo dato que caduca lleva fecha en la propia diapositiva. Revisa antes de reutilizar el material.
 
 ## Refrescar el panorama de modelos
 
