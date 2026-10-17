@@ -81,6 +81,99 @@ configuración de despliegue.</code></pre>
 </section>
 
 <section class="slide" data-module="9 · Skills y contexto">
+  <h2>El catálogo que todo equipo acaba teniendo (I · código)</h2>
+  <div class="body compact">
+    <table class="xxs" style="font-size:13.2px">
+      <thead><tr><th>Skill</th><th>Para qué</th><th>Criterio de terminado</th></tr></thead>
+      <tbody>
+        <tr><td><code>mapear-repo</code></td><td>Explorar un repositorio desconocido y escribir la arquitectura, el flujo principal y los acoplamientos peligrosos</td><td>Existe <code>docs/arquitectura.md</code> y una afirmación verificada a mano</td></tr>
+        <tr><td><code>revisar-pr</code> / <code>preparar-pr</code></td><td>Auto-revisión antes de pedir revisión humana (tests, lint, criterios, riesgos) y preparar rama, commits atómicos y descripción</td><td>Todo en verde y PR abierto con un resumen de lo que debe mirar una persona</td></tr>
+        <tr><td><code>escribir-tests</code></td><td>Caracterizar comportamiento actual y cubrir casos límite (vacíos, ceros, duplicados, concurrencia)</td><td>Al menos un test que has visto fallar antes de arreglar el código</td></tr>
+        <tr><td><code>reproducir-bug</code></td><td>Construir el script mínimo que reproduce el fallo</td><td>Existe un comando que falla de forma reproducible</td></tr>
+        <tr><td><code>subir-dependencias</code></td><td>Actualizar versiones, arreglar incompatibilidades y leer los cambios importantes</td><td>Tests y lint en verde, y una nota con las incompatibilidades encontradas</td></tr>
+        <tr><td><code>revisar-migraciones</code></td><td>Detectar bloqueos, pérdida de datos, cambios no reversibles y ausencia de plan de vuelta atrás</td><td>Informe con riesgos y la versión de reversión probada</td></tr>
+        <tr><td><code>nuevo-servicio</code> / <code>nuevo-endpoint</code></td><td>Crear el esqueleto oficial del equipo: estructura, configuración, logs, healthcheck, CI</td><td>Arranca en local con un comando y pasa la pipeline</td></tr>
+        <tr><td><code>revisar-seguridad</code></td><td>Buscar secretos, permisos excesivos, dependencias sin auditar y entradas sin validar</td><td>Lista de hallazgos con gravedad y propuesta concreta</td></tr>
+        <tr><td><code>documentar-decision</code></td><td>Convertir una conversación de diseño en un documento de decisión (contexto, opciones, consecuencias)</td><td>Documento en el repositorio, revisado</td></tr>
+      </tbody>
+    </table>
+    <div class="okbox" style="font-size:16.5px;padding:10px 14px">Estas diez cubren la mayor parte del día a día de un equipo de desarrollo. Empieza por <b>mapear-repo, revisar-pr y escribir-tests</b>: mayor retorno y menor riesgo.</div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Pedir al grupo que elija tres: se escriben en el taller.</li>
+    <li>Detalle clave: todas terminan con una <b>comprobación</b>, no con "código generado".</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="9 · Skills y contexto">
+  <h2>El catálogo que todo equipo acaba teniendo (II · proceso y negocio)</h2>
+  <div class="body compact">
+    <table class="xxs" style="font-size:13.2px">
+      <thead><tr><th>Skill</th><th>Para qué</th><th>Criterio de terminado</th></tr></thead>
+      <tbody>
+        <tr><td><code>runbook-incidencia</code></td><td>Síntomas, diagnóstico, mitigación y escalado, con los comandos exactos del equipo</td><td>Documento publicado y ensayado en una incidencia real</td></tr>
+        <tr><td><code>triaje-alerta</code></td><td>Leer logs y métricas de una alerta y proponer las tres causas más probables</td><td>Hipótesis ordenadas, cada una con cómo comprobarla</td></tr>
+        <tr><td><code>informe-mensual</code></td><td>Extraer datos, calcular, formatear y dejar el informe listo para revisar</td><td>Informe generado, con la lista de incidencias de datos</td></tr>
+        <tr><td><code>notas-de-release</code></td><td>Changelog y notas de versión a partir de commits, PRs y tickets</td><td>Notas revisadas y publicadas con la release</td></tr>
+        <tr><td><code>altas-y-bajas</code></td><td>Provisionar usuarios, permisos y entornos con el procedimiento del equipo</td><td>Accesos verificados y registro de quién pidió qué</td></tr>
+        <tr><td><code>calidad-de-datos</code></td><td>Detectar duplicados, huecos, formatos raros y valores imposibles en un conjunto de datos</td><td>Informe con incidencias cuantificadas y ejemplos</td></tr>
+        <tr><td><code>responder-consultas</code></td><td>Responder preguntas recurrentes del equipo a partir de vuestra documentación, siempre con la fuente citada</td><td>Respuesta con enlace al documento original</td></tr>
+        <tr><td><code>acta-y-tareas</code></td><td>Convertir una reunión (o su transcripción) en acta, decisiones y tareas con responsable</td><td>Acta revisada y tareas creadas en el sistema de trabajo</td></tr>
+        <tr><td><code>onboarding</code></td><td>Guía para una persona nueva: accesos, entorno, primer ticket, a quién preguntar</td><td>Alguien nuevo arranca el proyecto en un día</td></tr>
+        <tr><td><code>revisar-requisitos-de-cliente</code></td><td>Comprobar cláusulas que nos afectan: confidencialidad, RGPD, uso de IA, accesibilidad, licencias</td><td>Checklist cumplimentada y firmada por una persona</td></tr>
+      </tbody>
+    </table>
+    <div class="warnbox">Estas skills no generan código: <b>eliminan preguntas repetidas y errores de procedimiento</b>. Suele ser el mayor ahorro real de un equipo, y el que nadie documenta hasta que se va alguien.</div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Conectar con el ejercicio de inventario del bloque de automatización: muchas tareas repetitivas acaban siendo una de estas skills.</li>
+    <li>La de onboarding es la más agradecida: se escribe una vez y la usan todas las incorporaciones.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="9 · Skills y contexto">
+  <h2>Cómo se comparten y evolucionan (o mueren)</h2>
+  <div class="body compact">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card accent">
+          <h3>Organización que funciona</h3>
+          <ul class="tight">
+            <li><b>Un repositorio de skills del equipo</b> (o una carpeta en el repo principal), versionado con git.</li>
+            <li>Una carpeta por skill, con su fichero de instrucciones y sus recursos; nombres claros.</li>
+            <li><b>Dueño por skill</b>. Sin dueño, se pudre. E instalación trivial: clonar y listo.</li>
+            <li>Un <b>índice</b> con descripción, dueño y fecha de última revisión.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card">
+          <h3>Reglas de convivencia</h3>
+          <ul class="tight">
+            <li>Se revisan como código: PR, una persona que las pruebe antes de mezclar.</li>
+            <li>Cambios anunciados: si una skill cambia de criterio, avisar (aquí se rompen confianzas).</li>
+            <li><b>Borrar</b> las que ya no se usan. Veinte skills activas son mejores que doscientas olvidadas.</li>
+            <li>Prohibido meter secretos, credenciales o datos de clientes dentro de una skill.</li>
+          </ul>
+        </div>
+        <div class="card warn">
+          <h3>Antipatrones del catálogo</h3>
+          <ul class="tight">
+            <li>Una persona con 40 skills que nadie más usa.</li>
+            <li>Skills de 300 líneas que nadie lee: ahí se cuelan instrucciones peligrosas.</li>
+            <li>Copiar skills de terceros sin leerlas: son código, no texto decorativo.</li>
+            <li>Medirlas por número y no por uso: <em>¿cuántas veces se ha usado y qué ha ahorrado?</em></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Comparar con los scripts internos: mismo destino si nadie los mantiene. La diferencia es que una skill también <em>documenta</em> el proceso.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="9 · Skills y contexto">
   <h2>El fichero de convenciones del proyecto</h2>
   <div class="body">
     <div class="cols c2">

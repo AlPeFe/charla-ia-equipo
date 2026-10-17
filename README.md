@@ -45,7 +45,7 @@ Enlace directo a una diapositiva: `index.html#/42`.
 
 ---
 
-## Contenido: 159 diapositivas en 16 módulos
+## Contenido: 167 diapositivas en 16 módulos
 
 | Módulo | Diapositivas | Contenido |
 |---|---|---|
@@ -57,8 +57,8 @@ Enlace directo a una diapositiva: `index.html#/42`.
 | 5 · Arquitecturas | 11 | Densa vs MoE, CNN, RNN/LSTM, tres familias de transformer, alternativas, otros modelos |
 | 6 · Difusión y ComfyUI | 9 | Difusión paso a paso, checkpoints/VAE/LoRA/ControlNet, ComfyUI, flujos de equipo, LoRA de imagen, vídeo y audio |
 | 7 · Panorama 2026 | 12 | Laboratorios, modelos punteros, precios, pesos abiertos, benchmarks, riesgos |
-| 8 · Harness y agentes | 12 | Bucle, herramientas, contexto, permisos, ecosistema, MCP, paralelismo, coste |
-| 9 · Skills y contexto | 7 | Skills, fichero de convenciones, memoria, ADRs, anatomía del prompt |
+| 8 · Harness y agentes | 17 | Bucle, herramientas, contexto, permisos, **tipos de harness (chat, IDE, CLI, nube, local)**, CLIs concretas (Claude Code, Codex, Gemini CLI, HanniPI, Copilot, Aider, OpenCode…), MCP y catálogo de servidores, configuración sin sustos, paralelismo, coste |
+| 9 · Skills y contexto | 10 | Skills, **catálogo de skills típicas de un equipo (código y proceso)**, cómo se comparten y evolucionan, fichero de convenciones, memoria, ADRs, anatomía del prompt |
 | 10 · Día a día (código) | 11 | Código heredado, tests, revisión, refactors, SQL, bugs, anti-patrones |
 | 11 · Despliegue y apps | 10 | Plantillas, contenedores, IaC, CI/CD, observabilidad, seguridad, métricas |
 | 12 · Automatizar | 9 | Inventario, contrato, CLIs, lotes, trabajos programados, cuándo NO |

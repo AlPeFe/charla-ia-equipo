@@ -275,15 +275,15 @@ table.xxs th{font-size:12.5px}
     <table>
       <thead><tr><th>Tramo</th><th>Contenido</th><th>Duración</th></tr></thead>
       <tbody>
-        <tr><td><span class="tag">Parte 1</span></td><td>Qué es la IA · cómo aprende (fine-tuning, <b>LoRA y QLoRA</b>) · cómo funciona un LLM · inferencia · arquitecturas (dense, MoE, CNN, LSTM, transformers) · <b>difusión y ComfyUI</b></td><td class="num">95&#8211;105 min</td></tr>
+        <tr><td><span class="tag">Parte 1</span></td><td>Qué es la IA · cómo aprende (fine-tuning, <b>LoRA y QLoRA</b>) · cómo funciona un LLM · inferencia · arquitecturas (dense, MoE, CNN, LSTM, transformers) · <b>difusión y ComfyUI</b></td><td class="num">70 min</td></tr>
         <tr><td><span class="tag acc">Descanso</span></td><td>15 minutos (y preguntas sueltas)</td><td class="num">15 min</td></tr>
-        <tr><td><span class="tag">Parte 2</span></td><td>Panorama de laboratorios y modelos hoy · qué es un harness · agentes, skills, contexto, MCP</td><td class="num">65 min</td></tr>
-        <tr><td><span class="tag">Parte 3</span></td><td>IA en el día a día (código, revisión, datos) · despliegue y apps · automatizar lo repetitivo</td><td class="num">80 min</td></tr>
+        <tr><td><span class="tag">Parte 2</span></td><td>Panorama de laboratorios y modelos · qué es un harness · <b>tipos de harness (CLI, IDE, nube, local)</b> · agentes, <b>MCP y su catálogo</b> · skills y <b>catálogo de skills típicas</b></td><td class="num">65 min</td></tr>
+        <tr><td><span class="tag">Parte 3</span></td><td>IA en el día a día (código, revisión, datos) · despliegue y apps · automatizar lo repetitivo</td><td class="num">60 min</td></tr>
         <tr><td><span class="tag warn">Descanso</span></td><td>10 minutos</td><td class="num">10 min</td></tr>
-        <tr><td><span class="tag">Parte 4</span></td><td>Riesgos y buenas prácticas · taller guiado en vuestros portátiles · plan de adopción 30/60/90</td><td class="num">70 min</td></tr>
+        <tr><td><span class="tag">Parte 4</span></td><td>Riesgos y buenas prácticas · taller guiado en vuestros portátiles (2 ejercicios completos y el resto como tarea) · plan de adopción 30/60/90</td><td class="num">55 min</td></tr>
       </tbody>
     </table>
-    <div class="okbox">Los tiempos son holgados a propósito: prefiero que salgamos con <b>manos en el teclado</b> que con más diapositivas vistas.</div>
+    <div class="okbox">Los tiempos suman exactamente las <b>4 horas</b>, con los descansos incluidos. La presentación tiene <b>diapositivas de más a propósito</b>: hay material para profundizar en cualquier bloque o para recuperar tiempo si un ejercicio se alarga. Se puede saltar bloque a bloque con el índice (<kbd>O</kbd>).</div>
   </div>
   <aside class="notes"><ul>
     <li>Avisar del reparto y de que el taller es la parte que más valor tiene: prepararlo con antelación (que tengan Node y un repo a mano).</li>
@@ -2843,6 +2843,165 @@ modelo = [bloque] * N_capas</code></pre>
 </section>
 
 <section class="slide" data-module="8 · Harness y agentes">
+  <h2>Tipos de harness: el mapa completo</h2>
+  <div class="body">
+    <table class="sm">
+      <thead><tr><th>Tipo</th><th>Dónde vive</th><th>Qué te da</th><th>Cuándo elegirlo</th></tr></thead>
+      <tbody>
+        <tr><td><b>Chat web</b></td><td>Navegador</td><td>Conversación, análisis, redacción, multimodal</td><td>Pensar, preguntar, redactar. No toca tu repositorio</td></tr>
+        <tr><td><b>Autocompletado</b></td><td>Dentro del editor</td><td>Escribir código más rápido, línea a línea</td><td>Mientras escribes tú; no ejecuta ni verifica</td></tr>
+        <tr><td><b>IDE con agente</b></td><td>Aplicación de escritorio</td><td>Edición guiada con contexto del proyecto y revisión paso a paso</td><td>Trabajo interactivo con control humano muy fino</td></tr>
+        <tr><td><b>Agente de terminal (CLI)</b></td><td>Tu shell</td><td>Tarea completa: lee, edita, ejecuta, usa git y herramientas</td><td><b>El caso general para trabajar de verdad</b></td></tr>
+        <tr><td><b>Agente en la nube</b></td><td>Plataforma web</td><td>Le das un issue y devuelve un PR sin ocupar tu máquina</td><td>Volumen y trabajo de fondo; exige tests y revisión</td></tr>
+        <tr><td><b>Inferencia local</b></td><td>Tu equipo o servidor propio</td><td>Modelos abiertos, sin enviar datos fuera, coste fijo</td><td>Datos que no pueden salir, offline, experimentación</td></tr>
+      </tbody>
+    </table>
+    <div class="okbox">No hay que elegir uno: lo normal es <b>chat para pensar, IDE para escribir, CLI para ejecutar</b>. Y el mismo modelo rinde muy distinto en cada uno, porque lo que cambia son las herramientas y el contexto.</div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Preguntar al grupo qué usa hoy cada uno: casi todos estarán en la primera fila (chat) y alguno en autocompletado.</li>
+    <li>Frase para recordar: el chat opina, el CLI ejecuta y comprueba.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="8 · Harness y agentes">
+  <h2>Harness de terminal: los nombres que vas a oír</h2>
+  <div class="body">
+    <table class="xxs">
+      <thead><tr><th>Herramienta</th><th>De quién</th><th>Fuerte en</th><th>Detalle que conviene saber</th></tr></thead>
+      <tbody>
+        <tr><td><b>Claude Code</b></td><td>Anthropic</td><td>Codificación agéntica: contexto largo, planificar antes de tocar, edición quirúrgica</td><td>Fichero de convenciones propio, skills, hooks, subagentes y MCP. Una de las referencias del sector</td></tr>
+        <tr><td><b>Codex</b> (CLI, app y nube)</td><td>OpenAI</td><td>Ejecutar tareas end-to-end y, en su modo nube, tomar un issue y devolver un PR</td><td>Usa <code>AGENTS.md</code> como fichero de convenciones, lo que lo hace portable entre herramientas</td></tr>
+        <tr><td><b>Gemini CLI</b></td><td>Google</td><td>Terminal + contexto enorme, integración con su familia de modelos</td><td>Abierto y extensible vía MCP; buena opción si ya usáis su ecosistema</td></tr>
+        <tr><td><b>HanniPI</b> (el nuestro)</td><td>Interno</td><td>Herramientas, skills, memoria y decisiones (ADR), documentos de decisión y orquestación de varios agentes</td><td>Es el que usamos en el equipo: aquí enseñamos con él los conceptos de este bloque</td></tr>
+        <tr><td><b>GitHub Copilot</b> (IDE y CLI)</td><td>GitHub / Microsoft</td><td>Integración con el repositorio, revisión de PRs y agente en la terminal</td><td>Cómodo si vuestra vida está en GitHub y ya tenéis licencia</td></tr>
+        <tr><td><b>Aider</b></td><td>Comunidad</td><td>Editar el repositorio con diffs y commits limpios (el pionero del "git-aware")</td><td>Menos agéntico que los anteriores, muy fiable para cambios acotados</td></tr>
+        <tr><td><b>OpenCode</b>, <b>Cline</b>, <b>Continue</b>, <b>Roo</b>, <b>Qwen Code</b>&#8230;</td><td>Comunidad / varios</td><td>Abiertos y conectables a cualquier proveedor, incluidos modelos locales</td><td>Más configuración a mano; a cambio, control total y sin dependencia de un único proveedor</td></tr>
+        <tr><td><b>Ollama</b>, <b>LM Studio</b>, <b>llama.cpp</b>, <b>vLLM</b></td><td>Comunidad / varios</td><td>Servir modelos abiertos en tu hardware y enchufarlos a cualquiera de los CLIs anteriores</td><td>Aquí no hay agente: es el motor local. Se combina con Continue, Zed, Aider&#8230;</td></tr>
+      </tbody>
+    </table>
+    <div class="warnbox">Esta lista cambia cada pocos meses por diseño. Lo que no cambia son las <b>cinco preguntas</b> para evaluar cualquiera: ¿lee y escribe el repositorio? ¿ejecuta comandos y tests? ¿soporta skills y MCP? ¿respeta permisos y sandbox? ¿se puede usar desde CI?</div>
+  </div>
+  <aside class="notes"><ul>
+    <li>No convertir esto en una guerra de herramientas: elegir una por equipo y estandarizar el fichero de convenciones, que es lo portable.</li>
+    <li>Si preguntan por precios: casi todos tienen suscripción y también uso por API; lo relevante es el coste por tarea (bloque de inferencia).</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="8 · Harness y agentes">
+  <h2>IDE, escritorio y agentes en la nube</h2>
+  <div class="body compact">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card">
+          <h3>IDE con agente (interactivo)</h3>
+          <ul class="tight">
+            <li><b>Cursor</b> y <b>Windsurf</b>: editor propio con agente, buenos diffs y control por pasos.</li>
+            <li><b>Zed</b>: rápido, muy orientado a colaboración, agente integrado.</li>
+            <li><b>VS Code</b> + <b>Copilot</b>, <b>Cline</b>, <b>Continue</b> o similares: vivís donde ya vivís.</li>
+          </ul>
+          <p class="small">Fuertes cuando quieres revisar cada cambio en la propia interfaz. Más difíciles de automatizar o de meter en una pipeline.</p>
+        </div>
+        <div class="card ok">
+          <h3>Local, sin nube</h3>
+          <ul class="tight">
+            <li>Modelo abierto + runner local + un cliente que hable con él.</li>
+            <li>Para datos que no pueden salir y para probar sin gastar cuota.</li>
+            <li>Menos calidad que un modelo frontera: elige bien la tarea.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card accent">
+          <h3>Agentes en la nube (delegar)</h3>
+          <ul class="tight">
+            <li>Le das una tarea o un issue; trabajan en su propio entorno y devuelven un PR.</li>
+            <li><b>Ventaja</b>: no ocupan tu máquina y permiten paralelizar de verdad.</li>
+            <li><b>Requisito</b>: tests que puedan ejecutar y revisión humana del diff.</li>
+            <li>Encaja con trabajo bien especificado: bugs acotados, tests, dependencias, documentación.</li>
+          </ul>
+        </div>
+        <div class="warnbox">Regla para todo lo que trabaja sin ti delante: <b>si no hay forma de comprobarlo automáticamente, no lo delegues</b>. Un PR sin tests es una promesa, no una entrega.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Si alguien pregunta por una herramienta concreta que no está: la categoría importa más que la marca; se puede evaluar con las cinco preguntas.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="8 · Harness y agentes">
+  <h2>MCP: los servidores que se usan de verdad</h2>
+  <div class="body">
+    <table class="xs">
+      <thead><tr><th>Servidor MCP</th><th>Para qué sirve</th><th>Riesgo / precaución</th></tr></thead>
+      <tbody>
+        <tr><td><b>Ficheros</b> (el proyecto)</td><td>Leer y escribir ficheros con permisos acotados a una carpeta</td><td>Limita la raíz al repositorio; nunca el directorio personal entero</td></tr>
+        <tr><td><b>Git / GitHub / GitLab</b></td><td>Ver PRs, issues, comentarios, historial y crear ramas</td><td>Usa un token con permisos mínimos y de tu cuenta de servicio</td></tr>
+        <tr><td><b>Gestión del trabajo</b> (Jira, Linear, Notion, Confluence)</td><td>Leer tickets y documentación; escribir comentarios o actualizar estados</td><td>Escritura con aprobación; cuidado con datos de clientes</td></tr>
+        <tr><td><b>Bases de datos</b> (PostgreSQL, SQLite&#8230;)</td><td>Consultar esquemas y datos de desarrollo; proponer migraciones</td><td><b>Sólo lectura</b> y nunca contra producción</td></tr>
+        <tr><td><b>Web / fetch / búsqueda</b></td><td>Documentación actual, APIs, versiones, comparativas</td><td>Contenido no confiable: es la vía típica de inyección de prompts</td></tr>
+        <tr><td><b>Navegador automatizado</b> (Playwright y similares)</td><td>Probar flujos reales, hacer capturas, depurar el front</td><td>Puede tener sesiones iniciadas: aíslo el perfil</td></tr>
+        <tr><td><b>Observabilidad</b> (Sentry, Grafana, logs)</td><td>Diagnosticar incidentes con datos reales</td><td>Los logs traen datos personales: filtra antes</td></tr>
+        <tr><td><b>Infraestructura</b> (Docker, Kubernetes, nube)</td><td>Leer estado, proponer manifiestos, entender un despliegue</td><td>Nada de aplicar cambios sin plan y revisión humana</td></tr>
+        <tr><td><b>Comunicación</b> (Slack, Teams, correo)</td><td>Resumir canales, avisar, buscar decisiones pasadas</td><td>Enviar mensajes en nombre de alguien: siempre con aprobación</td></tr>
+        <tr><td><b>Documentación de librerías</b></td><td>Traer la documentación correcta de la versión que usas</td><td>Menos alucinación de API; revisa igualmente que compila</td></tr>
+        <tr><td><b>Memoria / conocimiento del equipo</b></td><td>Decisiones, convenciones y aprendizajes recuperables entre sesiones</td><td>Suele funcionar mejor con ficheros versionados en el repo</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <aside class="notes"><ul>
+    <li>Regla de oro: un MCP es una API con un modelo apretando el botón. Se instala con el mismo criterio que se daría acceso a un becario.</li>
+    <li>Empezar por dos: ficheros y git. Añadir el tercero cuando el anterior esté controlado.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="8 · Harness y agentes">
+  <h2>MCP: cómo se configura sin liarla</h2>
+  <div class="body compact">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card accent">
+          <h3>Ámbitos (y por qué importa)</h3>
+          <ul class="tight">
+            <li><b>De usuario</b>: sólo en tu máquina, con tus credenciales.</li>
+            <li><b>De proyecto</b>: el fichero de configuración viaja en el repositorio, así que <b>lo hereda todo el equipo</b>&#8230; y también cualquiera que clone. Nada de secretos ahí dentro.</li>
+            <li><b>Local vs remoto</b>: en local ejecutas un proceso (revisa qué código es); en remoto es un servicio al que te conectas (revisa quién lo opera).</li>
+          </ul>
+        </div>
+        <div class="card ok">
+          <h3>Buenas prácticas mínimas</h3>
+          <ul class="tight">
+            <li>Credenciales propias del servicio, nunca tus claves personales.</li>
+            <li>Empezar en <b>sólo lectura</b>; abrir escritura cuando haga falta y con aprobación.</li>
+            <li>Listas blancas de acciones y de destinos.</li>
+            <li>Registro de uso: qué se consultó y cuándo.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card">
+          <h3>Checklist antes de instalar un servidor MCP</h3>
+          <ol class="tight">
+            <li>¿Quién lo mantiene y con qué licencia?</li>
+            <li>¿Qué código ejecuta en mi máquina?</li>
+            <li>¿A qué sistemas se conecta y con qué permisos?</li>
+            <li>¿Qué acciones de escritura permite?</li>
+            <li>¿Puedo ejecutarlo aislado, sin acceso a producción?</li>
+            <li>¿Sé desinstalarlo y rotar sus credenciales?</li>
+          </ol>
+        </div>
+        <div class="callout">Y una alternativa que se olvida: si sólo necesitas <b>cuatro operaciones</b> de un sistema interno, quizá no quieras un MCP completo, sino un <b>script propio</b> (o una skill que lo invoque). Menos superficie, más control.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Insistir en el ámbito de proyecto: config compartida = comodidad y también riesgo si alguien mete un token.</li>
+    <li>Conectar con el bloque de riesgos (inyección, permisos, datos).</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="8 · Harness y agentes">
   <h2>MCP: el enchufe estándar para conectar herramientas</h2>
   <div class="body">
     <div class="cols c2">
@@ -3062,6 +3221,99 @@ configuración de despliegue.</code></pre>
     <div class="callout">Cinco ingredientes de una skill que funciona: <b>cuándo usarla</b> · <b>pasos concretos con comandos</b> · <b>criterio de terminado</b> · <b>límites explícitos</b> · <b>lugar donde dejar constancia</b>.</div>
   </div>
   <aside class="notes"><ul><li>Regla: si no puedes escribir el criterio de "terminado" en una línea, la tarea no está lista para delegarse.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="9 · Skills y contexto">
+  <h2>El catálogo que todo equipo acaba teniendo (I · código)</h2>
+  <div class="body compact">
+    <table class="xxs" style="font-size:13.2px">
+      <thead><tr><th>Skill</th><th>Para qué</th><th>Criterio de terminado</th></tr></thead>
+      <tbody>
+        <tr><td><code>mapear-repo</code></td><td>Explorar un repositorio desconocido y escribir la arquitectura, el flujo principal y los acoplamientos peligrosos</td><td>Existe <code>docs/arquitectura.md</code> y una afirmación verificada a mano</td></tr>
+        <tr><td><code>revisar-pr</code> / <code>preparar-pr</code></td><td>Auto-revisión antes de pedir revisión humana (tests, lint, criterios, riesgos) y preparar rama, commits atómicos y descripción</td><td>Todo en verde y PR abierto con un resumen de lo que debe mirar una persona</td></tr>
+        <tr><td><code>escribir-tests</code></td><td>Caracterizar comportamiento actual y cubrir casos límite (vacíos, ceros, duplicados, concurrencia)</td><td>Al menos un test que has visto fallar antes de arreglar el código</td></tr>
+        <tr><td><code>reproducir-bug</code></td><td>Construir el script mínimo que reproduce el fallo</td><td>Existe un comando que falla de forma reproducible</td></tr>
+        <tr><td><code>subir-dependencias</code></td><td>Actualizar versiones, arreglar incompatibilidades y leer los cambios importantes</td><td>Tests y lint en verde, y una nota con las incompatibilidades encontradas</td></tr>
+        <tr><td><code>revisar-migraciones</code></td><td>Detectar bloqueos, pérdida de datos, cambios no reversibles y ausencia de plan de vuelta atrás</td><td>Informe con riesgos y la versión de reversión probada</td></tr>
+        <tr><td><code>nuevo-servicio</code> / <code>nuevo-endpoint</code></td><td>Crear el esqueleto oficial del equipo: estructura, configuración, logs, healthcheck, CI</td><td>Arranca en local con un comando y pasa la pipeline</td></tr>
+        <tr><td><code>revisar-seguridad</code></td><td>Buscar secretos, permisos excesivos, dependencias sin auditar y entradas sin validar</td><td>Lista de hallazgos con gravedad y propuesta concreta</td></tr>
+        <tr><td><code>documentar-decision</code></td><td>Convertir una conversación de diseño en un documento de decisión (contexto, opciones, consecuencias)</td><td>Documento en el repositorio, revisado</td></tr>
+      </tbody>
+    </table>
+    <div class="okbox" style="font-size:16.5px;padding:10px 14px">Estas diez cubren la mayor parte del día a día de un equipo de desarrollo. Empieza por <b>mapear-repo, revisar-pr y escribir-tests</b>: mayor retorno y menor riesgo.</div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Pedir al grupo que elija tres: se escriben en el taller.</li>
+    <li>Detalle clave: todas terminan con una <b>comprobación</b>, no con "código generado".</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="9 · Skills y contexto">
+  <h2>El catálogo que todo equipo acaba teniendo (II · proceso y negocio)</h2>
+  <div class="body compact">
+    <table class="xxs" style="font-size:13.2px">
+      <thead><tr><th>Skill</th><th>Para qué</th><th>Criterio de terminado</th></tr></thead>
+      <tbody>
+        <tr><td><code>runbook-incidencia</code></td><td>Síntomas, diagnóstico, mitigación y escalado, con los comandos exactos del equipo</td><td>Documento publicado y ensayado en una incidencia real</td></tr>
+        <tr><td><code>triaje-alerta</code></td><td>Leer logs y métricas de una alerta y proponer las tres causas más probables</td><td>Hipótesis ordenadas, cada una con cómo comprobarla</td></tr>
+        <tr><td><code>informe-mensual</code></td><td>Extraer datos, calcular, formatear y dejar el informe listo para revisar</td><td>Informe generado, con la lista de incidencias de datos</td></tr>
+        <tr><td><code>notas-de-release</code></td><td>Changelog y notas de versión a partir de commits, PRs y tickets</td><td>Notas revisadas y publicadas con la release</td></tr>
+        <tr><td><code>altas-y-bajas</code></td><td>Provisionar usuarios, permisos y entornos con el procedimiento del equipo</td><td>Accesos verificados y registro de quién pidió qué</td></tr>
+        <tr><td><code>calidad-de-datos</code></td><td>Detectar duplicados, huecos, formatos raros y valores imposibles en un conjunto de datos</td><td>Informe con incidencias cuantificadas y ejemplos</td></tr>
+        <tr><td><code>responder-consultas</code></td><td>Responder preguntas recurrentes del equipo a partir de vuestra documentación, siempre con la fuente citada</td><td>Respuesta con enlace al documento original</td></tr>
+        <tr><td><code>acta-y-tareas</code></td><td>Convertir una reunión (o su transcripción) en acta, decisiones y tareas con responsable</td><td>Acta revisada y tareas creadas en el sistema de trabajo</td></tr>
+        <tr><td><code>onboarding</code></td><td>Guía para una persona nueva: accesos, entorno, primer ticket, a quién preguntar</td><td>Alguien nuevo arranca el proyecto en un día</td></tr>
+        <tr><td><code>revisar-requisitos-de-cliente</code></td><td>Comprobar cláusulas que nos afectan: confidencialidad, RGPD, uso de IA, accesibilidad, licencias</td><td>Checklist cumplimentada y firmada por una persona</td></tr>
+      </tbody>
+    </table>
+    <div class="warnbox">Estas skills no generan código: <b>eliminan preguntas repetidas y errores de procedimiento</b>. Suele ser el mayor ahorro real de un equipo, y el que nadie documenta hasta que se va alguien.</div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Conectar con el ejercicio de inventario del bloque de automatización: muchas tareas repetitivas acaban siendo una de estas skills.</li>
+    <li>La de onboarding es la más agradecida: se escribe una vez y la usan todas las incorporaciones.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="9 · Skills y contexto">
+  <h2>Cómo se comparten y evolucionan (o mueren)</h2>
+  <div class="body compact">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card accent">
+          <h3>Organización que funciona</h3>
+          <ul class="tight">
+            <li><b>Un repositorio de skills del equipo</b> (o una carpeta en el repo principal), versionado con git.</li>
+            <li>Una carpeta por skill, con su fichero de instrucciones y sus recursos; nombres claros.</li>
+            <li><b>Dueño por skill</b>. Sin dueño, se pudre. E instalación trivial: clonar y listo.</li>
+            <li>Un <b>índice</b> con descripción, dueño y fecha de última revisión.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card">
+          <h3>Reglas de convivencia</h3>
+          <ul class="tight">
+            <li>Se revisan como código: PR, una persona que las pruebe antes de mezclar.</li>
+            <li>Cambios anunciados: si una skill cambia de criterio, avisar (aquí se rompen confianzas).</li>
+            <li><b>Borrar</b> las que ya no se usan. Veinte skills activas son mejores que doscientas olvidadas.</li>
+            <li>Prohibido meter secretos, credenciales o datos de clientes dentro de una skill.</li>
+          </ul>
+        </div>
+        <div class="card warn">
+          <h3>Antipatrones del catálogo</h3>
+          <ul class="tight">
+            <li>Una persona con 40 skills que nadie más usa.</li>
+            <li>Skills de 300 líneas que nadie lee: ahí se cuelan instrucciones peligrosas.</li>
+            <li>Copiar skills de terceros sin leerlas: son código, no texto decorativo.</li>
+            <li>Medirlas por número y no por uso: <em>¿cuántas veces se ha usado y qué ha ahorrado?</em></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Comparar con los scripts internos: mismo destino si nadie los mantiene. La diferencia es que una skill también <em>documenta</em> el proceso.</li>
+  </ul></aside>
 </section>
 
 <section class="slide" data-module="9 · Skills y contexto">
