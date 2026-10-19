@@ -45,14 +45,14 @@ Enlace directo a una diapositiva: `index.html#/42`.
 
 ---
 
-## Contenido: 179 diapositivas en 16 módulos
+## Contenido: 181 diapositivas en 16 módulos
 
 | Módulo | Diapositivas | Contenido |
 |---|---|---|
 | 0 · Encuadre | 6 | Objetivos, agenda de 4 h, reglas del juego |
 | 1 · Qué es la IA | 8 | Definiciones, los tres saltos (transformer, ChatGPT, agentes), taxonomía, glosario |
 | 2 · Cómo aprende | 17 | Datos, pérdida, gradientes, sobreajuste, las 4 fases, **fine-tuning, LoRA y QLoRA**, **herramientas de entrenamiento (Unsloth, PEFT, TRL, Axolotl…)**, Unsloth en detalle y receta mínima paso a paso |
-| 3 · Anatomía de un LLM | 10 | Tokens, embeddings, atención, bloques, muestreo, multimodalidad |
+| 3 · Anatomía de un LLM | 12 | Tokens, embeddings, atención, **la fórmula de la atención y self-attention**, **softmax (la función, la temperatura y por qué es derivable)**, bloques, muestreo, multimodalidad |
 | 4 · Inferencia | 15 | Prefill/decode, KV cache, cuantización, razonamiento, precios, hardware, API vs propio, **motores locales (llama.cpp, Ollama, vLLM) y la API compatible con OpenAI** |
 | 5 · Arquitecturas | 11 | Densa vs MoE, CNN, RNN/LSTM, tres familias de transformer, alternativas, otros modelos |
 | 6 · Difusión y ComfyUI | 9 | Difusión paso a paso, checkpoints/VAE/LoRA/ControlNet, ComfyUI, flujos de equipo, LoRA de imagen, vídeo y audio |

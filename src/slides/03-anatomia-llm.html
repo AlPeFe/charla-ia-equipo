@@ -138,8 +138,92 @@
     <div class="callout">Esta es la razón por la que cosas importantes tienden a "pesar" más <b>al principio o al final</b> del contexto, y por la que perderse en medio de un prompt enorme es un riesgo real.</div>
   </div>
   <aside class="notes"><ul>
-    <li>No hace falta la fórmula; sí la intuición de pesos y de mixtura de información.</li>
+    <li>Aquí sólo la intuición; la fórmula tiene su propia diapositiva justo después, y es de las que se entienden mejor de lo que parece.</li>
     <li>Detalle curioso: cabezas de atención especializadas (una para comillas, otra para sangría en código) — se han observado en modelos reales.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="3 · Anatomía de un LLM">
+  <h2>Self-attention: la fórmula, leída en voz alta</h2>
+  <div class="body compact">
+    <div class="math">
+      <span class="chunk"><span class="fn">Attention</span><span class="paren">(</span><i>Q</i>,&#8201;<i>K</i>,&#8201;<i>V</i><span class="paren">)</span></span>
+      <span class="eq">=</span>
+      <span class="chunk"><span class="fn">softmax</span><span class="paren">(</span><span class="frac"><span class="num"><i>QK</i><sup>T</sup></span><span class="den">&#8730;<span class="radicand"><i>d<sub>k</sub></i></span></span></span><span class="paren">)</span><i>V</i></span>
+    </div>
+    <div class="cols c2">
+      <div class="col">
+        <div class="card accent">
+          <h3>Los cuatro pasos, en orden</h3>
+          <ol class="tight">
+            <li><b><i>QK</i><sup>T</sup></b>: producto escalar de cada consulta con cada clave. Sale una tabla de puntuaciones <b>n&#215;n</b>: «cuánto me interesa cada otro token».</li>
+            <li><b>/ &#8730;<i>d<sub>k</sub></i></b>: se divide por la raíz de la dimensión de las claves. Sin esto las puntuaciones crecen con la dimensión, el softmax se satura y el modelo aprende peor.</li>
+            <li><b>softmax</b>: convierte cada fila en pesos entre 0 y 1 que suman 1.</li>
+            <li><b>&#215; <i>V</i></b>: cada token acaba siendo una <b>media ponderada</b> de la información de los demás. Eso es «mezclar contexto».</li>
+          </ol>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card">
+          <h3>De dónde salen Q, K y V</h3>
+          <p>De la <b>misma</b> secuencia, multiplicada por tres matrices aprendidas (<i>W<sub>Q</sub></i>, <i>W<sub>K</sub></i>, <i>W<sub>V</sub></i>). Por eso se llama <b>self</b>-attention: es la frase mirándose a sí misma.</p>
+          <p class="small">Cuando la <i>Q</i> viene de otro sitio (una frase en otro idioma, una imagen, un resultado de búsqueda) se llama <b>cross-attention</b>: la misma cuenta con dos entradas distintas.</p>
+        </div>
+        <div class="card warn">
+          <h3>Y la máscara causal entra por aquí</h3>
+          <p>Prohibir el futuro es poner <b>&#8722;&#8734;</b> en las puntuaciones de los tokens que aún no existen: al exponenciarlas se convierten exactamente en <b>0</b>. Cero de futuro, reparto sólo entre el pasado.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Leer la fórmula de izquierda a derecha sin miedo: buscar (<i>QK</i>), repartir (softmax) y recoger (<i>V</i>). Es la misma idea que las tres líneas de la diapositiva anterior.</li>
+    <li>Si preguntan por la raíz: existe para que el tamaño de las puntuaciones no dependa de la dimensión del vector. Con d=64 serían unas 8 veces mayores y el softmax daría casi un único 1.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="3 · Anatomía de un LLM">
+  <h2>Softmax: de números sueltos a una decisión</h2>
+  <div class="body compact">
+    <div class="math">
+      <span class="chunk"><span class="fn">softmax</span><span class="paren">(</span><i>x</i><span class="paren">)</span><sub>i</sub></span>
+      <span class="eq">=</span>
+      <span class="frac"><span class="num"><i>e</i><sup><i>x<sub>i</sub></i></sup></span><span class="den">&#931;<sub>j</sub>&#8201;<i>e</i><sup><i>x<sub>j</sub></i></sup></span></span>
+    </div>
+    <div class="cols c2">
+      <div class="col">
+        <div class="card accent">
+          <h3>Qué hace, en dos gestos</h3>
+          <ul class="tight">
+            <li><b>Exponencia</b>: todo se vuelve positivo y las diferencias se <b>amplían</b>: el que va por delante no gana por poco, gana por mucho.</li>
+            <li><b>Normaliza</b>: divide entre la suma &#8594; proporciones que suman 1, legibles como probabilidad.</li>
+            <li><b>Sólo cuentan las diferencias</b>: sumarle la misma cantidad a todas las puntuaciones no cambia nada.</li>
+            <li><b>Es derivable</b>: se puede entrenar a través de ella; «gana el mayor» no daría pendiente por la que aprender.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card">
+          <h3>Ejemplo con tres candidatos</h3>
+          <table class="xs">
+            <thead><tr><th>Candidato</th><th>Puntuación</th><th>T&#8201;=&#8201;1</th><th>T&#8201;=&#8201;0,5</th></tr></thead>
+            <tbody>
+              <tr><td>A</td><td class="num">2,0</td><td class="num">0,665</td><td class="num">0,867</td></tr>
+              <tr><td>B</td><td class="num">1,0</td><td class="num">0,245</td><td class="num">0,117</td></tr>
+              <tr><td>C</td><td class="num">0,0</td><td class="num">0,090</td><td class="num">0,016</td></tr>
+            </tbody>
+          </table>
+          <p class="small">La temperatura es esto mismo: dividir antes del softmax.</p>
+        </div>
+        <div class="callout">Aparece dos veces: en la <b>atención</b> (pesos que suman 1) y en la <b>salida</b> (probabilidad de cada token antes de muestrear).</div>
+        <div class="warnbox">No es una confianza honesta: un 90% de probabilidad no significa acertar el 90% de las veces.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>La analogía que funciona: es una votación donde los votos se reparten según la ventaja, no según el orden de llegada.</li>
+    <li>Detalle de ingeniería que se puede mencionar de pasada: en la práctica se resta el máximo antes de exponenciar para que no desborde. El resultado es idéntico.</li>
+    <li>Conectar con la diapositiva de muestreo: lo que allí se llama temperatura es esta división.</li>
   </ul></aside>
 </section>
 

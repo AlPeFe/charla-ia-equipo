@@ -94,6 +94,23 @@ td.num{font-variant-numeric:tabular-nums;text-align:right;font-family:var(--mono
 .grow{flex:1}
 .notes{display:none}
 
+/* ---------- fórmulas ---------- */
+.math{display:flex;align-items:baseline;justify-content:center;flex-wrap:wrap;gap:6px;
+  background:#070a11;border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:12px;
+  padding:14px 20px;font-family:Georgia,'Times New Roman',serif;font-size:30px;color:#e6edfb;line-height:1.15}
+.math .chunk{display:inline-flex;align-items:baseline;gap:0}
+.math .eq{margin:0 8px;color:#8fa3c4}
+.math .fn{font-style:normal;color:#bcd0f0}
+.math .paren{color:#8fa3c4;font-size:1.15em}
+.math i{color:#fff}
+.math sup{font-size:.62em}
+.math sub{font-size:.62em}
+.math .frac{display:inline-flex;flex-direction:column;align-items:center;margin:0 6px;font-size:.8em}
+.math .frac .num{padding:0 8px 3px;border-bottom:1.5px solid #7f92b4}
+.math .frac .den{padding:3px 8px 0}
+.math .radicand{border-top:1.5px solid #7f92b4;padding:1px 5px 0;margin-left:-1px}
+@media print{.math{background:#fff;color:#0b0f17}}
+
 /* title + section slides */
 .slide.cover{justify-content:center;padding:64px 80px}
 .slide.cover h1{font-size:72px}
