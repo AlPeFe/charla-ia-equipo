@@ -18,6 +18,7 @@
             <li>Documentación de Google sobre Gemini y buenas prácticas multimodales.</li>
             <li>Especificación de <b>MCP</b> (Model Context Protocol): cómo se conectan herramientas y datos.</li>
             <li>Documentación del harness que use el equipo: hooks, skills, permisos, subagentes.</li>
+            <li>Documentación de <b>Docker</b>, <b>Kubernetes</b> y de los motores locales (<b>Ollama</b>, <b>vLLM</b>, <b>llama.cpp</b>): lo que más se consulta cuando se despliega de verdad.</li>
           </ul>
         </div>
       </div>
@@ -103,6 +104,26 @@
     </table>
   </div>
   <aside class="notes"><ul><li>Material de consulta; se puede imprimir como una página de referencia.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="15 · Anexo">
+  <h2>Glosario de infraestructura y de agentes</h2>
+  <div class="body">
+    <table class="xs" style="font-size:14px">
+      <thead><tr><th>Término</th><th>Definición corta</th><th>Término</th><th>Definición corta</th></tr></thead>
+      <tbody>
+        <tr><td><b>Contenedor</b></td><td>Aplicación empaquetada con su entorno, compartiendo el kernel</td><td><b>Imagen</b></td><td>Plantilla de capas de la que nacen los contenedores</td></tr>
+        <tr><td><b>Compose</b></td><td>Levantar varios contenedores juntos desde un fichero</td><td><b>Registro</b></td><td>Almacén versionado de imágenes</td></tr>
+        <tr><td><b>Kubernetes</b></td><td>Reconciliador: compara el estado deseado con el real y actúa</td><td><b>GitOps</b></td><td>El repositorio como única fuente de verdad del despliegue</td></tr>
+        <tr><td><b>Política como código</b></td><td>Permisos y red declarados en ficheros, revisables y auditables</td><td><b>On-premise</b></td><td>Ejecutar en infraestructura propia, sin nube de terceros</td></tr>
+        <tr><td><b>Motor de inferencia</b></td><td>Programa que sirve un modelo a muchos usuarios (vLLM, llama.cpp)</td><td><b>API compatible con OpenAI</b></td><td>Dialecto común: cambiar de motor sin tocar el código</td></tr>
+        <tr><td><b>Puerta de modelos</b></td><td>Un único endpoint con claves, cuotas y registro (LiteLLM)</td><td><b>Superficie de control</b></td><td>Panel que arranca y aprueba agentes ya instalados (T3 Code)</td></tr>
+        <tr><td><b>Worktree</b></td><td>Copia de trabajo del mismo repositorio, una por agente</td><td><b>Orquestación</b></td><td>Repartir tareas entre agentes y esperar sus resultados</td></tr>
+        <tr><td><b>Puerta de decisión</b></td><td>Tarea detenida hasta que responde una persona</td><td><b>Memoria del agente</b></td><td>Decisiones y hallazgos recuperables entre sesiones (ADR, HanniGram)</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <aside class="notes"><ul><li>Segunda hoja de referencia, junto al glosario general: la que se consulta cuando el equipo empieza a desplegar y a orquestar.</li></ul></aside>
 </section>
 
 <section class="slide" data-module="15 · Anexo">

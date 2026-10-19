@@ -286,6 +286,46 @@
 </section>
 
 <section class="slide" data-module="8 · Harness y agentes">
+  <h2>Superficies de control: el panel por encima de las CLIs</h2>
+  <div class="body compact">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card accent">
+          <h3>Qué es una superficie de control</h3>
+          <p>Una aplicación que <b>no trae modelo propio</b>: arranca, vigila y aprueba los agentes que ya tienes instalados. Resuelve justo lo que el terminal hace mal: ver varias sesiones a la vez, revisar diffs y aprobar permisos.</p>
+          <p class="small">El modelo y la CLI siguen siendo los mismos. Cambia lo que puedes <em>ver</em> y <em>controlar</em>.</p>
+        </div>
+        <div class="card">
+          <h3>T3 Code <span class="tag acc">código abierto</span></h3>
+          <ul class="tight">
+            <li>Maneja las CLIs de Claude Code, Codex, Cursor, Grok Build, OpenCode y Antigravity.</li>
+            <li>Escritorio, web local y <b>app móvil</b>: la tarea corre en tu máquina y la revisas desde el teléfono.</li>
+            <li>Modos de permiso, revisión de cambios e integración con el control de versiones.</li>
+            <li>Instalación ligera (<code>npx t3@latest</code>) o app de escritorio. Muy joven: sus autores avisan de que habrá errores.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card ok">
+          <h3>La categoría completa importa más que la marca</h3>
+          <ul class="tight">
+            <li><b>Paneles sobre CLIs</b>: T3 Code, Conductor, Claude Desktop, la app de Codex, Cursor Glass.</li>
+            <li><b>IDE con agente</b>: Cursor, Windsurf, Zed, VS Code con extensión.</li>
+            <li><b>La versión pobre y siempre disponible</b>: varias terminales con tmux y un worktree de git por tarea, miradas a mano.</li>
+          </ul>
+        </div>
+        <div class="warnbox">Una superficie de control no verifica nada por ti: te enseña el diff y te pide permiso. La decisión, el test y la revisión siguen siendo tu trabajo.</div>
+        <div class="callout">Para el equipo: elegir <b>una</b> superficie y estandarizar. Lo portable no es el panel, sino las convenciones y los comandos del repositorio.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Contexto sin hype: T3 Code ronda las 28.000 estrellas en GitHub en octubre de 2026 con menos de un año de vida. Esa velocidad es el motivo de enseñar categorías y no productos.</li>
+    <li>Si preguntan cuál instalar: la que maneje la CLI que ya usáis y no exija mover el código a su nube.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="8 · Harness y agentes">
   <h2>MCP: los servidores que se usan de verdad</h2>
   <div class="body">
     <table class="xs">
@@ -427,6 +467,83 @@
     </div>
   </div>
   <aside class="notes"><ul><li>Contar un caso: dividir una migración por módulos; 4 agentes, revisión final a mano.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="8 · Harness y agentes">
+  <h2>Orca: la sala de máquinas cuando hay varios agentes</h2>
+  <div class="body compact">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card accent">
+          <h3>Qué es</h3>
+          <p>Herramienta local (interfaz y línea de órdenes <code>orca</code>) que organiza el trabajo de <b>varios agentes sobre el mismo repositorio</b>: cada uno en su worktree y su terminal, todos supervisables desde el mismo sitio.</p>
+          <p class="small">En la máquina donde se preparó esta charla: Orca 1.4.224. Todo lo que sigue sale de <code>orca --help</code>.</p>
+        </div>
+        <div class="card">
+          <h3>Lo que resuelve, en órdenes</h3>
+          <ul class="tight">
+            <li><b>Worktrees</b>: <code>worktree create</code>, <code>worktree ps</code>. Un checkout por agente, sin pisarse.</li>
+            <li><b>Terminales gestionadas</b>: crear, leer, enviar y <b>esperar</b> (<code>terminal wait</code>).</li>
+            <li><b>Orquestación</b>: tareas, workers supervisados, buzón de mensajes, preguntas bloqueantes y <b>puertas de decisión</b> que detienen una tarea hasta que contesta una persona.</li>
+            <li><b>Artefactos, navegador y control del escritorio</b>, y búsqueda en el texto de sesiones de agentes.</li>
+            <li><b>Automatizaciones programadas</b> y skills compartidas por enlace.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card ok">
+          <h3>Por qué sirve para enseñar esto</h3>
+          <p>Aquí los conceptos abstractos tienen nombre y se ven en vivo:</p>
+          <ul class="tight">
+            <li><b>Aislamiento</b>: un worktree por agente, no dos editando el mismo fichero.</li>
+            <li><b>Supervisión</b>: quién trabaja, en qué y desde cuándo.</li>
+            <li><b>Espera</b>: un agente que no adivina, que comprueba si el otro ha terminado.</li>
+            <li><b>Puerta de decisión</b>: lo irreversible no lo decide un modelo; se para y se pregunta.</li>
+          </ul>
+        </div>
+        <div class="warnbox">El precio es disciplina: cuatro agentes sin contrato de tarea, sin límite de pasos y sin revisión son cuatro veces el mismo lío, más rápido.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Demostrar sólo una cosa: dos worktrees, dos agentes con una tarea de lectura cada uno, y los dos diffs revisados a la vez.</li>
+    <li>No convertir la sesión en un manual de la herramienta: lo que se llevan es el patrón (aislar, supervisar, esperar, preguntar).</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="8 · Harness y agentes">
+  <h2>El stack con el que se ha preparado esta charla</h2>
+  <div class="body compact">
+    <div class="cols c3">
+      <div class="card accent">
+        <h3>HanniPI · el harness</h3>
+        <p>Bucle agéntico, herramientas de fichero y de shell, ejecución de código en un entorno aislado, skills, memoria y una interfaz de terminal.</p>
+        <p class="small">Sustituye a la caja de texto: aquí el modelo lee, escribe, ejecuta y vuelve a intentarlo. Repositorio público.</p>
+      </div>
+      <div class="card">
+        <h3>HanniGram · la memoria</h3>
+        <p>Motor en .NET 10 con SQLite y búsqueda de texto completo, servido por HTTP, y las herramientas <code>mem_*</code> dentro del harness.</p>
+        <p class="small">Guarda lo que un chat olvida: decisiones que hay que respetar, hallazgos y el cierre de cada sesión con lo hecho y lo pendiente.</p>
+      </div>
+      <div class="card ok">
+        <h3>Orca · el taller</h3>
+        <p>Worktrees, terminales gestionadas, orquestación de varios agentes, navegador propio y automatizaciones programadas.</p>
+        <p class="small">No es el agente: es el sitio donde los agentes se organizan y se vigilan.</p>
+      </div>
+    </div>
+    <div class="cols c2">
+      <div class="col">
+        <div class="callout"><b>Lo importante no es el stack propio</b>, sino los cuatro patrones que se pueden copiar mañana sin instalar nada: convenciones en <code>AGENTS.md</code>, decisiones en ADR versionados, memoria de lo acordado y <b>un worktree por tarea</b>.</div>
+      </div>
+      <div class="col">
+        <div class="warnbox">Y su límite honesto: un harness propio es código que hay que mantener y del que nadie más responde. Se construye para <b>entender el mecanismo y poder enseñarlo</b>, no para reinventar comercialmente lo que ya existe.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Mensaje clave: aquí se usa stack propio por transparencia y aprendizaje; las mismas piezas existen comercialmente y los patrones son idénticos.</li>
+    <li>Si alguien quiere memoria persistente sin cambiar de harness: un fichero de decisiones versionado en el repositorio ya da el 80% del valor.</li>
+  </ul></aside>
 </section>
 
 <section class="slide" data-module="8 · Harness y agentes">

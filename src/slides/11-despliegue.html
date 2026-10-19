@@ -62,6 +62,47 @@
 </section>
 
 <section class="slide" data-module="11 · Despliegue y apps">
+  <h2>Docker: empaquetar la aplicación con su entorno</h2>
+  <div class="body compact">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card accent">
+          <h3>La idea, en una frase</h3>
+          <p>Una <b>imagen</b> es la aplicación con sus librerías, su versión de runtime y su configuración. Un <b>contenedor</b> es esa imagen ejecutándose. El problema que resuelve tiene treinta años: «en mi máquina funciona».</p>
+        </div>
+        <div class="card">
+          <h3>Las piezas que se usan de verdad</h3>
+          <ul class="tight">
+            <li><b>Imagen y capas</b>: cada instrucción añade una capa reutilizable y cacheable.</li>
+            <li><b>Registro</b>: donde se publican y se versionan las imágenes (etiquetas concretas, nunca <code>latest</code> en producción).</li>
+            <li><b>Volumen</b>: lo que debe sobrevivir al contenedor.</li>
+            <li><b>Red</b>: los contenedores se ven entre ellos por nombre.</li>
+            <li><b>Compose</b>: describir en un fichero la aplicación, su base de datos y su cola, y levantarlo todo con una orden.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card ok">
+          <h3>Qué cambia en el día a día</h3>
+          <ul class="tight">
+            <li>El mismo entorno en el portátil, en pruebas y en producción.</li>
+            <li>Incorporación sin manuales de instalación: <code>docker compose up</code>.</li>
+            <li>Despliegues reproducibles: se despliega una etiqueta, no «lo que había».</li>
+            <li>Vuelta atrás sencilla: se vuelve a la etiqueta anterior.</li>
+          </ul>
+        </div>
+        <div class="warnbox"><b>Un contenedor no es una máquina virtual</b>: comparte el kernel y separa por <em>namespaces</em> y <em>cgroups</em>, lo que <b>no</b> es aislamiento de seguridad por sí solo. Usuario no root, imágenes mínimas&#8230; y el socket de Docker equivale a ser root en la máquina.</div>
+        <div class="callout">El 90% del trabajo: <code>build</code>, <code>run</code>, <code>ps</code>, <code>logs</code>, <code>exec</code> y <code>compose up</code>. Alternativas que conviene conocer: <b>Podman</b> y <b>containerd</b> con <code>nerdctl</code>.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Pregunta de arranque: «¿cuántas horas se han perdido este año en diferencias de entorno?». Ahí está el retorno de la tarde.</li>
+    <li>Si ya usáis contenedores: pasar directo al aviso de seguridad (usuario, secretos, versiones fijadas).</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="11 · Despliegue y apps">
   <h2>Contenedores sin dolor</h2>
   <div class="body">
     <div class="cols c2">
@@ -92,6 +133,75 @@
     </div>
   </div>
   <aside class="notes"><ul><li>Comentar el clásico: contenedor de 2 GB con compiladores y credenciales dentro.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="11 · Despliegue y apps">
+  <h2>Kubernetes: qué problema resuelve (y cuándo no usarlo)</h2>
+  <div class="body compact">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card accent">
+          <h3>La idea central</h3>
+          <p>No es «un servidor más grande». Es un <b>bucle</b> que compara el estado que declaras por escrito con el estado real de las máquinas y <b>actúa</b>: crea, mueve, reinicia o retira. Todo lo demás sale de ahí.</p>
+          <p class="small">Docker empaqueta y ejecuta; Kubernetes decide <b>dónde, cuántos y con qué reglas</b>.</p>
+        </div>
+        <div class="card ok">
+          <h3>Lo que aporta de verdad</h3>
+          <ul class="tight">
+            <li><b>Reparto</b>: colocar contenedores entre máquinas según recursos y reglas.</li>
+            <li><b>Autorreparación</b>: lo que muere se recrea; si cae una máquina, se recoloca.</li>
+            <li><b>Escalado horizontal</b> y despliegues progresivos con vuelta atrás.</li>
+            <li><b>Descubrimiento y balanceo</b>: los servicios se encuentran sin fijar direcciones.</li>
+            <li><b>Política</b>: quién puede hacer qué, qué habla con qué y qué está permitido ejecutar.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card bad">
+          <h3>Cuándo no usarlo</h3>
+          <ul class="tight">
+            <li>Uno o tres servicios en un servidor: Compose o un servicio gestionado.</li>
+            <li>Equipo pequeño sin nadie de guardia: el coste no es instalarlo, es <b>operarlo</b>.</li>
+            <li>Si no hay nada que escalar ni que repartir, la complejidad se paga sin cobrar nada a cambio.</li>
+          </ul>
+        </div>
+        <div class="warnbox">La pregunta honesta antes de montarlo: <b>¿quién lo opera un domingo a las tres de la mañana?</b> Si la respuesta es «nadie», la respuesta es no.</div>
+        <div class="callout">Y aun sin usarlo, sus ideas sirven en cualquier despliegue: declarar el estado deseado, reconciliar sin parar y tratar la política como código.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Calibrar expectativas: la mayoría de los equipos que sufren Kubernetes no necesitaban Kubernetes, necesitaban dejar de desplegar a mano.</li>
+    <li>Conectar con el bloque de riesgos: aquí es donde se prohíbe <b>por política</b> lo que un agente no puede hacer.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="11 · Despliegue y apps">
+  <h2>Kubernetes en la práctica: vocabulario y política</h2>
+  <div class="body compact">
+    <table class="xxs">
+      <thead><tr><th>Objeto</th><th>Qué es</th><th>Para qué se usa</th></tr></thead>
+      <tbody>
+        <tr><td><b>Pod</b></td><td>Uno o varios contenedores que van juntos</td><td>La unidad mínima; casi nunca se escribe a mano</td></tr>
+        <tr><td><b>Deployment</b> / <b>StatefulSet</b></td><td>Cuántas copias hay y cómo se actualizan</td><td>Servicios sin estado / con estado (bases de datos)</td></tr>
+        <tr><td><b>Service</b> / <b>Ingress</b></td><td>Nombre estable y entrada desde fuera</td><td>Que los servicios se encuentren sin fijar direcciones ni puertos</td></tr>
+        <tr><td><b>ConfigMap</b> / <b>Secret</b></td><td>Configuración y credenciales</td><td>Separar configuración y código (ojo con quién puede leer el secreto)</td></tr>
+        <tr><td><b>Namespace</b></td><td>Separación lógica y de permisos</td><td>Aislar equipos o entornos dentro del mismo clúster</td></tr>
+        <tr><td><b>Helm</b> / <b>Kustomize</b></td><td>Plantillas sobre los ficheros de definición</td><td>Reutilizar y parametrizar manifiestos entre entornos</td></tr>
+        <tr><td><b>HPA</b></td><td>Escalado automático por carga</td><td>Más copias cuando sube el tráfico&#8230; si la aplicación lo soporta</td></tr>
+        <tr><td><b>RBAC</b>, <b>NetworkPolicy</b>, <b>Pod Security</b>, admisión</td><td>Permisos, red y reglas de admisión</td><td><b>Política como código</b>: qué puede correr, con qué permisos y con quién habla</td></tr>
+        <tr><td><b>Operator</b> / <b>CRD</b></td><td>Extender Kubernetes con tus propios objetos</td><td>Automatizar sistemas complejos (bases de datos, colas, agentes)</td></tr>
+      </tbody>
+    </table>
+    <div class="cols c2">
+      <div class="col"><div class="callout">El fichero de definición es código y se revisa como código: <b>plan antes de aplicar</b>, una pasada en seco contra el servidor y GitOps (Argo CD, Flux) para que el repositorio sea la única fuente de verdad.</div></div>
+      <div class="col"><div class="okbox">En una empresa regulada, Kubernetes interesa sobre todo como <b>mecanismo de política y aislamiento</b>: qué se ejecuta, con qué permisos, qué se comunica con qué y qué queda registrado. Es exactamente donde encajan los agentes: como usuarios de esas reglas y como sujetos de ellas.</div></div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>No hay que memorizar la tabla: la lección es que casi todo lo que en un servidor se hace a mano, aquí se declara y se revisa.</li>
+    <li>Si el equipo ya usa Kubernetes: ¿qué políticas tenéis y quién las revisa?</li>
+  </ul></aside>
 </section>
 
 <section class="slide" data-module="11 · Despliegue y apps">

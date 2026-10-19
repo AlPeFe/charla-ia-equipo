@@ -45,7 +45,7 @@ Enlace directo a una diapositiva: `index.html#/42`.
 
 ---
 
-## Contenido: 170 diapositivas en 16 módulos
+## Contenido: 179 diapositivas en 16 módulos
 
 | Módulo | Diapositivas | Contenido |
 |---|---|---|
@@ -53,18 +53,18 @@ Enlace directo a una diapositiva: `index.html#/42`.
 | 1 · Qué es la IA | 8 | Definiciones, los tres saltos (transformer, ChatGPT, agentes), taxonomía, glosario |
 | 2 · Cómo aprende | 17 | Datos, pérdida, gradientes, sobreajuste, las 4 fases, **fine-tuning, LoRA y QLoRA**, **herramientas de entrenamiento (Unsloth, PEFT, TRL, Axolotl…)**, Unsloth en detalle y receta mínima paso a paso |
 | 3 · Anatomía de un LLM | 10 | Tokens, embeddings, atención, bloques, muestreo, multimodalidad |
-| 4 · Inferencia | 14 | Prefill/decode, KV cache, cuantización, razonamiento, precios, hardware, API vs propio |
+| 4 · Inferencia | 15 | Prefill/decode, KV cache, cuantización, razonamiento, precios, hardware, API vs propio, **motores locales (llama.cpp, Ollama, vLLM) y la API compatible con OpenAI** |
 | 5 · Arquitecturas | 11 | Densa vs MoE, CNN, RNN/LSTM, tres familias de transformer, alternativas, otros modelos |
 | 6 · Difusión y ComfyUI | 9 | Difusión paso a paso, checkpoints/VAE/LoRA/ControlNet, ComfyUI, flujos de equipo, LoRA de imagen, vídeo y audio |
 | 7 · Panorama 2026 | 12 | Laboratorios, modelos punteros, precios, pesos abiertos, benchmarks, riesgos |
-| 8 · Harness y agentes | 17 | Bucle, herramientas, contexto, permisos, **tipos de harness (chat, IDE, CLI, nube, local)**, CLIs concretas (Claude Code, Codex, Gemini CLI, HanniPI, Copilot, Aider, OpenCode…), MCP y catálogo de servidores, configuración sin sustos, paralelismo, coste |
+| 8 · Harness y agentes | 20 | Bucle, herramientas, contexto, permisos, **tipos de harness (chat, IDE, CLI, nube, local)**, CLIs concretas (Claude Code, Codex, Gemini CLI, HanniPI, Copilot, Aider, OpenCode…), **superficies de control (T3 Code)**, MCP y catálogo de servidores, configuración sin sustos, paralelismo, **Orca: worktrees, terminales gestionadas y orquestación**, **el stack propio (HanniPI + HanniGram + Orca)**, coste |
 | 9 · Skills y contexto | 10 | Skills, **catálogo de skills típicas de un equipo (código y proceso)**, cómo se comparten y evolucionan, fichero de convenciones, memoria, ADRs, anatomía del prompt |
 | 10 · Día a día (código) | 11 | Código heredado, tests, revisión, refactors, SQL, bugs, anti-patrones |
-| 11 · Despliegue y apps | 10 | Plantillas, contenedores, IaC, CI/CD, observabilidad, seguridad, métricas |
+| 11 · Despliegue y apps | 13 | Plantillas, **Docker (imagen, contenedor, capas, Compose)**, **Kubernetes: qué resuelve, cuándo no usarlo y su vocabulario**, IaC, CI/CD, observabilidad, seguridad, métricas |
 | 12 · Automatizar | 9 | Inventario, contrato, CLIs, lotes, trabajos programados, cuándo NO |
 | 13 · Riesgos y reglas | 10 | Alucinaciones, inyección de prompts, datos, seguridad, coste, checklists |
-| 14 · Taller y adopción | 12 | 6 ejercicios guiados, plan 30/60/90, diez reglas |
-| 15 · Anexo | 5 | Recursos, plantilla de convenciones, glosario, cómo editar |
+| 14 · Taller y adopción | 13 | 7 ejercicios guiados (el último, levantar un modelo local y enchufarlo), plan 30/60/90, diez reglas |
+| 15 · Anexo | 6 | Recursos, plantilla de convenciones, **dos glosarios (general y de infraestructura y agentes)**, cómo editar |
 
 Cada diapositiva incluye **notas del ponente** (tecla `N`).
 
@@ -120,6 +120,10 @@ Clases útiles: `cols c2` / `c3` / `c4` (columnas), `card`, `callout`, `okbox`, 
 - **Unsloth** (velocidad, memoria, formatos, plataformas): datos publicados por el propio proyecto en su
   repositorio, consultados en la misma fecha. En la diapositiva se indica que son sus cifras.
 - **Arquitecturas, inferencia, difusión y buenas prácticas**: conocimiento estable, sin cifras volátiles.
+- **Docker, Kubernetes, Ollama, vLLM y llama.cpp**: conceptos y órdenes estables; la diapositiva de K8s menciona GitOps (Argo CD, Flux) y política como código sin dar versiones.
+- **T3 Code**: estrellas y proveedores soportados, leídos de la API de GitHub el **19-oct-2026**. Es la cifra que más caduca de toda la presentación.
+- **Orca**: versión **1.4.224** de la máquina donde se preparó la charla, y sólo lo que aparece en `orca --help`. Si en el equipo usáis otra versión, revisa esa diapositiva antes de presentarla.
+- **HanniPI y HanniGram**: descritos por sus responsabilidades (harness y memoria), sin versiones.
 - Todo dato que caduca lleva fecha en la propia diapositiva. Revisa antes de reutilizar el material.
 
 ## Refrescar el panorama de modelos

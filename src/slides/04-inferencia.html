@@ -407,6 +407,37 @@
 </section>
 
 <section class="slide" data-module="4 · Inferencia">
+  <h2>Servir un modelo tú mismo: Ollama, vLLM y una sola puerta</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card accent">
+          <h3>Tres piezas, tres trabajos distintos</h3>
+          <ul class="tight">
+            <li><b>llama.cpp</b>: el motor de base. Corre en casi todo (CPU, portátil, GPU modesta) y consume modelos <b>GGUF</b> ya cuantizados.</li>
+            <li><b>Ollama</b>: el mismo motor envuelto para humanos. Un ejecutable, un catálogo de modelos y una orden: <code>ollama run &lt;modelo&gt;</code>. Levanta un servicio local en <code>127.0.0.1:11434</code>.</li>
+            <li><b>vLLM</b>: motor de servidor. <b>Batching continuo</b>, GPU, métricas y muchas peticiones a la vez: es lo que se pone detrás de un servicio con varios usuarios.</li>
+          </ul>
+          <p class="small">Regla sencilla: una persona probando &#8594; Ollama. Un equipo consumiendo &#8594; vLLM. Sin GPU &#8594; llama.cpp.</p>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card ok">
+          <h3>La pieza que lo une todo: la API compatible con OpenAI</h3>
+          <p>Todos hablan el mismo dialecto: <code>/v1/chat/completions</code>. Cambiar de Ollama a vLLM o a un proveedor de nube no obliga a tocar el código: cambia la URL y el nombre del modelo.</p>
+          <p class="small">Encima se pone una <b>puerta</b> (LiteLLM y similares): un único endpoint con varias claves, modelos, cuotas, reintentos y registro de uso. Tu aplicación deja de conocer proveedores &#8212; y ese es el objetivo.</p>
+        </div>
+        <div class="warnbox"><b>Lo que no se ve en la demo:</b> es software que hay que operar. Memoria de GPU, versiones de drivers, cuantizaciones, actualizaciones y guardias. Antes de prometer nada: mide <b>tokens por segundo</b>, VRAM usada y coste real de la máquina.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>En vivo: preguntar lo mismo al modelo local y a la nube y cronometrarlo. La diferencia de calidad se entiende mejor que explicada.</li>
+    <li>Insistir en la idea de puerta: el día que cambiéis de motor, si habéis hablado siempre con un endpoint compatible, no hay proyecto.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="4 · Inferencia">
   <h2>Idea clave del bloque</h2>
   <div class="body center" style="justify-content:center">
     <div class="quote" style="max-width:1020px;font-size:29px">La inferencia es un problema de <b>ingeniería</b>: contexto bien ordenado, la herramienta adecuada, el modelo justo para cada tarea.</div>

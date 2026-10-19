@@ -252,6 +252,44 @@ descripción: &lt;cuándo debe usarse,
 </section>
 
 <section class="slide" data-module="14 · Taller y adopción">
+  <h2>Taller 7 · Un modelo en tu propia máquina (15 min)</h2>
+  <div class="body compact">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card">
+          <h3>Enunciado</h3>
+          <ol class="tight">
+            <li>Instala un motor local (Ollama es el camino corto) y descarga un modelo pequeño.</li>
+            <li>Pregúntale lo mismo que a la nube y compara: calidad, velocidad y aspecto de la respuesta.</li>
+            <li>Comprueba que expone una API compatible con OpenAI: <code>http://127.0.0.1:11434/v1</code>.</li>
+            <li>Pide al agente del harness que apunte a ese endpoint y repita una tarea de texto sencilla.</li>
+          </ol>
+          <pre style="font-size:15px"><code>ollama run &lt;modelo-pequeno&gt;
+# en otra terminal:
+curl http://127.0.0.1:11434/v1/models</code></pre>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card ok">
+          <h3>Criterio de éxito</h3>
+          <ul class="tight">
+            <li>Has visto con tus ojos dónde gana y dónde pierde un modelo local.</li>
+            <li>Sabes nombrar tres tareas de tu semana que tolerarían un modelo local: clasificar, resumir, extraer, redactar un borrador.</li>
+            <li>Y una que no: razonar sobre un repositorio grande o sobre un caso límite.</li>
+          </ul>
+        </div>
+        <div class="warnbox">Local no significa gratis: pagas máquina, electricidad y tiempo de descarga. Y si el uso crece a varias personas, el mismo endpoint lo sirve <b>vLLM</b> en lugar de un modelo en un portátil.</div>
+        <div class="callout">El uso profesional más interesante: <b>datos que no pueden salir de casa</b>. Ahí el modelo local no es un juguete, es la única opción compatible.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Si la máquina del taller no aguanta el modelo: hacerlo sólo en la del ponente y repartir la transcripción.</li>
+    <li>Cerrar insistiendo en la API compatible: es lo que permite cambiar de motor sin tocar la aplicación.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="14 · Taller y adopción">
   <h2>Adopción 30 / 60 / 90 días</h2>
   <div class="body">
     <div class="cols c3">

@@ -6,7 +6,7 @@
 <title>IA en el trabajo: entenderla y usarla</title>
 <meta name="description" content="Qué es la IA, cómo funciona por dentro, y cómo exprimirla con harness, skills y agentes">
 <meta name="author" content="AlPeFe">
-<meta name="generated" content="2026-10-17">
+<meta name="generated" content="2026-10-19">
 <style>
 :root{
   --bg:#080b12; --bg-soft:#0f1622; --panel:#141d2b; --line:#22304a;
@@ -1814,6 +1814,37 @@ modelo = [bloque] * N_capas</code></pre>
 </section>
 
 <section class="slide" data-module="4 · Inferencia">
+  <h2>Servir un modelo tú mismo: Ollama, vLLM y una sola puerta</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card accent">
+          <h3>Tres piezas, tres trabajos distintos</h3>
+          <ul class="tight">
+            <li><b>llama.cpp</b>: el motor de base. Corre en casi todo (CPU, portátil, GPU modesta) y consume modelos <b>GGUF</b> ya cuantizados.</li>
+            <li><b>Ollama</b>: el mismo motor envuelto para humanos. Un ejecutable, un catálogo de modelos y una orden: <code>ollama run &lt;modelo&gt;</code>. Levanta un servicio local en <code>127.0.0.1:11434</code>.</li>
+            <li><b>vLLM</b>: motor de servidor. <b>Batching continuo</b>, GPU, métricas y muchas peticiones a la vez: es lo que se pone detrás de un servicio con varios usuarios.</li>
+          </ul>
+          <p class="small">Regla sencilla: una persona probando &#8594; Ollama. Un equipo consumiendo &#8594; vLLM. Sin GPU &#8594; llama.cpp.</p>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card ok">
+          <h3>La pieza que lo une todo: la API compatible con OpenAI</h3>
+          <p>Todos hablan el mismo dialecto: <code>/v1/chat/completions</code>. Cambiar de Ollama a vLLM o a un proveedor de nube no obliga a tocar el código: cambia la URL y el nombre del modelo.</p>
+          <p class="small">Encima se pone una <b>puerta</b> (LiteLLM y similares): un único endpoint con varias claves, modelos, cuotas, reintentos y registro de uso. Tu aplicación deja de conocer proveedores &#8212; y ese es el objetivo.</p>
+        </div>
+        <div class="warnbox"><b>Lo que no se ve en la demo:</b> es software que hay que operar. Memoria de GPU, versiones de drivers, cuantizaciones, actualizaciones y guardias. Antes de prometer nada: mide <b>tokens por segundo</b>, VRAM usada y coste real de la máquina.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>En vivo: preguntar lo mismo al modelo local y a la nube y cronometrarlo. La diferencia de calidad se entiende mejor que explicada.</li>
+    <li>Insistir en la idea de puerta: el día que cambiéis de motor, si habéis hablado siempre con un endpoint compatible, no hay proyecto.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="4 · Inferencia">
   <h2>Idea clave del bloque</h2>
   <div class="body center" style="justify-content:center">
     <div class="quote" style="max-width:1020px;font-size:29px">La inferencia es un problema de <b>ingeniería</b>: contexto bien ordenado, la herramienta adecuada, el modelo justo para cada tarea.</div>
@@ -3045,6 +3076,46 @@ modelo = [bloque] * N_capas</code></pre>
 </section>
 
 <section class="slide" data-module="8 · Harness y agentes">
+  <h2>Superficies de control: el panel por encima de las CLIs</h2>
+  <div class="body compact">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card accent">
+          <h3>Qué es una superficie de control</h3>
+          <p>Una aplicación que <b>no trae modelo propio</b>: arranca, vigila y aprueba los agentes que ya tienes instalados. Resuelve justo lo que el terminal hace mal: ver varias sesiones a la vez, revisar diffs y aprobar permisos.</p>
+          <p class="small">El modelo y la CLI siguen siendo los mismos. Cambia lo que puedes <em>ver</em> y <em>controlar</em>.</p>
+        </div>
+        <div class="card">
+          <h3>T3 Code <span class="tag acc">código abierto</span></h3>
+          <ul class="tight">
+            <li>Maneja las CLIs de Claude Code, Codex, Cursor, Grok Build, OpenCode y Antigravity.</li>
+            <li>Escritorio, web local y <b>app móvil</b>: la tarea corre en tu máquina y la revisas desde el teléfono.</li>
+            <li>Modos de permiso, revisión de cambios e integración con el control de versiones.</li>
+            <li>Instalación ligera (<code>npx t3@latest</code>) o app de escritorio. Muy joven: sus autores avisan de que habrá errores.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card ok">
+          <h3>La categoría completa importa más que la marca</h3>
+          <ul class="tight">
+            <li><b>Paneles sobre CLIs</b>: T3 Code, Conductor, Claude Desktop, la app de Codex, Cursor Glass.</li>
+            <li><b>IDE con agente</b>: Cursor, Windsurf, Zed, VS Code con extensión.</li>
+            <li><b>La versión pobre y siempre disponible</b>: varias terminales con tmux y un worktree de git por tarea, miradas a mano.</li>
+          </ul>
+        </div>
+        <div class="warnbox">Una superficie de control no verifica nada por ti: te enseña el diff y te pide permiso. La decisión, el test y la revisión siguen siendo tu trabajo.</div>
+        <div class="callout">Para el equipo: elegir <b>una</b> superficie y estandarizar. Lo portable no es el panel, sino las convenciones y los comandos del repositorio.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Contexto sin hype: T3 Code ronda las 28.000 estrellas en GitHub en octubre de 2026 con menos de un año de vida. Esa velocidad es el motivo de enseñar categorías y no productos.</li>
+    <li>Si preguntan cuál instalar: la que maneje la CLI que ya usáis y no exija mover el código a su nube.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="8 · Harness y agentes">
   <h2>MCP: los servidores que se usan de verdad</h2>
   <div class="body">
     <table class="xs">
@@ -3186,6 +3257,83 @@ modelo = [bloque] * N_capas</code></pre>
     </div>
   </div>
   <aside class="notes"><ul><li>Contar un caso: dividir una migración por módulos; 4 agentes, revisión final a mano.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="8 · Harness y agentes">
+  <h2>Orca: la sala de máquinas cuando hay varios agentes</h2>
+  <div class="body compact">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card accent">
+          <h3>Qué es</h3>
+          <p>Herramienta local (interfaz y línea de órdenes <code>orca</code>) que organiza el trabajo de <b>varios agentes sobre el mismo repositorio</b>: cada uno en su worktree y su terminal, todos supervisables desde el mismo sitio.</p>
+          <p class="small">En la máquina donde se preparó esta charla: Orca 1.4.224. Todo lo que sigue sale de <code>orca --help</code>.</p>
+        </div>
+        <div class="card">
+          <h3>Lo que resuelve, en órdenes</h3>
+          <ul class="tight">
+            <li><b>Worktrees</b>: <code>worktree create</code>, <code>worktree ps</code>. Un checkout por agente, sin pisarse.</li>
+            <li><b>Terminales gestionadas</b>: crear, leer, enviar y <b>esperar</b> (<code>terminal wait</code>).</li>
+            <li><b>Orquestación</b>: tareas, workers supervisados, buzón de mensajes, preguntas bloqueantes y <b>puertas de decisión</b> que detienen una tarea hasta que contesta una persona.</li>
+            <li><b>Artefactos, navegador y control del escritorio</b>, y búsqueda en el texto de sesiones de agentes.</li>
+            <li><b>Automatizaciones programadas</b> y skills compartidas por enlace.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card ok">
+          <h3>Por qué sirve para enseñar esto</h3>
+          <p>Aquí los conceptos abstractos tienen nombre y se ven en vivo:</p>
+          <ul class="tight">
+            <li><b>Aislamiento</b>: un worktree por agente, no dos editando el mismo fichero.</li>
+            <li><b>Supervisión</b>: quién trabaja, en qué y desde cuándo.</li>
+            <li><b>Espera</b>: un agente que no adivina, que comprueba si el otro ha terminado.</li>
+            <li><b>Puerta de decisión</b>: lo irreversible no lo decide un modelo; se para y se pregunta.</li>
+          </ul>
+        </div>
+        <div class="warnbox">El precio es disciplina: cuatro agentes sin contrato de tarea, sin límite de pasos y sin revisión son cuatro veces el mismo lío, más rápido.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Demostrar sólo una cosa: dos worktrees, dos agentes con una tarea de lectura cada uno, y los dos diffs revisados a la vez.</li>
+    <li>No convertir la sesión en un manual de la herramienta: lo que se llevan es el patrón (aislar, supervisar, esperar, preguntar).</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="8 · Harness y agentes">
+  <h2>El stack con el que se ha preparado esta charla</h2>
+  <div class="body compact">
+    <div class="cols c3">
+      <div class="card accent">
+        <h3>HanniPI · el harness</h3>
+        <p>Bucle agéntico, herramientas de fichero y de shell, ejecución de código en un entorno aislado, skills, memoria y una interfaz de terminal.</p>
+        <p class="small">Sustituye a la caja de texto: aquí el modelo lee, escribe, ejecuta y vuelve a intentarlo. Repositorio público.</p>
+      </div>
+      <div class="card">
+        <h3>HanniGram · la memoria</h3>
+        <p>Motor en .NET 10 con SQLite y búsqueda de texto completo, servido por HTTP, y las herramientas <code>mem_*</code> dentro del harness.</p>
+        <p class="small">Guarda lo que un chat olvida: decisiones que hay que respetar, hallazgos y el cierre de cada sesión con lo hecho y lo pendiente.</p>
+      </div>
+      <div class="card ok">
+        <h3>Orca · el taller</h3>
+        <p>Worktrees, terminales gestionadas, orquestación de varios agentes, navegador propio y automatizaciones programadas.</p>
+        <p class="small">No es el agente: es el sitio donde los agentes se organizan y se vigilan.</p>
+      </div>
+    </div>
+    <div class="cols c2">
+      <div class="col">
+        <div class="callout"><b>Lo importante no es el stack propio</b>, sino los cuatro patrones que se pueden copiar mañana sin instalar nada: convenciones en <code>AGENTS.md</code>, decisiones en ADR versionados, memoria de lo acordado y <b>un worktree por tarea</b>.</div>
+      </div>
+      <div class="col">
+        <div class="warnbox">Y su límite honesto: un harness propio es código que hay que mantener y del que nadie más responde. Se construye para <b>entender el mecanismo y poder enseñarlo</b>, no para reinventar comercialmente lo que ya existe.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Mensaje clave: aquí se usa stack propio por transparencia y aprendizaje; las mismas piezas existen comercialmente y los patrones son idénticos.</li>
+    <li>Si alguien quiere memoria persistente sin cambiar de harness: un fichero de decisiones versionado en el repositorio ya da el 80% del valor.</li>
+  </ul></aside>
 </section>
 
 <section class="slide" data-module="8 · Harness y agentes">
@@ -3936,6 +4084,47 @@ Alternativas descartadas: cron por cliente.</code></pre>
 </section>
 
 <section class="slide" data-module="11 · Despliegue y apps">
+  <h2>Docker: empaquetar la aplicación con su entorno</h2>
+  <div class="body compact">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card accent">
+          <h3>La idea, en una frase</h3>
+          <p>Una <b>imagen</b> es la aplicación con sus librerías, su versión de runtime y su configuración. Un <b>contenedor</b> es esa imagen ejecutándose. El problema que resuelve tiene treinta años: «en mi máquina funciona».</p>
+        </div>
+        <div class="card">
+          <h3>Las piezas que se usan de verdad</h3>
+          <ul class="tight">
+            <li><b>Imagen y capas</b>: cada instrucción añade una capa reutilizable y cacheable.</li>
+            <li><b>Registro</b>: donde se publican y se versionan las imágenes (etiquetas concretas, nunca <code>latest</code> en producción).</li>
+            <li><b>Volumen</b>: lo que debe sobrevivir al contenedor.</li>
+            <li><b>Red</b>: los contenedores se ven entre ellos por nombre.</li>
+            <li><b>Compose</b>: describir en un fichero la aplicación, su base de datos y su cola, y levantarlo todo con una orden.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card ok">
+          <h3>Qué cambia en el día a día</h3>
+          <ul class="tight">
+            <li>El mismo entorno en el portátil, en pruebas y en producción.</li>
+            <li>Incorporación sin manuales de instalación: <code>docker compose up</code>.</li>
+            <li>Despliegues reproducibles: se despliega una etiqueta, no «lo que había».</li>
+            <li>Vuelta atrás sencilla: se vuelve a la etiqueta anterior.</li>
+          </ul>
+        </div>
+        <div class="warnbox"><b>Un contenedor no es una máquina virtual</b>: comparte el kernel y separa por <em>namespaces</em> y <em>cgroups</em>, lo que <b>no</b> es aislamiento de seguridad por sí solo. Usuario no root, imágenes mínimas&#8230; y el socket de Docker equivale a ser root en la máquina.</div>
+        <div class="callout">El 90% del trabajo: <code>build</code>, <code>run</code>, <code>ps</code>, <code>logs</code>, <code>exec</code> y <code>compose up</code>. Alternativas que conviene conocer: <b>Podman</b> y <b>containerd</b> con <code>nerdctl</code>.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Pregunta de arranque: «¿cuántas horas se han perdido este año en diferencias de entorno?». Ahí está el retorno de la tarde.</li>
+    <li>Si ya usáis contenedores: pasar directo al aviso de seguridad (usuario, secretos, versiones fijadas).</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="11 · Despliegue y apps">
   <h2>Contenedores sin dolor</h2>
   <div class="body">
     <div class="cols c2">
@@ -3966,6 +4155,75 @@ Alternativas descartadas: cron por cliente.</code></pre>
     </div>
   </div>
   <aside class="notes"><ul><li>Comentar el clásico: contenedor de 2 GB con compiladores y credenciales dentro.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="11 · Despliegue y apps">
+  <h2>Kubernetes: qué problema resuelve (y cuándo no usarlo)</h2>
+  <div class="body compact">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card accent">
+          <h3>La idea central</h3>
+          <p>No es «un servidor más grande». Es un <b>bucle</b> que compara el estado que declaras por escrito con el estado real de las máquinas y <b>actúa</b>: crea, mueve, reinicia o retira. Todo lo demás sale de ahí.</p>
+          <p class="small">Docker empaqueta y ejecuta; Kubernetes decide <b>dónde, cuántos y con qué reglas</b>.</p>
+        </div>
+        <div class="card ok">
+          <h3>Lo que aporta de verdad</h3>
+          <ul class="tight">
+            <li><b>Reparto</b>: colocar contenedores entre máquinas según recursos y reglas.</li>
+            <li><b>Autorreparación</b>: lo que muere se recrea; si cae una máquina, se recoloca.</li>
+            <li><b>Escalado horizontal</b> y despliegues progresivos con vuelta atrás.</li>
+            <li><b>Descubrimiento y balanceo</b>: los servicios se encuentran sin fijar direcciones.</li>
+            <li><b>Política</b>: quién puede hacer qué, qué habla con qué y qué está permitido ejecutar.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card bad">
+          <h3>Cuándo no usarlo</h3>
+          <ul class="tight">
+            <li>Uno o tres servicios en un servidor: Compose o un servicio gestionado.</li>
+            <li>Equipo pequeño sin nadie de guardia: el coste no es instalarlo, es <b>operarlo</b>.</li>
+            <li>Si no hay nada que escalar ni que repartir, la complejidad se paga sin cobrar nada a cambio.</li>
+          </ul>
+        </div>
+        <div class="warnbox">La pregunta honesta antes de montarlo: <b>¿quién lo opera un domingo a las tres de la mañana?</b> Si la respuesta es «nadie», la respuesta es no.</div>
+        <div class="callout">Y aun sin usarlo, sus ideas sirven en cualquier despliegue: declarar el estado deseado, reconciliar sin parar y tratar la política como código.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Calibrar expectativas: la mayoría de los equipos que sufren Kubernetes no necesitaban Kubernetes, necesitaban dejar de desplegar a mano.</li>
+    <li>Conectar con el bloque de riesgos: aquí es donde se prohíbe <b>por política</b> lo que un agente no puede hacer.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="11 · Despliegue y apps">
+  <h2>Kubernetes en la práctica: vocabulario y política</h2>
+  <div class="body compact">
+    <table class="xxs">
+      <thead><tr><th>Objeto</th><th>Qué es</th><th>Para qué se usa</th></tr></thead>
+      <tbody>
+        <tr><td><b>Pod</b></td><td>Uno o varios contenedores que van juntos</td><td>La unidad mínima; casi nunca se escribe a mano</td></tr>
+        <tr><td><b>Deployment</b> / <b>StatefulSet</b></td><td>Cuántas copias hay y cómo se actualizan</td><td>Servicios sin estado / con estado (bases de datos)</td></tr>
+        <tr><td><b>Service</b> / <b>Ingress</b></td><td>Nombre estable y entrada desde fuera</td><td>Que los servicios se encuentren sin fijar direcciones ni puertos</td></tr>
+        <tr><td><b>ConfigMap</b> / <b>Secret</b></td><td>Configuración y credenciales</td><td>Separar configuración y código (ojo con quién puede leer el secreto)</td></tr>
+        <tr><td><b>Namespace</b></td><td>Separación lógica y de permisos</td><td>Aislar equipos o entornos dentro del mismo clúster</td></tr>
+        <tr><td><b>Helm</b> / <b>Kustomize</b></td><td>Plantillas sobre los ficheros de definición</td><td>Reutilizar y parametrizar manifiestos entre entornos</td></tr>
+        <tr><td><b>HPA</b></td><td>Escalado automático por carga</td><td>Más copias cuando sube el tráfico&#8230; si la aplicación lo soporta</td></tr>
+        <tr><td><b>RBAC</b>, <b>NetworkPolicy</b>, <b>Pod Security</b>, admisión</td><td>Permisos, red y reglas de admisión</td><td><b>Política como código</b>: qué puede correr, con qué permisos y con quién habla</td></tr>
+        <tr><td><b>Operator</b> / <b>CRD</b></td><td>Extender Kubernetes con tus propios objetos</td><td>Automatizar sistemas complejos (bases de datos, colas, agentes)</td></tr>
+      </tbody>
+    </table>
+    <div class="cols c2">
+      <div class="col"><div class="callout">El fichero de definición es código y se revisa como código: <b>plan antes de aplicar</b>, una pasada en seco contra el servidor y GitOps (Argo CD, Flux) para que el repositorio sea la única fuente de verdad.</div></div>
+      <div class="col"><div class="okbox">En una empresa regulada, Kubernetes interesa sobre todo como <b>mecanismo de política y aislamiento</b>: qué se ejecuta, con qué permisos, qué se comunica con qué y qué queda registrado. Es exactamente donde encajan los agentes: como usuarios de esas reglas y como sujetos de ellas.</div></div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>No hay que memorizar la tabla: la lección es que casi todo lo que en un servidor se hace a mano, aquí se declara y se revisa.</li>
+    <li>Si el equipo ya usa Kubernetes: ¿qué políticas tenéis y quién las revisa?</li>
+  </ul></aside>
 </section>
 
 <section class="slide" data-module="11 · Despliegue y apps">
@@ -5002,6 +5260,44 @@ descripción: &lt;cuándo debe usarse,
 </section>
 
 <section class="slide" data-module="14 · Taller y adopción">
+  <h2>Taller 7 · Un modelo en tu propia máquina (15 min)</h2>
+  <div class="body compact">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card">
+          <h3>Enunciado</h3>
+          <ol class="tight">
+            <li>Instala un motor local (Ollama es el camino corto) y descarga un modelo pequeño.</li>
+            <li>Pregúntale lo mismo que a la nube y compara: calidad, velocidad y aspecto de la respuesta.</li>
+            <li>Comprueba que expone una API compatible con OpenAI: <code>http://127.0.0.1:11434/v1</code>.</li>
+            <li>Pide al agente del harness que apunte a ese endpoint y repita una tarea de texto sencilla.</li>
+          </ol>
+          <pre style="font-size:15px"><code>ollama run &lt;modelo-pequeno&gt;
+# en otra terminal:
+curl http://127.0.0.1:11434/v1/models</code></pre>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card ok">
+          <h3>Criterio de éxito</h3>
+          <ul class="tight">
+            <li>Has visto con tus ojos dónde gana y dónde pierde un modelo local.</li>
+            <li>Sabes nombrar tres tareas de tu semana que tolerarían un modelo local: clasificar, resumir, extraer, redactar un borrador.</li>
+            <li>Y una que no: razonar sobre un repositorio grande o sobre un caso límite.</li>
+          </ul>
+        </div>
+        <div class="warnbox">Local no significa gratis: pagas máquina, electricidad y tiempo de descarga. Y si el uso crece a varias personas, el mismo endpoint lo sirve <b>vLLM</b> en lugar de un modelo en un portátil.</div>
+        <div class="callout">El uso profesional más interesante: <b>datos que no pueden salir de casa</b>. Ahí el modelo local no es un juguete, es la única opción compatible.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Si la máquina del taller no aguanta el modelo: hacerlo sólo en la del ponente y repartir la transcripción.</li>
+    <li>Cerrar insistiendo en la API compatible: es lo que permite cambiar de motor sin tocar la aplicación.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="14 · Taller y adopción">
   <h2>Adopción 30 / 60 / 90 días</h2>
   <div class="body">
     <div class="cols c3">
@@ -5123,6 +5419,7 @@ descripción: &lt;cuándo debe usarse,
             <li>Documentación de Google sobre Gemini y buenas prácticas multimodales.</li>
             <li>Especificación de <b>MCP</b> (Model Context Protocol): cómo se conectan herramientas y datos.</li>
             <li>Documentación del harness que use el equipo: hooks, skills, permisos, subagentes.</li>
+            <li>Documentación de <b>Docker</b>, <b>Kubernetes</b> y de los motores locales (<b>Ollama</b>, <b>vLLM</b>, <b>llama.cpp</b>): lo que más se consulta cuando se despliega de verdad.</li>
           </ul>
         </div>
       </div>
@@ -5208,6 +5505,26 @@ descripción: &lt;cuándo debe usarse,
     </table>
   </div>
   <aside class="notes"><ul><li>Material de consulta; se puede imprimir como una página de referencia.</li></ul></aside>
+</section>
+
+<section class="slide" data-module="15 · Anexo">
+  <h2>Glosario de infraestructura y de agentes</h2>
+  <div class="body">
+    <table class="xs" style="font-size:14px">
+      <thead><tr><th>Término</th><th>Definición corta</th><th>Término</th><th>Definición corta</th></tr></thead>
+      <tbody>
+        <tr><td><b>Contenedor</b></td><td>Aplicación empaquetada con su entorno, compartiendo el kernel</td><td><b>Imagen</b></td><td>Plantilla de capas de la que nacen los contenedores</td></tr>
+        <tr><td><b>Compose</b></td><td>Levantar varios contenedores juntos desde un fichero</td><td><b>Registro</b></td><td>Almacén versionado de imágenes</td></tr>
+        <tr><td><b>Kubernetes</b></td><td>Reconciliador: compara el estado deseado con el real y actúa</td><td><b>GitOps</b></td><td>El repositorio como única fuente de verdad del despliegue</td></tr>
+        <tr><td><b>Política como código</b></td><td>Permisos y red declarados en ficheros, revisables y auditables</td><td><b>On-premise</b></td><td>Ejecutar en infraestructura propia, sin nube de terceros</td></tr>
+        <tr><td><b>Motor de inferencia</b></td><td>Programa que sirve un modelo a muchos usuarios (vLLM, llama.cpp)</td><td><b>API compatible con OpenAI</b></td><td>Dialecto común: cambiar de motor sin tocar el código</td></tr>
+        <tr><td><b>Puerta de modelos</b></td><td>Un único endpoint con claves, cuotas y registro (LiteLLM)</td><td><b>Superficie de control</b></td><td>Panel que arranca y aprueba agentes ya instalados (T3 Code)</td></tr>
+        <tr><td><b>Worktree</b></td><td>Copia de trabajo del mismo repositorio, una por agente</td><td><b>Orquestación</b></td><td>Repartir tareas entre agentes y esperar sus resultados</td></tr>
+        <tr><td><b>Puerta de decisión</b></td><td>Tarea detenida hasta que responde una persona</td><td><b>Memoria del agente</b></td><td>Decisiones y hallazgos recuperables entre sesiones (ADR, HanniGram)</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <aside class="notes"><ul><li>Segunda hoja de referencia, junto al glosario general: la que se consulta cuando el equipo empieza a desplegar y a orquestar.</li></ul></aside>
 </section>
 
 <section class="slide" data-module="15 · Anexo">
