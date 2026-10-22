@@ -45,11 +45,11 @@ Enlace directo a una diapositiva: `index.html#/42`.
 
 ---
 
-## Contenido: 181 diapositivas en 16 módulos
+## Contenido: 177 diapositivas en 16 módulos
 
 | Módulo | Diapositivas | Contenido |
 |---|---|---|
-| 0 · Encuadre | 6 | Objetivos, agenda de 4 h, reglas del juego |
+| 0 · Portada | 1 | Sólo portada |
 | 1 · Qué es la IA | 8 | Definiciones, los tres saltos (transformer, ChatGPT, agentes), taxonomía, glosario |
 | 2 · Cómo aprende | 17 | Datos, pérdida, gradientes, sobreajuste, las 4 fases, **fine-tuning, LoRA y QLoRA**, **herramientas de entrenamiento (Unsloth, PEFT, TRL, Axolotl…)**, Unsloth en detalle y receta mínima paso a paso |
 | 3 · Anatomía de un LLM | 12 | Tokens, embeddings, atención, **la fórmula de la atención y self-attention**, **softmax (la función, la temperatura y por qué es derivable)**, bloques, muestreo, multimodalidad |
@@ -144,7 +144,7 @@ modelos abiertos, novedades). Después actualiza a mano las tablas de la secció
 
 - Dos pantallas: pon la presentación en el proyector con `F` (pantalla completa) y el portátil con `N`
   (notas) — o usa `P`, que activa las dos cosas.
-- Cronómetro: `C`. La agenda prevista está en la diapositiva de agenda.
+- Cronómetro: `C`.
 - Para enviar el material: `Ctrl`+`P` y "Guardar como PDF".
 
 ---
