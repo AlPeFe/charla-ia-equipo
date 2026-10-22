@@ -9,40 +9,55 @@
 <section class="slide" data-module="2 · Cómo aprende">
   <h2>Aprender = ajustar números para equivocarse menos</h2>
   <div class="body">
-    <div class="flow">
-      <span class="node">1 · Datos de ejemplo</span><span class="arrow">&#8594;</span>
-      <span class="node">2 · Predecir</span><span class="arrow">&#8594;</span>
-      <span class="node">3 · Medir el error</span><span class="arrow">&#8594;</span>
-      <span class="node">4 · Corregir los pesos</span><span class="arrow">&#8594;</span>
-      <span class="node">repetir millones de veces</span>
+    <div class="figure">
+      <svg class="svgfig" viewBox="0 0 1152 360" role="img" aria-label="Bucle de entrenamiento y descenso de gradiente">
+        <!-- bucle -->
+        <rect x="30" y="30" width="240" height="70" rx="12" class="box hi"/>
+        <text x="150" y="60" text-anchor="middle" class="tb">1 · Le doy ejemplos</text>
+        <text x="150" y="84" text-anchor="middle" class="t">"El gato se subió al…"</text>
+
+        <rect x="310" y="30" width="240" height="70" rx="12" class="box cy"/>
+        <text x="430" y="60" text-anchor="middle" class="tb">2 · Que adivine</text>
+        <text x="430" y="84" text-anchor="middle" class="t">dice "sofá" (mal)</text>
+
+        <rect x="310" y="250" width="240" height="70" rx="12" class="box wa"/>
+        <text x="430" y="280" text-anchor="middle" class="tb">3 · Mido el fallo</text>
+        <text x="430" y="304" text-anchor="middle" class="t">un número: el error</text>
+
+        <rect x="30" y="250" width="240" height="70" rx="12" class="box ok"/>
+        <text x="150" y="280" text-anchor="middle" class="tb">4 · Corrijo los pesos</text>
+        <text x="150" y="304" text-anchor="middle" class="t">un poquito hacia acertar</text>
+
+        <path d="M274 65 H298" class="ln hi"/>
+        <path d="M304 65 l-9 -6 v12z" fill="#8b5cff"/>
+        <path d="M430 104 V238" class="ln hi"/>
+        <path d="M430 244 l-6 -9 h12z" fill="#8b5cff"/>
+        <path d="M306 285 H282" class="ln hi"/>
+        <path d="M276 285 l9 -6 v12z" fill="#8b5cff"/>
+        <path d="M150 246 V112" class="ln hi"/>
+        <path d="M150 106 l-6 9 h12z" fill="#8b5cff"/>
+        <text x="470" y="195" text-anchor="middle" class="tc" transform="rotate(-90 470 195)">× millones de veces</text>
+
+        <!-- descenso -->
+        <line x1="620" y1="330" x2="1130" y2="330" class="ln"/>
+        <line x1="620" y1="330" x2="620" y2="40" class="ln"/>
+        <text x="596" y="60" class="ts" transform="rotate(-90 596 60)">error</text>
+        <text x="1010" y="352" class="ts">ajuste de los pesos →</text>
+        <path d="M640 60 C 760 320, 960 330, 1120 90" class="curve"/>
+        <circle cx="672" cy="130" r="7" class="dot"/>
+        <circle cx="722" cy="218" r="7" class="dot"/>
+        <circle cx="782" cy="282" r="7" class="dot"/>
+        <circle cx="850" cy="313" r="7" class="dot"/>
+        <text x="700" y="118" class="ts">paso grande: rebota</text>
+        <text x="800" y="300" class="ts">paso pequeño: llega</text>
+        <text x="640" y="384" class="t">Cada paso = el "learning rate". Ni muy grande ni muy pequeño.</text>
+      </svg>
     </div>
-    <div class="cols c2">
-      <div class="col">
-        <div class="card">
-          <h3>La analogía de la niebla en la montaña</h3>
-          <p>Estás en una ladera con niebla y quieres bajar. No ves el valle: sólo notas la pendiente <em>bajo tus pies</em> y das un paso en esa dirección. Repites. Eso es el <b>descenso de gradiente</b>.</p>
-          <ul class="tight">
-            <li><b>Altura</b> = error (pérdida / loss).</li>
-            <li><b>Pendiente</b> = gradiente: en qué dirección cambia cada peso para reducir el error.</li>
-            <li><b>Tamaño del paso</b> = learning rate. Muy grande: rebotas; muy pequeño: tardas una eternidad.</li>
-          </ul>
-        </div>
-      </div>
-      <div class="col">
-        <div class="card accent">
-          <h3>Qué NO hay aquí</h3>
-          <ul class="tight">
-            <li>No hay reglas escritas por humanos dentro del modelo.</li>
-            <li>No hay comprensión: hay correlación y optimización numérica.</li>
-            <li>No hay memoria de los ejemplos: sólo quedan los números ajustados.</li>
-          </ul>
-          <p class="small">Por eso el mismo algoritmo sirve para predecir texto, píxeles o proteínas: es matemática genérica de ajuste.</p>
-        </div>
-      </div>
-    </div>
+    <div class="okbox">Dentro del modelo no hay reglas escritas por nadie: sólo <b>números</b> que se retocan en bucle. El mismo truco sirve para texto, imágenes o proteínas.</div>
   </div>
   <aside class="notes"><ul>
-    <li>Pregunta al grupo: "¿dónde está el conocimiento en un modelo?". Respuesta: no está en un sitio concreto, está distribuido en los pesos.</li>
+    <li>Meter en la conversación: "¿dónde está el conocimiento?" No hay un cajón: está repartido en los millones de pesos.</li>
+    <li>Analogía rápida: bajar una ladera con niebla, tanteando la pendiente bajo los pies. Eso es el descenso de gradiente.</li>
   </ul></aside>
 </section>
 
@@ -81,112 +96,162 @@
 </section>
 
 <section class="slide" data-module="2 · Cómo aprende">
-  <h2>El truco del LLM: predecir lo que viene después</h2>
+  <h2>El truco del LLM: adivinar la siguiente palabra</h2>
   <div class="body">
-    <div class="cols c2">
+    <div class="cols c2-1">
       <div class="col">
-        <pre><code>Entrada:   "El gato se subió al ___"
-Objetivo:  predecir el siguiente token
-
-Salida (probabilidades del modelo):
-  tejado     0.41
-  árbol      0.22
-  sofá       0.13
-  techo      0.09
-  ...        (miles de candidatos)</code></pre>
-        <div class="card">
-          <h3>Por qué algo tan simple funciona</h3>
-          <p>Para predecir bien el siguiente token <em>en cualquier texto del mundo</em>, el modelo se ve obligado a aprender gramática, sintaxis, hechos, estilos, formato, razonamiento típico&#8230; La tarea es simple; el requisito para hacerla bien, enorme.</p>
+        <div class="figure">
+          <svg class="svgfig" viewBox="0 0 660 120" role="img" aria-label="El modelo predice el siguiente trozo de texto">
+            <rect x="10" y="20" width="640" height="76" rx="12" class="box"/>
+            <text x="34" y="56" class="tb">El gato se subió al</text>
+            <rect x="248" y="36" width="62" height="44" rx="8" fill="rgba(251,191,36,.18)" stroke="#fbbf24" stroke-dasharray="4 4"/>
+            <text x="352" y="56" class="tc">← ¿qué va aquí?</text>
+          </svg>
         </div>
+        <div class="bars" style="margin-top:2px">
+          <div class="bar"><span class="n">tejado</span><div class="track"><div class="fill" style="width:100%"></div></div><span class="v">41 %</span></div>
+          <div class="bar"><span class="n">árbol</span><div class="track"><div class="fill" style="width:54%"></div></div><span class="v">22 %</span></div>
+          <div class="bar"><span class="n">sofá</span><div class="track"><div class="fill" style="width:32%"></div></div><span class="v">13 %</span></div>
+          <div class="bar"><span class="n">techo</span><div class="track"><div class="fill" style="width:22%"></div></div><span class="v">9 %</span></div>
+          <div class="bar"><span class="n">nevera</span><div class="track"><div class="fill" style="width:8%"></div></div><span class="v">3 %</span></div>
+        </div>
+        <p class="tiny">…y así hasta decenas de miles de candidatos. Elige uno y vuelve a empezar.</p>
       </div>
       <div class="col">
         <div class="card accent">
-          <h3>Auto-supervisado: la etiqueta es gratis</h3>
-          <p>Coge una frase y esconde el siguiente token: el propio texto es la respuesta correcta. No hay que etiquetar nada a mano &#8594; se puede entrenar con <b>billones</b> de tokens.</p>
+          <h3>Y por eso aprende tanto</h3>
+          <p>Para acertar la siguiente palabra <em>en cualquier texto del mundo</em>, no le queda otra que aprender gramática, datos, estilos y hasta razonamientos típicos.</p>
         </div>
         <div class="card bad">
-          <h3>El lado oscuro de esta tarea</h3>
+          <h3>El lado malo</h3>
           <ul class="tight">
-            <li>Optimiza <b>plausibilidad</b>, no verdad. "Suena bien" es el objetivo literal.</li>
-            <li>Por eso inventa con total seguridad (alucinación).</li>
-            <li>Por eso el arranque del texto condiciona todo: si empiezas con una premisa falsa, la continúa.</li>
+            <li>Optimiza <b>que suene bien</b>, no que sea verdad.</li>
+            <li>Por eso inventa con toda la tranquilidad: es <em>su</em> trabajo.</li>
+            <li>Si le das una premisa falsa, la sigue. La primera frase lo condiciona todo.</li>
           </ul>
         </div>
+        <div class="okbox" style="font-size:18px">La etiqueta sale del propio texto: no hay nadie etiquetando a mano. Por eso se puede entrenar con <b>billones</b> de páginas.</div>
       </div>
     </div>
   </div>
   <aside class="notes"><ul>
-    <li>Dato útil: la palabra "alucinación" no es un fallo del sistema, es el comportamiento por defecto de un predictor.</li>
-    <li>Mencionar que también hay objetivos tipo "masked" (rellenar huecos, estilo BERT) además de "causal" (siguiente token).</li>
+    <li>Dato útil: "alucinación" no es un fallo raro, es el comportamiento por defecto de un predictor.</li>
+    <li>Truco de mesa: pedirle que continúe una frase falsa y ver cómo la sostiene.</li>
   </ul></aside>
 </section>
 
 <section class="slide" data-module="2 · Cómo aprende">
-  <h2>Pérdida, gradiente y descenso: la maquinaria</h2>
+  <h2>Cómo se corrige: el error viaja hacia atrás</h2>
   <div class="body">
-    <div class="cols c2">
+    <div class="cols c2-1">
       <div class="col">
-        <div class="card">
-          <h3>Vocabulario que verás en cualquier charla técnica</h3>
-          <ul class="tight">
-            <li><b>Pérdida (loss)</b>: un número que mide cuánto se equivoca. Entropía cruzada en lenguaje.</li>
-            <li><b>Backpropagation</b>: la regla de la cadena de las derivadas, aplicada hacia atrás por las capas para saber cuánto culpar a cada peso.</li>
-            <li><b>Optimizador (Adam/AdamW)</b>: la receta para actualizar los pesos (media móvil del gradiente, etc.).</li>
-            <li><b>Batch</b>: cuántos ejemplos se miran antes de actualizar. <b>Época</b>: una pasada completa por los datos.</li>
-            <li><b>Learning rate y su calendario (warmup, cosine)</b>: cómo cambia el tamaño del paso durante el entrenamiento.</li>
-          </ul>
+        <div class="figure">
+          <svg class="svgfig" viewBox="0 0 700 300" role="img" aria-label="Hacia delante se predice, hacia atrás se reparte la culpa">
+            <text x="10" y="26" class="tc">HACIA DELANTE → predice</text>
+            <g>
+              <rect x="10" y="48" width="104" height="56" rx="10" class="box"/>
+              <text x="62" y="82" text-anchor="middle" class="t">texto</text>
+              <rect x="140" y="48" width="104" height="56" rx="10" class="box"/>
+              <text x="192" y="82" text-anchor="middle" class="t">capa 1</text>
+              <rect x="270" y="48" width="104" height="56" rx="10" class="box"/>
+              <text x="322" y="82" text-anchor="middle" class="t">capa 2</text>
+              <rect x="400" y="48" width="104" height="56" rx="10" class="box"/>
+              <text x="452" y="82" text-anchor="middle" class="t">capa 3</text>
+              <rect x="530" y="48" width="150" height="56" rx="10" class="box cy"/>
+              <text x="605" y="76" text-anchor="middle" class="t">dice</text>
+              <text x="605" y="94" text-anchor="middle" class="tb">"sofá" 41%</text>
+            </g>
+            <path d="M116 76 H136" class="ln cy"/><path d="M246 76 H266" class="ln cy"/>
+            <path d="M376 76 H396" class="ln cy"/><path d="M506 76 H526" class="ln cy"/>
+
+            <rect x="530" y="176" width="150" height="56" rx="10" class="box no"/>
+            <text x="605" y="200" text-anchor="middle" class="t">debería ser</text>
+            <text x="605" y="220" text-anchor="middle" class="tb">"tejado"</text>
+            <path d="M605 108 V172" class="ln" stroke="#fb7185" stroke-width="2"/>
+            <path d="M605 166 l-6 -9 l12 0z" fill="#fb7185"/>
+            <text x="640" y="146" class="ts" fill="#fb7185">error = 0,9</text>
+
+            <text x="10" y="176" class="tc">← HACIA ATRÁS reparte la culpa</text>
+            <path d="M500 204 H480" class="ln dash" stroke="#8b5cff"/><path d="M370 204 H350" class="ln dash" stroke="#8b5cff"/>
+            <path d="M240 204 H220" class="ln dash" stroke="#8b5cff"/><path d="M110 204 H90" class="ln dash" stroke="#8b5cff"/>
+            <path d="M86 204 l10 -6 v12z" fill="#8b5cff"/>
+            <g class="ts">
+              <text x="82" y="244">-0,004</text><text x="212" y="244">+0,031</text>
+              <text x="342" y="244">-0,012</text><text x="472" y="244">+0,020</text>
+            </g>
+            <text x="10" y="286" class="t">Cada peso recibe una corrección pequeñita. Repite miles de millones de veces.</text>
+          </svg>
         </div>
       </div>
       <div class="col">
-        <pre><code>para cada batch de ejemplos:
-    y_pred = modelo(x)          # paso hacia delante
-    loss   = error(y_pred, y)   # ¿cuánto me equivoco?
-    grad   = backprop(loss)     # ¿quién tiene la culpa?
-    pesos  = pesos - lr * grad  # corregir un poquito</code></pre>
-        <div class="card ok">
-          <h3>Lo que sí puedes controlar tú</h3>
-          <p>Nada de esto se toca cuando usas un modelo: sólo importa en fine-tuning. Pero explica por qué el <b>mismo prompt da respuestas distintas</b> y por qué "temperatura" y "muestreo" no son lo mismo que "aprender".</p>
+        <div class="card">
+          <h3>Las cuatro palabras</h3>
+          <ul class="tight">
+            <li><b>Pérdida</b> — el número que mide el fallo.</li>
+            <li><b>Gradiente</b> — cuánto y hacia dónde corregir cada peso.</li>
+            <li><b>Backpropagation</b> — el método para repartir la culpa hacia atrás.</li>
+            <li><b>Learning rate</b> — el tamaño del paso. Y <b>batch</b>, cuántos ejemplos miro antes de corregir.</li>
+          </ul>
         </div>
+        <div class="okbox" style="font-size:18px">Nada de esto se toca cuando usas un modelo. Sólo importa si haces <b>fine-tuning</b>.</div>
       </div>
     </div>
   </div>
   <aside class="notes"><ul>
-    <li>No entrar en derivadas: la analogía de la niebla ya basta. Lo importante: es una optimización numérica iterativa.</li>
+    <li>No entrar en derivadas: la idea es "se reparte la culpa y se corrige un poquito".</li>
+    <li>Sirve para explicar por qué el mismo prompt da respuestas distintas: eso es muestreo, no aprendizaje.</li>
   </ul></aside>
 </section>
 
 <section class="slide" data-module="2 · Cómo aprende">
   <h2>Generalizar: el único objetivo que importa</h2>
   <div class="body">
-    <div class="cols c2">
+    <div class="cols c2-1">
       <div class="col">
-        <div class="card bad">
-          <h3>Sobreajuste (overfitting)</h3>
-          <p>El modelo se aprende de memoria los ejemplos de entrenamiento y falla con lo nuevo. Es el equivalente a estudiar sólo las respuestas del examen.</p>
-          <p class="small">Síntomas: error de entrenamiento bajísimo, error real alto.</p>
-        </div>
-        <div class="card">
-          <h3>Subajuste (underfitting)</h3>
-          <p>El modelo es demasiado simple o ha entrenado poco: le falla incluso lo visto. Error alto en ambos.</p>
+        <div class="figure">
+          <svg class="svgfig" viewBox="0 0 700 330" role="img" aria-label="Curvas de error: entrenamiento y validación">
+            <rect x="380" y="40" width="270" height="240" fill="rgba(251,113,133,.08)"/>
+            <line x1="70" y1="280" x2="660" y2="280" class="ln"/>
+            <line x1="70" y1="280" x2="70" y2="30" class="ln"/>
+            <text x="46" y="50" class="ts" transform="rotate(-90 46 50)">error</text>
+            <text x="520" y="304" class="ts">tiempo de entrenamiento →</text>
+
+            <path d="M80 60 C 200 180, 320 232, 650 252" class="curve"/>
+            <path d="M80 60 C 190 190, 300 250, 430 246 C 520 240, 600 170, 650 96" class="curve wa"/>
+
+            <line x1="105" y1="128" x2="135" y2="128" class="curve" stroke-width="3"/>
+            <text x="143" y="133" class="ts" fill="#22d3ee">error con los ejemplos que ya ha visto</text>
+            <line x1="105" y1="106" x2="135" y2="106" class="curve wa" stroke-width="3"/>
+            <text x="143" y="111" class="ts" fill="#fbbf24">error con datos nuevos</text>
+
+            <line x1="470" y1="40" x2="470" y2="280" class="ln dash"/>
+            <text x="478" y="34" class="ts">⇧ aquí empieza a memorizar</text>
+            <text x="560" y="196" class="ts" fill="#fb7185">sobreajuste</text>
+            <text x="86" y="256" class="ts">subajuste (muy pronto)</text>
+          </svg>
         </div>
       </div>
       <div class="col">
-        <div class="card accent">
-          <h3>Las herramientas contra el sobreajuste</h3>
+        <div class="card bad">
+          <h3>Sobreajuste</h3>
+          <p>Se aprende los ejemplos de memoria y falla con lo nuevo: como estudiar sólo las respuestas del examen.</p>
+        </div>
+        <div class="card">
+          <h3>Cómo se combate</h3>
           <ul class="tight">
-            <li><b>Conjunto de validación / test</b>: datos que el modelo nunca ve durante el entrenamiento.</li>
-            <li><b>Regularización</b>: penalizar pesos grandes, dropout.</li>
-            <li><b>Más datos y más variedad</b> &mdash; casi siempre la mejor respuesta.</li>
-            <li><b>Parada temprana</b>: parar cuando empeora la validación.</li>
+            <li><b>Datos que nunca ha visto</b> (validación).</li>
+            <li><b>Más datos y más variados</b>: casi siempre lo mejor.</li>
+            <li><b>Parar a tiempo</b>, cuando empeora.</li>
+            <li><b>Regularización</b>: penalizar excesos, dropout.</li>
           </ul>
-          <p class="small">En modelos fundacionales, el "test" clásico se sustituye por evaluaciones (benchmarks) con todos sus problemas, que veremos en el bloque de panorama.</p>
         </div>
       </div>
     </div>
-    <div class="warnbox">Traducción para el equipo: un test que pasa hoy no garantiza nada si los datos de entrada cambian. La IA también "sobreajusta" nuestro proceso si sólo la evaluamos con el caso feliz.</div>
+    <div class="warnbox">Trasladado al equipo: probar la IA sólo con el caso feliz es sobreajustar tu proceso. Prueba con lo feo.</div>
   </div>
   <aside class="notes"><ul>
-    <li>Esta idea conecta con la cultura de tests del equipo: validar con lo que no has visto.</li>
+    <li>Conecta con la cultura de tests: validar con lo que no has visto.</li>
+    <li>En modelos grandes el "test" clásico se sustituye por benchmarks, con todos sus problemas (bloque 7).</li>
   </ul></aside>
 </section>
 
@@ -296,46 +361,67 @@ Salida (probabilidades del modelo):
 </section>
 
 <section class="slide" data-module="2 · Cómo aprende">
-  <div class="kicker">LoRA</div>
-  <h2>LoRA: la idea, sin matemáticas</h2>
+  <h2>LoRA: cambiar el modelo sin tocar el modelo</h2>
   <div class="body">
-    <div class="cols c2">
+    <div class="cols c2-1">
       <div class="col">
-        <div class="card accent">
-          <h3>El truco</h3>
-          <p><b>Congelas el modelo original</b> y sólo aprendes una <em>corrección</em> de bajo rango: dos matrices pequeñas (A y B) cuyo producto se suma a cada capa.</p>
-          <pre style="font-size:15px"><code>pesos_originales  (congelados)
-        +
-B (r &#215; d)  &#215;  A (d &#215; r)   &#8592; lo único que se entrena
+        <div class="figure">
+          <svg class="svgfig" viewBox="0 0 700 290" role="img" aria-label="LoRA: matrices pequeñas añadidas a los pesos congelados">
+            <text x="30" y="26" class="tc">PESOS ORIGINALES (congelados)</text>
+            <rect x="30" y="40" width="150" height="150" rx="10" fill="#1a2436" stroke="#22304a"/>
+            <g fill="#2b3a55">
+              <rect x="44" y="54" width="26" height="26"/><rect x="78" y="54" width="26" height="26"/><rect x="112" y="54" width="26" height="26"/><rect x="146" y="54" width="20" height="26"/>
+              <rect x="44" y="88" width="26" height="26"/><rect x="78" y="88" width="26" height="26"/><rect x="112" y="88" width="26" height="26"/><rect x="146" y="88" width="20" height="26"/>
+              <rect x="44" y="122" width="26" height="26"/><rect x="78" y="122" width="26" height="26"/><rect x="112" y="122" width="26" height="26"/><rect x="146" y="122" width="20" height="26"/>
+              <rect x="44" y="156" width="26" height="26"/><rect x="78" y="156" width="26" height="26"/><rect x="112" y="156" width="26" height="26"/><rect x="146" y="156" width="20" height="26"/>
+            </g>
+            <text x="105" y="214" text-anchor="middle" class="ts">❄ no se entrena</text>
 
-r = 8, 16, 32, 64...  &#8594; 0,1%&#8211;1% de los parámetros</code></pre>
-          <ul class="tight">
-            <li>Entrena en horas, no en semanas; cabe en una GPU de consumo.</li>
-            <li>El adaptador pesa <b>megas</b>, no gigas: se versiona y se comparte fácil.</li>
-            <li>Puedes tener varios (uno de estilo, uno de dominio, uno de idioma) y <b>cambiarlos en caliente</b> sobre la misma base.</li>
-          </ul>
+            <text x="238" y="120" class="tb" font-size="30">+</text>
+
+            <text x="300" y="26" class="tc">LA CORRECCIÓN (esto sí)</text>
+            <rect x="300" y="46" width="34" height="140" rx="8" class="box hi"/>
+            <text x="317" y="120" text-anchor="middle" class="tb" font-size="15">B</text>
+            <rect x="348" y="94" width="140" height="34" rx="8" class="box hi"/>
+            <text x="418" y="117" text-anchor="middle" class="tb" font-size="15">A</text>
+            <text x="317" y="206" text-anchor="middle" class="ts">r</text>
+            <text x="418" y="76" text-anchor="middle" class="ts">r</text>
+            <text x="300" y="242" class="t">Sirven para apuntar sólo lo que quieres cambiar:</text>
+            <text x="300" y="266" class="t">tono, formato, jerga del equipo, un idioma.</text>
+
+            <rect x="530" y="46" width="150" height="140" rx="10" fill="rgba(139,92,255,.14)" stroke="#8b5cff" stroke-dasharray="6 5"/>
+            <text x="605" y="112" text-anchor="middle" class="tb">= modelo</text>
+            <text x="605" y="136" text-anchor="middle" class="tb">ajustado</text>
+            <path d="M196 115 H232" class="ln"/>
+            <path d="M500 115 H524" class="ln hi"/>
+            <text x="605" y="214" text-anchor="middle" class="tc">~0,1 % de los parámetros</text>
+          </svg>
         </div>
       </div>
       <div class="col">
-        <div class="card">
-          <h3>Los cuatro parámetros que oirás</h3>
-          <table style="font-size:16px">
-            <thead><tr><th>Parámetro</th><th>Qué significa</th></tr></thead>
-            <tbody>
-              <tr><td><b>rank (r)</b></td><td>Capacidad del adaptador. Bajo = cambios suaves; alto = más capacidad y más sobreajuste.</td></tr>
-              <tr><td><b>alpha</b></td><td>Cuánto pesa el adaptador frente al modelo base (escala efectiva = alpha/r).</td></tr>
-              <tr><td><b>targets</b></td><td>En qué capas se engancha: sólo atención, o todas las lineales (más potente y más caro).</td></tr>
-              <tr><td><b>dropout</b></td><td>Regularización: ayuda a que no memorice.</td></tr>
-            </tbody>
-          </table>
+        <div class="card accent">
+          <h3>Qué ganas</h3>
+          <ul class="tight">
+            <li>Entrena en <b>horas</b> y cabe en una GPU normal.</li>
+            <li>El adaptador pesa <b>megas</b>: se versiona en git y se comparte.</li>
+            <li>Puedes tener varios (tono, dominio, idioma) y cambiarlos en caliente.</li>
+          </ul>
         </div>
-        <div class="okbox"><b>Merge o no merge.</b> Puedes fusionar el adaptador con la base (un modelo único, más simple de servir) o mantenerlos separados (puedes combinarlos y retirarlos sin reentrenar). Lo segundo es lo habitual en producto.</div>
+        <div class="card">
+          <h3>Los 4 parámetros que oirás</h3>
+          <ul class="tight">
+            <li><b>r</b> — capacidad del adaptador.</li>
+            <li><b>alpha</b> — cuánto pesa frente al modelo base.</li>
+            <li><b>targets</b> — en qué capas se engancha.</li>
+            <li><b>dropout</b> — para que no memorice.</li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
   <aside class="notes"><ul>
-    <li>Insistir: LoRA no añade conocimiento nuevo fiable; moldea forma, tono y especialización.</li>
-    <li>En generación de imágenes, LoRA es exactamente la misma idea aplicada a la difusión: se entrena una LoRA de estilo o de personaje y se combina con el modelo base (bloque 6).</li>
+    <li>Insistir: LoRA no añade conocimiento fiable; moldea forma, tono y especialización.</li>
+    <li>En imagen es la misma idea aplicada a la difusión (bloque 6).</li>
   </ul></aside>
 </section>
 

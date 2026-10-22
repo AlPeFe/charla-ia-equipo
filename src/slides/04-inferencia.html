@@ -54,39 +54,58 @@
 </section>
 
 <section class="slide" data-module="4 · Inferencia">
-  <h2>La caché (KV cache): cómo se evita repetir trabajo</h2>
+  <h2>La caché (KV cache): no repetir trabajo</h2>
   <div class="body">
-    <div class="cols c2">
+    <div class="cols c2-1">
       <div class="col">
-        <div class="card">
-          <h3>Qué guarda</h3>
-          <p>Para cada token ya procesado, el modelo guarda sus vectores internos de atención (K y V). Al generar un token nuevo, sólo calcula ese, y <b>reutiliza</b> todo lo anterior.</p>
-          <p class="small">Sin caché, generar el token 1.000 supondría reprocesar 999 tokens. Con caché, sólo uno.</p>
+        <div class="figure" style="flex:0 0 auto">
+          <svg class="svgfig" viewBox="0 0 660 190" role="img" aria-label="Sólo se calcula el token nuevo; el resto viene de la caché">
+            <text x="10" y="24" class="tc">YA PROCESADO (en caché, gratis)</text>
+            <g>
+              <rect x="10" y="40" width="86" height="44" rx="9" fill="rgba(34,211,238,.10)" stroke="#22d3ee"/>
+              <text x="53" y="68" text-anchor="middle" class="t">El</text>
+              <rect x="104" y="40" width="86" height="44" rx="9" fill="rgba(34,211,238,.10)" stroke="#22d3ee"/>
+              <text x="147" y="68" text-anchor="middle" class="t">gato</text>
+              <rect x="198" y="40" width="86" height="44" rx="9" fill="rgba(34,211,238,.10)" stroke="#22d3ee"/>
+              <text x="241" y="68" text-anchor="middle" class="t">se</text>
+              <rect x="292" y="40" width="86" height="44" rx="9" fill="rgba(34,211,238,.10)" stroke="#22d3ee"/>
+              <text x="335" y="68" text-anchor="middle" class="t">subió</text>
+              <rect x="386" y="40" width="86" height="44" rx="9" fill="rgba(34,211,238,.10)" stroke="#22d3ee"/>
+              <text x="429" y="68" text-anchor="middle" class="t">al</text>
+              <rect x="480" y="40" width="170" height="44" rx="9" class="box hi"/>
+              <text x="565" y="68" text-anchor="middle" class="tb">tejado</text>
+            </g>
+            <text x="650" y="24" text-anchor="end" class="tc" fill="#c4b5fd">NUEVO · sólo este se calcula</text>
+            <path d="M486 100 H150" class="ln dash"/>
+            <text x="150" y="120" class="ts">se reutilizan sus vectores internos (K y V)</text>
+            <text x="10" y="160" class="t">Sin caché, generar el token 1.000 costaría reprocesar 999. Con caché, coste 1.</text>
+            <text x="10" y="184" class="ts">El precio: esa caché ocupa memoria y crece con el contexto.</text>
+          </svg>
         </div>
         <div class="card warn">
-          <h3>El problema: tamaño</h3>
+          <h3>El problema: ocupa memoria</h3>
           <ul class="tight">
-            <li>La caché crece con la longitud del contexto y hay que mantenerla en memoria (VRAM) por conversación.</li>
-            <li>Es el auténtico cuello de botella para servir a muchos usuarios con contextos largos.</li>
-            <li>De ahí técnicas como <b>PagedAttention</b> (gestionar la caché por páginas, como memoria virtual) o la cuantización de la propia caché.</li>
+            <li>Crece con la longitud del contexto y hay que tenerla en VRAM <b>por conversación</b>.</li>
+            <li>Es el verdadero cuello de botella para servir a mucha gente con contextos largos.</li>
+            <li>De ahí <b>PagedAttention</b> y compañía: gestionarla por páginas, como la memoria virtual.</li>
           </ul>
         </div>
       </div>
       <div class="col">
         <div class="card accent">
-          <h3>Caché de prompt (lo que ves en las facturas)</h3>
+          <h3>Caché de prompt (lo que sale en la factura)</h3>
           <ul class="tight">
-            <li>Si repites un <b>prefijo</b> idéntico entre peticiones (por ejemplo, un prompt de sistema largo o un fichero grande), el proveedor puede cobrarte ese prefijo más barato y responder antes.</li>
-            <li>Buena práctica: <b>lo estable primero, lo variable al final</b>. Ficheros y convenciones arriba, la pregunta concreta abajo.</li>
-            <li>Si reordenas tu prompt en cada llamada, rompes la caché y pagas completo.</li>
+            <li>Si repites un <b>prefijo idéntico</b> entre peticiones (prompt de sistema, un fichero grande), te lo cobran más barato y responde antes.</li>
+            <li>Buena práctica: <b>lo estable delante, lo variable al final</b>.</li>
+            <li>Si reordenas el prompt en cada llamada, rompes la caché y pagas todo.</li>
           </ul>
         </div>
-        <div class="okbox">Regla de oro para agentes: el orden del contexto es dinero. Los harness serios colocan reglas y ficheros grandes delante justamente por esto.</div>
+        <div class="okbox" style="font-size:18px">Regla de oro: el orden del contexto es dinero. Los buenos harness ponen reglas y ficheros grandes delante justo por esto.</div>
       </div>
     </div>
   </div>
   <aside class="notes"><ul>
-    <li>Se puede comprobar en las consolas de los proveedores: aparece "cached input tokens" con su precio.</li>
+    <li>Se ve en las consolas de los proveedores: "cached input tokens" con su precio.</li>
   </ul></aside>
 </section>
 
@@ -122,24 +141,48 @@
 </section>
 
 <section class="slide" data-module="4 · Inferencia">
-  <h2>Cuantización y compresión: la calidad se paga en bits</h2>
+  <h2>Cuantización: menos bits, menos memoria</h2>
   <div class="body">
-    <table>
-      <thead><tr><th>Formato</th><th>Bits por peso</th><th>Qué gana</th><th>Qué pierde</th></tr></thead>
-      <tbody>
-        <tr><td>BF16 / FP16</td><td class="num">16</td><td>Calidad de referencia; entrenamiento</td><td>El doble de memoria y de coste</td></tr>
-        <tr><td>FP8 / INT8</td><td class="num">8</td><td>Mitad de memoria, casi sin pérdida; estándar en producción</td><td>Requiere kernels y hardware que lo soporten</td></tr>
-        <tr><td>INT4 (por ejemplo, <em>4-bit</em>)</td><td class="num">4</td><td>Cabe en portátiles y GPUs pequeñas</td><td>Degradación perceptible, sobre todo en razonamiento y código</td></tr>
-        <tr><td>INT3/INT2 y formatos extremos</td><td class="num">2&#8211;3</td><td>Experimentos de laboratorio / investigación</td><td>Calidad frágil; no para trabajo serio</td></tr>
-      </tbody>
-    </table>
-    <div class="cols c2">
-      <div class="col"><div class="card ok"><h3>Regla práctica</h3><p>Para uso local: un modelo de 8B en 4 bits funciona razonablemente. Un modelo de 70B en 4 bits necesita una GPU de 48 GB o memoria unificada (Mac con 64 GB, por ejemplo).</p></div></div>
-      <div class="col"><div class="card accent"><h3>Otras compresiones de la misma familia</h3><ul class="tight"><li><b>Destilación</b>: un modelo pequeño aprende del grande.</li><li><b>Podado</b>: quitar estructuras poco útiles.</li><li><b>MoE</b>: muchas piezas, pocas activas por token (lo veremos en el siguiente bloque).</li></ul></div></div>
+    <div class="cols c1-2">
+      <div class="col">
+        <div class="card">
+          <h3>Cuánta memoria para un modelo de 8B</h3>
+          <div class="bars" style="margin-top:4px">
+            <div class="bar" style="grid-template-columns:74px 1fr 66px"><span class="n">16 bits</span><div class="track"><div class="fill" style="width:100%"></div></div><span class="v">16 GB</span></div>
+            <div class="bar" style="grid-template-columns:74px 1fr 66px"><span class="n">8 bits</span><div class="track"><div class="fill" style="width:50%"></div></div><span class="v">8 GB</span></div>
+            <div class="bar" style="grid-template-columns:74px 1fr 66px"><span class="n">4 bits</span><div class="track"><div class="fill" style="width:25%"></div></div><span class="v">4 GB</span></div>
+          </div>
+          <p class="small" style="margin-top:6px">La cuenta es fácil: <b>parámetros × bytes</b>, más la caché y el margen.</p>
+        </div>
+        <div class="card ok">
+          <h3>Regla práctica</h3>
+          <p>Un 8B en 4 bits va bien en un portátil. Un 70B en 4 bits pide unos 48 GB de GPU (o un Mac de 64 GB).</p>
+        </div>
+      </div>
+      <div class="col">
+        <table class="sm">
+          <thead><tr><th>Formato</th><th>Bits</th><th>Qué gana</th><th>Qué pierde</th></tr></thead>
+          <tbody>
+            <tr><td>BF16 / FP16</td><td class="num">16</td><td>Calidad de referencia</td><td>El doble de memoria y coste</td></tr>
+            <tr><td>FP8 / INT8</td><td class="num">8</td><td>Mitad de memoria, casi sin pérdida</td><td>Necesita hardware que lo soporte</td></tr>
+            <tr><td>INT4</td><td class="num">4</td><td>Cabe en portátiles</td><td>Se nota en razonamiento y código</td></tr>
+            <tr><td>INT3 / INT2</td><td class="num">2-3</td><td>Sólo experimentos</td><td>Calidad frágil, no para trabajar</td></tr>
+          </tbody>
+        </table>
+        <div class="card accent">
+          <h3>Primas hermanas</h3>
+          <ul class="tight">
+            <li><b>Destilación</b> — un modelo pequeño aprende del grande.</li>
+            <li><b>Podado</b> — quitar lo que apenas se usa.</li>
+            <li><b>MoE</b> — muchas piezas, pocas activas (siguiente bloque).</li>
+          </ul>
+        </div>
+      </div>
     </div>
   </div>
   <aside class="notes"><ul>
-    <li>Si alguien quiere correr algo local, aquí está la cuenta de memoria: parámetros &#215; bytes + caché + overhead.</li>
+    <li>Si alguien quiere correr algo local: esta es la cuenta de memoria.</li>
+    <li>Matiz honesto: en 4 bits pierdes sobre todo en tareas de razonamiento largo y código.</li>
   </ul></aside>
 </section>
 

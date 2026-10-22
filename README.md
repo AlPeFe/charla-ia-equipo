@@ -49,7 +49,7 @@ Enlace directo a una diapositiva: `index.html#/42`.
 
 | Módulo | Diapositivas | Contenido |
 |---|---|---|
-| 0 · Portada | 1 | Sólo portada |
+| 0 · Portada | 1 | Portada WordArt + foto, sin preámbulos |
 | 1 · Qué es la IA | 8 | Definiciones, los tres saltos (transformer, ChatGPT, agentes), taxonomía, glosario |
 | 2 · Cómo aprende | 17 | Datos, pérdida, gradientes, sobreajuste, las 4 fases, **fine-tuning, LoRA y QLoRA**, **herramientas de entrenamiento (Unsloth, PEFT, TRL, Axolotl…)**, Unsloth en detalle y receta mínima paso a paso |
 | 3 · Anatomía de un LLM | 12 | Tokens, embeddings, atención, **la fórmula de la atención y self-attention**, **softmax (la función, la temperatura y por qué es derivable)**, bloques, muestreo, multimodalidad |
@@ -67,6 +67,13 @@ Enlace directo a una diapositiva: `index.html#/42`.
 | 15 · Anexo | 6 | Recursos, plantilla de convenciones, **dos glosarios (general y de infraestructura y agentes)**, cómo editar |
 
 Cada diapositiva incluye **notas del ponente** (tecla `N`).
+
+El material visual (diagramas, curvas, matrices) es **SVG dibujado a mano dentro de cada diapositiva**:
+no hay dependencias ni imágenes externas más allá de la portada. Clases disponibles: `figure` + `svgfig`
+con sus estilos (`box`, `box.hi/cy/ok/no/wa`, `ln`, `curve`, `dot`, `t`, `tb`, `ts`, `tc`), `bars` para
+barras, `tokens` para fichas tipo token, `stats` para cifras grandes y `pipe` para pipelines.
+
+La foto de la portada (`src/img/hanni.jpg`) se incrusta en `index.html` como data URI al construir.
 
 ---
 
@@ -146,6 +153,14 @@ modelos abiertos, novedades). Después actualiza a mano las tablas de la secció
   (notas) — o usa `P`, que activa las dos cosas.
 - Cronómetro: `C`.
 - Para enviar el material: `Ctrl`+`P` y "Guardar como PDF".
+
+---
+
+## Créditos de imágenes
+
+- **Portada**: Hanni Pham (NewJeans). Foto de **K-POPIT** (케이팝잇), vía Wikimedia Commons,
+  licencia **CC BY 3.0** (https://creativecommons.org/licenses/by/3.0). Si redistribuyes el material
+  fuera del equipo, mantén el crédito tal como aparece en la propia diapositiva.
 
 ---
 

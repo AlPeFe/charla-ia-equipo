@@ -9,137 +9,249 @@
 <section class="slide" data-module="3 · Anatomía de un LLM">
   <h2>La cadena completa, de tu texto a la respuesta</h2>
   <div class="body">
-    <div class="flow" style="row-gap:12px">
-      <span class="node">Texto</span><span class="arrow">&#8594;</span>
-      <span class="node">Tokenizador</span><span class="arrow">&#8594;</span>
-      <span class="node">Embeddings</span><span class="arrow">&#8594;</span>
-      <span class="node">+ posición</span><span class="arrow">&#8594;</span>
-      <span class="node">N bloques transformer<br><span class="small">(atención + red)</span></span><span class="arrow">&#8594;</span>
-      <span class="node">Probabilidades</span><span class="arrow">&#8594;</span>
-      <span class="node">Muestreo</span><span class="arrow">&#8594;</span>
-      <span class="node">Token nuevo</span><span class="arrow">&#8594;</span>
-      <span class="node">&#8630; repetir</span>
+    <div class="figure">
+      <svg class="svgfig" viewBox="0 0 1152 300" role="img" aria-label="Del texto al siguiente token, en bucle">
+        <g>
+          <rect x="10" y="50" width="164" height="86" rx="12" class="box"/>
+          <text x="92" y="86" text-anchor="middle" class="tb">Tu texto</text>
+          <text x="92" y="112" text-anchor="middle" class="t">"Hola, mundo"</text>
+
+          <rect x="204" y="50" width="164" height="86" rx="12" class="box"/>
+          <text x="286" y="82" text-anchor="middle" class="tb">1 · Trocea</text>
+          <text x="286" y="108" text-anchor="middle" class="t">en tokens</text>
+
+          <rect x="398" y="50" width="164" height="86" rx="12" class="box"/>
+          <text x="480" y="82" text-anchor="middle" class="tb">2 · A números</text>
+          <text x="480" y="108" text-anchor="middle" class="t">un vector por token</text>
+
+          <rect x="592" y="50" width="164" height="86" rx="12" class="box hi"/>
+          <text x="674" y="82" text-anchor="middle" class="tb">3 · N capas</text>
+          <text x="674" y="108" text-anchor="middle" class="t">mira a los demás</text>
+
+          <rect x="786" y="50" width="164" height="86" rx="12" class="box cy"/>
+          <text x="868" y="82" text-anchor="middle" class="tb">4 · Apuesta</text>
+          <text x="868" y="108" text-anchor="middle" class="t">qué token va después</text>
+
+          <rect x="980" y="50" width="162" height="86" rx="12" class="box wa"/>
+          <text x="1061" y="82" text-anchor="middle" class="tb">5 · Elige uno</text>
+          <text x="1061" y="108" text-anchor="middle" class="t">aquí entra el azar</text>
+        </g>
+        <g class="ln hi">
+          <path d="M176 93 H202"/><path d="M370 93 H396"/><path d="M564 93 H590"/>
+          <path d="M758 93 H784"/><path d="M952 93 H978"/>
+        </g>
+        <g fill="#8b5cff">
+          <path d="M198 93 l-9 -6 v12z"/><path d="M392 93 l-9 -6 v12z"/><path d="M586 93 l-9 -6 v12z"/>
+          <path d="M780 93 l-9 -6 v12z"/><path d="M974 93 l-9 -6 v12z"/>
+        </g>
+
+        <path d="M1061 140 V206 H92 V140" class="ln dash" stroke="#fbbf24"/>
+        <path d="M92 136 l-6 9 h12z" fill="#fbbf24"/>
+        <text x="576" y="196" text-anchor="middle" class="ts" fill="#fbbf24">el token elegido se añade al texto y se repite todo</text>
+        <text x="92" y="248" class="t">Lo que el modelo ve la última vez incluye lo que ya ha escrito: se lee a sí mismo.</text>
+      </svg>
     </div>
-    <div class="cols c3" style="margin-top:6px">
-      <div class="card"><h3>Determinista</h3><p>De texto a probabilidades: mismas entradas &#8594; mismas probabilidades.</p></div>
-      <div class="card accent"><h3>Estocástico</h3><p>De probabilidades a token: aquí entra el azar (temperatura, top-p).</p></div>
-      <div class="card ok"><h3>Incremental</h3><p>La respuesta se construye token a token. Por eso "escribe" y por eso hay latencia por token.</p></div>
+    <div class="cols c3 top">
+      <div class="card"><h3>Determinista</h3><p>De texto a probabilidades: misma entrada, mismas probabilidades.</p></div>
+      <div class="card accent"><h3>Con azar</h3><p>De probabilidades a palabra: aquí entra la temperatura.</p></div>
+      <div class="card ok"><h3>Poco a poco</h3><p>Se escribe token a token. De ahí la sensación de que "teclea".</p></div>
     </div>
-    <div class="callout">Consecuencia inmediata: <b>el modelo no lee tu mensaje y luego piensa</b>. Va generando, y cada token que genera pasa a formar parte de su propia entrada.</div>
+    <div class="callout">Consecuencia: <b>el modelo no lee tu mensaje y luego piensa</b>. Va generando, y cada token nuevo pasa a formar parte de su propia entrada.</div>
   </div>
   <aside class="notes"><ul>
-    <li>Comparar con un humano: leemos y después hablamos; aquí se genera y se va leyendo a sí mismo.</li>
-    <li>Esto explica que un buen comienzo de respuesta (o pedir "piensa paso a paso") mejore el resultado.</li>
+    <li>Comparar con un humano: leemos y luego hablamos; aquí genera y se va leyendo a sí mismo.</li>
+    <li>Explica por qué un buen arranque de respuesta mejora el resto.</li>
   </ul></aside>
 </section>
 
 <section class="slide" data-module="3 · Anatomía de un LLM">
-  <h2>Tokens: la unidad real (y la que se factura)</h2>
+  <h2>Tokens: no ve letras ni palabras, ve trozos</h2>
   <div class="body">
-    <div class="cols c2">
+    <div class="cols c2-1">
       <div class="col">
-        <pre><code>"Hola, mundo"        &#8594;  ["Hola", ",", " mundo"]
-"desarrollo"         &#8594;  ["des", "arrollo"]
-"tokenización"       &#8594;  ["token", "ización"]
-"2026-10-17"         &#8594;  ["2026", "-", "10", "-", "17"]
-"&#128512;"              &#8594;  varios tokens</code></pre>
         <div class="card">
-          <h3>Consecuencias prácticas</h3>
-          <ul class="tight">
-            <li><b>El coste y la latencia se miden en tokens</b>, no en palabras.</li>
-            <li>En español suele haber <b>más tokens por palabra</b> que en inglés: pagas más por lo mismo.</li>
-            <li>Números, fechas, rutas y hashes se rompen en trozos raros &#8594; <em>de ahí</em> que cuente mal y que no sea fiable comparando identificadores.</li>
-            <li>El código se tokeniza bastante bien, pero la indentación cuenta.</li>
-          </ul>
+          <h3>Cómo trocea de verdad</h3>
+          <div class="tokens" style="margin:4px 0 2px">
+            <span class="tok a">Hola</span><span class="tok a">,</span><span class="tok a"> mundo</span>
+          </div>
+          <div class="tokens" style="margin:2px 0">
+            <span class="tok b">des</span><span class="tok b">arrollo</span>
+          </div>
+          <div class="tokens" style="margin:2px 0">
+            <span class="tok c">token</span><span class="tok c">ización</span>
+          </div>
+          <div class="tokens" style="margin:2px 0">
+            <span class="tok d">2026</span><span class="tok d">-</span><span class="tok d">10</span><span class="tok d">-</span><span class="tok d">17</span>
+          </div>
+          <p class="small" style="margin-top:2px">Regla rápida: <b>1 token ≈ 3-4 letras</b> en español. Una página ≈ 600 tokens.</p>
+        </div>
+        <div class="card accent">
+          <h3>Por qué se parte así</h3>
+          <p>El troceador se aprende de los propios datos: lo que más se repite acaba siendo un solo token. Vocabulario típico: entre 50.000 y 250.000 trozos.</p>
         </div>
       </div>
       <div class="col">
-        <div class="card accent">
-          <h3>Vocabulario y BPE</h3>
-          <p>El tokenizador se aprende de los datos (algoritmos tipo <b>Byte-Pair Encoding</b>): las secuencias más frecuentes acaban siendo un solo token. Vocabularios típicos: <b>50.000&#8211;250.000</b> entradas.</p>
-          <p class="small">El mismo tokenizador lo comparten muchos experimentos; su calidad afecta al rendimiento del modelo en cada idioma.</p>
-        </div>
         <div class="card warn">
-          <h3>Regla de estimación útil</h3>
-          <table style="font-size:17px">
-            <tr><td>1 token (inglés)</td><td class="num">&#8776; 0,75 palabras</td></tr>
-            <tr><td>1 token (español)</td><td class="num">&#8776; 0,5&#8211;0,7 palabras</td></tr>
-            <tr><td>1 página A4</td><td class="num">&#8776; 500&#8211;800 tokens</td></tr>
-            <tr><td>1 fichero de 500 líneas</td><td class="num">&#8776; 5.000&#8211;8.000 tokens</td></tr>
-          </table>
+          <h3>Lo que esto explica</h3>
+          <ul class="tight">
+            <li><b>Pagas por token</b>, no por palabra: en español sale más caro que en inglés por lo mismo.</li>
+            <li><b>Cuenta mal las letras</b>: "¿cuántas erres tiene ferrocarril?" no lo ve.</li>
+            <li><b>Falla con números, fechas y hashes</b>: los parte en trozos sin significado.</li>
+            <li><b>El código se lleva bien</b>, pero la indentación también gasta.</li>
+          </ul>
         </div>
+        <div class="okbox" style="font-size:18px">Si necesitas exactitud con números o identificadores, dale una <b>herramienta</b> que cuente, no le pidas que "cuente".</div>
       </div>
     </div>
   </div>
   <aside class="notes"><ul>
-    <li>Truco: casi ningún modelo sabe contar letras ("¿cuántas r tiene 'ferrocarril'?") porque no ve letras, ve tokens.</li>
-    <li>Si en el equipo se usa mucho español, el coste por palabra sube: tenerlo en cuenta en las estimaciones.</li>
+    <li>Truco de mesa: pedirle que cuente letras de una palabra y ver el fallo. Luego explicar el por qué.</li>
+    <li>Si en el equipo se usa mucho español, el coste por palabra sube: tenerlo en las estimaciones.</li>
   </ul></aside>
 </section>
 
 <section class="slide" data-module="3 · Anatomía de un LLM">
-  <h2>Embeddings: el significado como geometría</h2>
+  <h2>Embeddings: el significado como mapa</h2>
   <div class="body">
-    <div class="cols c2">
+    <div class="cols c2-1">
       <div class="col">
-        <div class="card">
-          <h3>La idea</h3>
-          <p>Cada token se convierte en un vector de cientos o miles de números. Entrenando, palabras con usos parecidos acaban <b>cerca</b> en ese espacio: "coche" y "automóvil" quedan próximos; "coche" y "plátano", lejos.</p>
-          <p class="small">Clásico de los años 50-90 (las analogías tipo rey &#8722; hombre + mujer &#8776; reina) siguen siendo una buena intuición, aunque hoy los vectores son contextuales: la misma palabra cambia según la frase.</p>
+        <div class="figure">
+          <svg class="svgfig" viewBox="0 0 700 340" role="img" aria-label="Mapa de significados: palabras parecidas quedan cerca">
+            <line x1="40" y1="290" x2="670" y2="290" class="ln"/>
+            <line x1="40" y1="290" x2="40" y2="20" class="ln"/>
+            <text x="48" y="40" class="ts" fill="#22d3ee">círculo = lo que devuelve una búsqueda</text>
+
+            <circle cx="165" cy="135" r="60" fill="rgba(34,211,238,.08)" stroke="#22d3ee" stroke-dasharray="6 5" stroke-width="2"/>
+            <g class="dot">
+              <circle cx="165" cy="125" r="7"/><circle cx="198" cy="148" r="7"/><circle cx="143" cy="160" r="7"/><circle cx="188" cy="108" r="7"/>
+            </g>
+            <text x="150" y="232" text-anchor="middle" class="tb">coche · automóvil</text>
+            <text x="150" y="254" text-anchor="middle" class="ts">vehículos</text>
+
+            <g class="dot acc">
+              <circle cx="470" cy="120" r="7"/><circle cx="505" cy="100" r="7"/><circle cx="440" cy="95" r="7"/>
+            </g>
+            <text x="470" y="66" text-anchor="middle" class="tb">plátano · manzana</text>
+            <text x="470" y="86" text-anchor="middle" class="ts">frutas</text>
+
+            <g class="dot wa">
+              <circle cx="330" cy="232" r="7"/><circle cx="292" cy="250" r="7"/><circle cx="370" cy="252" r="7"/>
+            </g>
+            <text x="330" y="204" text-anchor="middle" class="tb">gato · perro</text>
+            <text x="56" y="322" class="ts">cada palabra es un punto; parecido = cerca. No es un diccionario, es un mapa.</text>
+          </svg>
         </div>
       </div>
       <div class="col">
         <div class="card accent">
-          <h3>Para qué sirve esto en el mundo real</h3>
+          <h3>Para qué vale (de verdad)</h3>
           <ul class="tight">
-            <li><b>Búsqueda semántica</b>: encontrar por significado, no por palabra exacta. Es la base de un RAG decente.</li>
-            <li><b>Clustering y deduplicación</b>: agrupar tickets, detectar duplicados, clasificar sin etiquetas.</li>
-            <li><b>Recomendación y similitud</b>: "parecido a esto".</li>
-            <li><b>Reranking</b>: reordenar resultados por relevancia real.</li>
+            <li><b>Buscar por significado</b>: "cómo despliego" encuentra "despliegue" aunque no compartan palabra. Es la base de un RAG que funciona.</li>
+            <li><b>Agrupar y deduplicar</b> tickets, incidencias, correos.</li>
+            <li><b>Ordenar por parecido</b> ("más como esto").</li>
           </ul>
         </div>
-        <div class="okbox">Los modelos de embeddings son pequeños, baratos y rapidísimos. Muchas veces <b>no necesitas un LLM</b>: necesitas un embedding y un umbral.</div>
+        <div class="okbox" style="font-size:18px">Los modelos de embeddings son pequeños, baratos y rapidísimos. Muchas veces <b>no necesitas un LLM</b>: necesitas un mapa y un umbral.</div>
       </div>
     </div>
   </div>
   <aside class="notes"><ul>
-    <li>Adelantar: el RAG que funciona no es "meter el documento entero", es trocear, embeber, recuperar los 5 mejores fragmentos y <em>entonces</em> preguntar.</li>
+    <li>Adelantar: un RAG decente no es "meter el documento entero", es trocear, embeber, recuperar los 5 mejores trozos y <em>entonces</em> preguntar.</li>
+    <li>La intuición clásica rey − hombre + mujer ≈ reina sigue sirviendo para explicarlo.</li>
   </ul></aside>
 </section>
 
 <section class="slide" data-module="3 · Anatomía de un LLM">
-  <h2>Atención: el mecanismo que lo cambió todo</h2>
+  <h2>Atención: cada palabra mira a las demás</h2>
   <div class="body">
-    <div class="cols c2">
+    <div class="cols c1-2">
       <div class="col">
         <div class="card">
-          <h3>Traducción a lenguaje humano</h3>
-          <p>Para cada token, el modelo se pregunta: <em>"¿a qué otras partes de la frase debo mirar para entender esto?"</em> y mezcla información de las relevantes, con más o menos peso.</p>
+          <h3>En una frase</h3>
+          <p>Para entender una palabra, el modelo decide <em>a qué otras palabras mirar</em> y cuánto caso a cada una.</p>
+          <p class="small">Ejemplo: en "El gato no se subió al árbol porque <b>estaba</b> cansado", para saber qué es "estaba" hay que mirar a "gato". Eso es la atención.</p>
+        </div>
+        <div class="card accent">
+          <h3>Las siglas</h3>
           <ul class="tight">
-            <li><b>Query (Q)</b>: qué busco.</li>
-            <li><b>Key (K)</b>: qué ofrezco.</li>
-            <li><b>Value (V)</b>: la información que aporto si me eligen.</li>
+            <li><b>Q</b> — qué busco.</li>
+            <li><b>K</b> — qué ofrezco.</li>
+            <li><b>V</b> — lo que aporto si me eligen.</li>
           </ul>
-          <p class="small">La compatibilidad Q&#183;K decide los pesos; el resultado es una suma ponderada de los V. Después, <em>softmax</em> convierte puntuaciones en proporciones que suman 1.</p>
         </div>
       </div>
       <div class="col">
-        <div class="card accent">
-          <h3>Detalles que importan</h3>
-          <ul class="tight">
-            <li><b>Multi-head</b>: muchos "puntos de vista" a la vez (uno mira sintaxis, otro correferencia, otro formato&#8230;).</li>
-            <li><b>Máscara causal</b>: en un modelo de chat, cada token sólo ve los anteriores. No puede ver el futuro de su propia respuesta.</li>
-            <li><b>Coste cuadrático</b>: doblar el contexto multiplica por cuatro el trabajo de atención. De ahí la pelea por arquitecturas eficientes y por el KV cache.</li>
-            <li><b>El orden se inyecta con posiciones</b> (posicional clásico o RoPE): sin ellas, la atención sería un saco de palabras.</li>
-          </ul>
+        <div class="figure">
+          <svg class="svgfig" viewBox="0 0 640 340" role="img" aria-label="Matriz de atención: qué palabra mira a qué palabra">
+            <g class="ts">
+              <text x="150" y="26" text-anchor="middle">El</text>
+              <text x="212" y="26" text-anchor="middle">gato</text>
+              <text x="274" y="26" text-anchor="middle">subió</text>
+              <text x="336" y="26" text-anchor="middle">al</text>
+              <text x="398" y="26" text-anchor="middle">árbol</text>
+              <text x="460" y="26" text-anchor="middle">estaba</text>
+
+              <text x="132" y="70" text-anchor="end">El</text>
+              <text x="132" y="112" text-anchor="end">gato</text>
+              <text x="132" y="154" text-anchor="end">subió</text>
+              <text x="132" y="196" text-anchor="end">al</text>
+              <text x="132" y="238" text-anchor="end">árbol</text>
+              <text x="132" y="280" text-anchor="end">estaba</text>
+            </g>
+
+            <g>
+              <rect x="150" y="44" width="56" height="38" fill="rgba(139,92,255,.75)"/>
+              <rect x="212" y="44" width="56" height="38" fill="rgba(139,92,255,.18)"/>
+              <rect x="274" y="44" width="56" height="38" fill="rgba(139,92,255,.06)"/>
+              <rect x="336" y="44" width="56" height="38" fill="rgba(139,92,255,.10)"/>
+              <rect x="398" y="44" width="56" height="38" fill="rgba(139,92,255,.12)"/>
+              <rect x="460" y="44" width="56" height="38" fill="rgba(139,92,255,.05)"/>
+
+              <rect x="150" y="86" width="56" height="38" fill="rgba(139,92,255,.55)"/>
+              <rect x="212" y="86" width="56" height="38" fill="rgba(139,92,255,.80)"/>
+              <rect x="274" y="86" width="56" height="38" fill="rgba(139,92,255,.25)"/>
+              <rect x="336" y="86" width="56" height="38" fill="rgba(139,92,255,.14)"/>
+              <rect x="398" y="86" width="56" height="38" fill="rgba(139,92,255,.16)"/>
+              <rect x="460" y="86" width="56" height="38" fill="rgba(139,92,255,.06)"/>
+
+              <rect x="150" y="128" width="56" height="38" fill="rgba(139,92,255,.20)"/>
+              <rect x="212" y="128" width="56" height="38" fill="rgba(139,92,255,.45)"/>
+              <rect x="274" y="128" width="56" height="38" fill="rgba(139,92,255,.70)"/>
+              <rect x="336" y="128" width="56" height="38" fill="rgba(139,92,255,.30)"/>
+              <rect x="398" y="128" width="56" height="38" fill="rgba(139,92,255,.40)"/>
+              <rect x="460" y="128" width="56" height="38" fill="rgba(139,92,255,.08)"/>
+
+              <rect x="150" y="170" width="56" height="38" fill="rgba(139,92,255,.14)"/>
+              <rect x="212" y="170" width="56" height="38" fill="rgba(139,92,255,.26)"/>
+              <rect x="274" y="170" width="56" height="38" fill="rgba(139,92,255,.34)"/>
+              <rect x="336" y="170" width="56" height="38" fill="rgba(139,92,255,.66)"/>
+              <rect x="398" y="170" width="56" height="38" fill="rgba(139,92,255,.44)"/>
+              <rect x="460" y="170" width="56" height="38" fill="rgba(139,92,255,.06)"/>
+
+              <rect x="150" y="212" width="56" height="38" fill="rgba(139,92,255,.12)"/>
+              <rect x="212" y="212" width="56" height="38" fill="rgba(139,92,255,.20)"/>
+              <rect x="274" y="212" width="56" height="38" fill="rgba(139,92,255,.32)"/>
+              <rect x="336" y="212" width="56" height="38" fill="rgba(139,92,255,.40)"/>
+              <rect x="398" y="212" width="56" height="38" fill="rgba(139,92,255,.72)"/>
+              <rect x="460" y="212" width="56" height="38" fill="rgba(139,92,255,.05)"/>
+
+              <rect x="150" y="254" width="56" height="38" fill="rgba(34,211,238,.10)"/>
+              <rect x="212" y="254" width="56" height="38" fill="rgba(34,211,238,.55)"/>
+              <rect x="274" y="254" width="56" height="38" fill="rgba(34,211,238,.14)"/>
+              <rect x="336" y="254" width="56" height="38" fill="rgba(34,211,238,.10)"/>
+              <rect x="398" y="254" width="56" height="38" fill="rgba(34,211,238,.14)"/>
+              <rect x="460" y="254" width="56" height="38" fill="rgba(34,211,238,.90)"/>
+            </g>
+            <text x="150" y="322" class="ts" fill="#22d3ee">Fila «estaba»: reparte su atención sobre todo en «gato».</text>
+          </svg>
         </div>
       </div>
     </div>
-    <div class="callout">Esta es la razón por la que cosas importantes tienden a "pesar" más <b>al principio o al final</b> del contexto, y por la que perderse en medio de un prompt enorme es un riesgo real.</div>
+    <div class="callout">Por eso lo importante <b>pesa más al principio o al final</b> del contexto, y perderse en medio de un prompt enorme es un riesgo real.</div>
   </div>
   <aside class="notes"><ul>
-    <li>Aquí sólo la intuición; la fórmula tiene su propia diapositiva justo después, y es de las que se entienden mejor de lo que parece.</li>
-    <li>Detalle curioso: cabezas de atención especializadas (una para comillas, otra para sangría en código) — se han observado en modelos reales.</li>
+    <li>Sólo intuición: la fórmula tiene su propia diapositiva después.</li>
+    <li>Detalle curioso: hay cabezas de atención especializadas (una para comillas, otra para la sangría del código).</li>
   </ul></aside>
 </section>
 

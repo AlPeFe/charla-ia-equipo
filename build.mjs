@@ -59,7 +59,17 @@ const tail = [
   ''
 ].join('\n');
 
-const html = [head, slides.join('\n'), tail].join('\n');
+let html = [head, slides.join('\n'), tail].join('\n');
+
+// Inyecta las imágenes de src/img/ como data URI para que index.html siga siendo autocontenido
+const mimes = { '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.png': 'image/png', '.webp': 'image/webp', '.svg': 'image/svg+xml' };
+for (const m of new Set(html.match(/src="img\/[^"]+"/g) || [])) {
+  const rel = m.slice(5, -1);
+  const file = path.join(src, rel);
+  const ext = path.extname(file).toLowerCase();
+  const b64 = (await fs.readFile(file)).toString('base64');
+  html = html.split(m).join('src="data:' + (mimes[ext] || 'application/octet-stream') + ';base64,' + b64 + '"');
+}
 await fs.writeFile(path.join(root, 'index.html'), html, 'utf8');
 const n = (html.match(/<section class="slide/g) || []).length;
 console.log('index.html listo: ' + n + ' diapositivas, ' + (html.length / 1024).toFixed(1) + ' KB, ' + files.length + ' ficheros fuente');
