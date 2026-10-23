@@ -290,3 +290,11 @@ table.xxs th{font-size:12.5px}
 .pais{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:6px}
 .pais.us{background:#8b5cff}
 .pais.cn{background:#fb7185}
+
+/* ---------- diapositivas de meme (descanso) ---------- */
+.slide.meme{align-items:center;justify-content:center;text-align:center;padding:36px 64px 56px;gap:14px}
+.slide.meme .meme-shot{max-height:560px;max-width:88%;height:auto;border:7px solid #f4f1e8;border-radius:8px;
+  box-shadow:0 26px 60px rgba(0,0,0,.65),0 0 60px rgba(139,92,255,.18);transform:rotate(-1.2deg);object-fit:contain}
+.slide.meme .meme-cap{font-family:"Comic Sans MS","Segoe Print",cursive;font-size:23px;line-height:1.3;color:#ffd23d;
+  max-width:1000px;text-shadow:0 2px 0 #1b0730,0 0 24px rgba(0,0,0,.9)}
+.slide.meme .meme-tag{font-size:12.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--dim)}

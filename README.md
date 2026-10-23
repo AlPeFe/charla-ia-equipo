@@ -45,7 +45,7 @@ Enlace directo a una diapositiva: `index.html#/42`.
 
 ---
 
-## Contenido: 181 diapositivas en 16 módulos
+## Contenido: 204 diapositivas en 16 módulos + 23 memes
 
 | Módulo | Diapositivas | Contenido |
 |---|---|---|
@@ -67,6 +67,16 @@ Enlace directo a una diapositiva: `index.html#/42`.
 | 15 · Anexo | 6 | Recursos, plantilla de convenciones, **dos glosarios (general y de infraestructura y agentes)**, cómo editar |
 
 Cada diapositiva incluye **notas del ponente** (tecla `N`).
+
+**Memes de descanso**: hay 23 diapositivas sueltas (`class="slide meme"`) repartidas una o dos por bloque,
+con pie de foto y la etiqueta *descanso*. Las imágenes viven en `src/img/memes/` (recomprimidas a 640 px) y
+se incrustan en el HTML al construir. Si en directo vas justo de tiempo, se saltan con `→` sin más: no
+interrumpen ninguna explicación porque nunca van a mitad de una idea. Para quitarlas todas:
+
+```bash
+grep -rl 'class="slide meme"' src/slides/*.html | xargs sed -i '/<section class="slide meme"/,/^<\/section>$/d'
+node build.mjs
+```
 
 El material visual (diagramas, curvas, matrices) es **SVG dibujado a mano dentro de cada diapositiva**:
 no hay dependencias ni imágenes externas más allá del collage de la portada. Clases disponibles: `figure` + `svgfig`
@@ -165,6 +175,9 @@ modelos abiertos, novedades). Después actualiza a mano las tablas de la secció
 ---
 
 ## Créditos de imágenes
+
+- **Memes**: recopilación propia, sin licencia conocida. Son imágenes de internet usadas como descanso
+  visual en un material interno; no reutilizar el deck fuera del equipo sin revisarlas o quitarlas.
 
 - **Portada**: collage de 11 fotos de **Hanni Pham** (NewJeans) en `src/img/collage/`. Proceden de
   material gráfico recopilado para la charla (web y redes), no de un banco con licencia explícita:
