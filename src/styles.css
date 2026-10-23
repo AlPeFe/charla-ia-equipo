@@ -284,3 +284,9 @@ table.xxs th{font-size:12.5px}
 .wordart{width:100%;display:block;filter:drop-shadow(0 18px 40px rgba(0,0,0,.85)) drop-shadow(0 0 26px rgba(139,92,255,.35))}
 .cover .chispa{font-family:"Comic Sans MS","Segoe Print",cursive;font-size:16px;color:#ffd23d;letter-spacing:.02em}
 .cols.top{align-items:start}
+
+/* barras por origen (EE. UU. vs China) */
+.bar .fill.cn{background:linear-gradient(90deg,#fb7185,#fbbf24)}
+.pais{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:6px}
+.pais.us{background:#8b5cff}
+.pais.cn{background:#fb7185}

@@ -295,6 +295,12 @@ table.xxs th{font-size:12.5px}
 .cover .chispa{font-family:"Comic Sans MS","Segoe Print",cursive;font-size:16px;color:#ffd23d;letter-spacing:.02em}
 .cols.top{align-items:start}
 
+/* barras por origen (EE. UU. vs China) */
+.bar .fill.cn{background:linear-gradient(90deg,#fb7185,#fbbf24)}
+.pais{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:6px}
+.pais.us{background:#8b5cff}
+.pais.cn{background:#fb7185}
+
 </style>
 </head>
 <body>
@@ -2257,6 +2263,74 @@ modelo = [bloque] * N_capas</code></pre>
 </section>
 
 <section class="slide" data-module="4 · Inferencia">
+  <h2>Hardware: la cuenta de la memoria</h2>
+  <div class="body">
+    <div class="cols c2-1">
+      <div class="col">
+        <div class="figure">
+          <svg class="svgfig" viewBox="0 0 700 300" role="img" aria-label="Memoria que necesita cada modelo según los bits, contra la memoria de cada equipo">
+            <text x="150" y="28" class="tc">GB de memoria necesarios →</text>
+            <g class="ln dash">
+              <path d="M303 40 V254"/><path d="M456 40 V254"/><path d="M558 40 V254"/><path d="M660 40 V254"/>
+            </g>
+            <line x1="150" y1="254" x2="672" y2="254" class="ln"/>
+
+            <rect x="150" y="56" width="22" height="22" rx="5" class="box cy"/>
+            <text x="140" y="72" text-anchor="end" class="t">7B · 4 bits</text>
+            <text x="180" y="72" class="ts">3,5 GB</text>
+
+            <rect x="150" y="96" width="45" height="22" rx="5" class="box cy"/>
+            <text x="140" y="112" text-anchor="end" class="t">14B · 4 bits</text>
+            <text x="203" y="112" class="ts">7 GB</text>
+
+            <rect x="150" y="136" width="102" height="22" rx="5" class="box cy"/>
+            <text x="140" y="152" text-anchor="end" class="t">32B · 4 bits</text>
+            <text x="260" y="152" class="ts">16 GB</text>
+
+            <rect x="150" y="176" width="223" height="22" rx="5" class="box wa"/>
+            <text x="140" y="192" text-anchor="end" class="t">70B · 4 bits</text>
+            <text x="381" y="192" class="ts">35 GB</text>
+
+            <rect x="150" y="216" width="510" height="22" rx="5" class="box no"/>
+            <text x="140" y="232" text-anchor="end" class="t">70B · 16 bits</text>
+            <text x="166" y="232" class="ts" fill="#ffd1d9">140 GB — aquí ya no hay tarjeta que valga</text>
+
+            <g class="ts" fill="#8497b4">
+              <text x="303" y="276" text-anchor="middle" transform="rotate(-38 303 276)">GPU 24 GB</text>
+              <text x="456" y="276" text-anchor="middle" transform="rotate(-38 456 276)">GPU 48 GB</text>
+              <text x="558" y="276" text-anchor="middle" transform="rotate(-38 558 276)">Mac 64 GB</text>
+              <text x="660" y="276" text-anchor="middle" transform="rotate(-38 660 276)">H100 80 GB</text>
+            </g>
+          </svg>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card accent">
+          <h3>Para generar manda el ancho de banda</h3>
+          <p style="font-size:17px"><b>tokens/s ≈ ancho de banda ÷ GB del modelo.</b></p>
+          <p class="small">GPU de consumo (≈1 TB/s) con un 8B en 4 bits (≈5 GB): techo de 200 tok/s, real 40-80. GPU de servidor (3-5 TB/s): pasa de 300.</p>
+        </div>
+        <div class="card dense">
+          <h3>Qué te cabe en cada sitio</h3>
+          <ul class="tight">
+            <li><b>Portátil 16 GB</b>: 7-8B en 4 bits, lento pero usable.</li>
+            <li><b>Móvil</b>: 1-3B.</li>
+            <li><b>Mac 64 GB</b>: 70B en 4 bits, 5-10 tok/s.</li>
+            <li><b>GPU 24 GB</b>: 32B en 4 bits, rápido.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="warnbox">Si no cabe, no hay truco: <b>cuantiza</b>, <b>reparte entre chips</b> (más lento) o usa la nube. Y cuenta también la <b>RAM del sistema</b>, no sólo la VRAM.</div>
+  </div>
+  <aside class="notes"><ul>
+    <li>La cuenta es siempre parámetros × bytes por parámetro, más un 15-20 % de caché y margen.</li>
+    <li>No entrar en marcas: importa el orden de magnitud y por qué "el modelo grande en tu portátil" no es viable.</li>
+    <li>Para probar en local: 7-8B en 4 bits con Ollama, y comparar contra la API antes de comprar nada.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="4 · Inferencia">
   <h2>¿API o modelo propio? Decisión en cuatro preguntas</h2>
   <div class="body">
     <div class="cols c2">
@@ -3019,6 +3093,184 @@ modelo = [bloque] * N_capas</code></pre>
 </section>
 
 <section class="slide" data-module="7 · Panorama 2026">
+  <h2>Benchmarks: para qué sirven y por qué no deciden</h2>
+  <div class="body">
+    <div class="cols c2">
+      <div class="col">
+        <div class="card">
+          <h3>Las familias clásicas</h3>
+          <ul class="tight">
+            <li><b>Conocimiento general</b> (tipo MMLU): preguntas de múltiples asignaturas. Hoy casi todos van sobrados: poca señal.</li>
+            <li><b>Ciencia y razonamiento</b> (tipo GPQA): preguntas de nivel experto.</li>
+            <li><b>Matemáticas</b> (tipo AIME): problemas con respuesta exacta, sensibles al "pensamiento".</li>
+            <li><b>Código real</b> (tipo SWE-bench): ¿arregla issues de repositorios auténticos? Es el más relevante para nosotros.</li>
+            <li><b>Agentes</b>: terminal, navegador, herramientas, varias vueltas.</li>
+            <li><b>Preferencia humana / arenas</b>: comparaciones a ciegas por votación.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card bad">
+          <h3>Los cinco problemas</h3>
+          <ul class="tight">
+            <li><b>Contaminación</b>: las respuestas pueden estar en los datos de entrenamiento.</li>
+            <li><b>Sobreajuste al benchmark</b>: optimizar la métrica deja de medir lo que importa.</li>
+            <li><b>Formato y azar</b>: cambiar el orden de las opciones cambia el resultado.</li>
+            <li><b>El "voto humano" premia el estilo</b>: respuestas largas y seguras ganan aunque sean peores.</li>
+            <li><b>Cero relación con tu caso</b>: tu código, tu idioma, tu normativa.</li>
+          </ul>
+        </div>
+        <div class="okbox"><b>La única evaluación que vale es la tuya.</b> 30&#8211;50 casos reales de tu dominio, con respuesta esperada, y comparas modelos en una tarde. Eso es más útil que cualquier leaderboard.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Proponer al equipo: montar un mini-set de evaluación propio (tareas reales) y repetirlo cada trimestre. Es la práctica con mejor relación esfuerzo/valor.</li>
+    <li>No citar puntuaciones concretas: caducan y no las hemos verificado aquí.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="7 · Panorama 2026">
+  <h2>Código de verdad: SWE-bench Verified <span class="tag ok">dato · feb-2026</span></h2>
+  <div class="body">
+    <div class="cols c2-1">
+      <div class="col">
+        <div class="bars" style="gap:9px">
+          <div class="bar" style="grid-template-columns:190px 1fr 68px"><span class="n"><span class="pais us"></span>Claude 4.5 Opus</span><div class="track"><div class="fill" style="width:84%"></div></div><span class="v">76,8 %</span></div>
+          <div class="bar" style="grid-template-columns:190px 1fr 68px"><span class="n"><span class="pais us"></span>Gemini 3 Flash</span><div class="track"><div class="fill" style="width:79%"></div></div><span class="v">75,8 %</span></div>
+          <div class="bar" style="grid-template-columns:190px 1fr 68px"><span class="n"><span class="pais cn"></span>MiniMax M2.5</span><div class="track"><div class="fill cn" style="width:79%"></div></div><span class="v">75,8 %</span></div>
+          <div class="bar" style="grid-template-columns:190px 1fr 68px"><span class="n"><span class="pais us"></span>Claude 4.6 Opus</span><div class="track"><div class="fill" style="width:78%"></div></div><span class="v">75,6 %</span></div>
+          <div class="bar" style="grid-template-columns:190px 1fr 68px"><span class="n"><span class="pais us"></span>Gemini 3 Pro</span><div class="track"><div class="fill" style="width:71%"></div></div><span class="v">74,2 %</span></div>
+          <div class="bar" style="grid-template-columns:190px 1fr 68px"><span class="n"><span class="pais cn"></span>GLM 5</span><div class="track"><div class="fill cn" style="width:64%"></div></div><span class="v">72,8 %</span></div>
+          <div class="bar" style="grid-template-columns:190px 1fr 68px"><span class="n"><span class="pais us"></span>GPT-5.2 Codex</span><div class="track"><div class="fill" style="width:64%"></div></div><span class="v">72,8 %</span></div>
+          <div class="bar" style="grid-template-columns:190px 1fr 68px"><span class="n"><span class="pais cn"></span>Kimi K2.5</span><div class="track"><div class="fill cn" style="width:54%"></div></div><span class="v">70,8 %</span></div>
+          <div class="bar" style="grid-template-columns:190px 1fr 68px"><span class="n"><span class="pais cn"></span>DeepSeek V3.2</span><div class="track"><div class="fill cn" style="width:50%"></div></div><span class="v">70,0 %</span></div>
+        </div>
+        <p class="tiny">Eje truncado en 60 %. Mismo agente para todos (<code>mini-SWE-agent</code>), 500 incidencias reales de GitHub.</p>
+      </div>
+      <div class="col">
+        <div class="card accent">
+          <h3>Qué se mide</h3>
+          <p>Una incidencia real: <b>leer el código, encontrar el fallo, parchearlo</b> sin romper nada. Pasa si los tests del proyecto pasan.</p>
+        </div>
+        <div class="card dense">
+          <h3>Tres avisos</h3>
+          <ul class="tight">
+            <li>El <b>arnés</b> sube o baja 5-10 puntos: no es sólo el modelo.</li>
+            <li>Python, repos públicos con tests: <b>no es tu código heredado</b>.</li>
+            <li>Aquí sólo las ejecuciones comparables, con el mismo agente.</li>
+          </ul>
+        </div>
+        <div class="okbox" style="font-size:18px">Los abiertos chinos están a <b>4-6 puntos</b> del líder cerrado, a una fracción del precio.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Fuente: swebench.com, tablero "Verified", filtrando las ejecuciones con el agente estandarizado (mini-SWE-agent). Consultada el 23-oct-2026.</li>
+    <li>Clave didáctica: el modelo solo no arregla nada; el harness es la mitad del resultado. Enlaza con el bloque 8.</li>
+  </ul></aside>
+</section>
+<section class="slide" data-module="7 · Panorama 2026">
+  <h2>La tabla de frontera, hoy <span class="tag ok">dato · vals.ai, 23-oct-2026</span></h2>
+  <div class="body">
+    <table class="xs">
+      <thead>
+        <tr>
+          <th>Modelo</th><th>Casa</th>
+          <th>GPQA-D<br><span class="dim">razonar</span></th>
+          <th>LiveCodeBench<br><span class="dim">programar</span></th>
+          <th>$ / M in</th><th>$ / M out</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><b>Gemini 3.1 Pro</b></td><td><span class="pais us"></span>Google</td><td class="num">95,5</td><td class="num">88,5</td><td class="num">2</td><td class="num">12</td></tr>
+        <tr><td><b>GPT-5.6 Sol</b></td><td><span class="pais us"></span>OpenAI</td><td class="num">95,2</td><td class="num">82,6</td><td class="num">4</td><td class="num">20</td></tr>
+        <tr><td><b>Grok 4.6</b></td><td><span class="pais us"></span>xAI</td><td class="num">94,7</td><td class="num">88,2</td><td class="num">2</td><td class="num">6</td></tr>
+        <tr><td><b>Gemini 3.8 Flash</b></td><td><span class="pais us"></span>Google</td><td class="num">94,4</td><td class="num">89,5</td><td class="num">1,5</td><td class="num">7,5</td></tr>
+        <tr><td><b>Qwen 3.8 Max</b></td><td><span class="pais cn"></span>Alibaba</td><td class="num">93,7</td><td class="num">87,9</td><td class="num">2</td><td class="num">6</td></tr>
+        <tr><td><b>Claude Opus 5</b></td><td><span class="pais us"></span>Anthropic</td><td class="num">93,4</td><td class="num">89,0</td><td class="num">5</td><td class="num">25</td></tr>
+        <tr><td><b>Claude Fable 5.1</b></td><td><span class="pais us"></span>Anthropic</td><td class="num">93,4</td><td class="num">90,5</td><td class="num">10</td><td class="num">50</td></tr>
+        <tr><td><b>Kimi K3</b></td><td><span class="pais cn"></span>Moonshot</td><td class="num">92,9</td><td class="num">87,2</td><td class="num">3</td><td class="num">15</td></tr>
+        <tr><td><b>MiniMax-M3</b></td><td><span class="pais cn"></span>MiniMax</td><td class="num">92,7</td><td class="num">82,2</td><td class="num">0,6</td><td class="num">2,4</td></tr>
+        <tr><td><b>DeepSeek V4 Pro</b></td><td><span class="pais cn"></span>DeepSeek</td><td class="num">92,4</td><td class="num">87,5</td><td class="num">1,3</td><td class="num">4</td></tr>
+        <tr><td><b>GLM 5.3</b></td><td><span class="pais cn"></span>Z.ai</td><td class="num">88,1</td><td class="num">80,5</td><td class="num">1,4</td><td class="num">4,4</td></tr>
+      </tbody>
+    </table>
+    <div class="cols c2">
+      <div class="col"><div class="okbox" style="font-size:18px">Del primero al décimo hay <b>7 puntos</b> de GPQA. Del más caro al más barato, <b>16 veces</b> de precio. Ahí está la decisión.</div></div>
+      <div class="col"><div class="card" style="padding:12px 16px"><h3 style="font-size:18px">Cómo leer la tabla</h3><p style="font-size:16px"><b>GPQA-Diamond</b>: 198 preguntas de doctorado (física, química, biología). <b>LiveCodeBench</b>: problemas de concurso recientes, para que no estén en el entrenamiento.</p></div></div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Fuente: vals.ai (evaluaciones independientes), páginas de GPQA-Diamond y LiveCodeBench, consultadas el 23-oct-2026. Precio de tarifa pública del mismo panel.</li>
+    <li>Mensaje: en capacidad bruta ya casi no hay diferencia entre laboratorios; la diferencia está en precio, en licencia y en el arnés.</li>
+    <li>Aviso honesto: en tareas de agente largo (no sólo un problema suelto) los modelos cerrados todavía sacan ventaja.</li>
+  </ul></aside>
+</section>
+<section class="slide" data-module="7 · Panorama 2026">
+  <h2>Capacidad por euro: el gráfico que decide</h2>
+  <div class="body">
+    <div class="cols c2-1">
+      <div class="col">
+        <div class="figure">
+          <svg class="svgfig" viewBox="0 0 700 350" role="img" aria-label="Dispersión de calidad frente a precio: los modelos chinos dan casi la misma calidad mucho más barato">
+            <line x1="90" y1="300" x2="670" y2="300" class="ln"/>
+            <line x1="90" y1="300" x2="90" y2="30" class="ln"/>
+            <text x="60" y="50" class="ts" transform="rotate(-90 60 50)">GPQA-D (%)</text>
+            <text x="670" y="330" text-anchor="end" class="ts">precio de salida ($ / millón de tokens) →</text>
+
+            <!-- frontera capacidad/precio -->
+            <path d="M121 142 L279 94 L398 76" class="ln dash" stroke="#34d399" stroke-width="2"/>
+
+            <g class="dot">
+              <circle cx="398" cy="76" r="7"/><circle cx="486" cy="83" r="7"/><circle cx="279" cy="94" r="7"/>
+              <circle cx="317" cy="102" r="7"/><circle cx="525" cy="125" r="7"/><circle cx="644" cy="125" r="7"/>
+              <circle cx="437" cy="137" r="7"/>
+            </g>
+            <g class="dot wa">
+              <circle cx="279" cy="118" r="7"/><circle cx="121" cy="142" r="7"/><circle cx="209" cy="149" r="7"/><circle cx="226" cy="250" r="7"/>
+            </g>
+
+            <g class="ts">
+              <text x="398" y="60" text-anchor="middle">Gemini 3.1 Pro</text>
+              <text x="486" y="67" text-anchor="middle">GPT-5.6 Sol</text>
+              <text x="291" y="86">Grok 4.6</text>
+              <text x="329" y="112">Gemini 3.8 Flash</text>
+              <text x="267" y="122" text-anchor="end">Qwen 3.8 Max</text>
+              <text x="525" y="109" text-anchor="middle">Claude Opus 5</text>
+              <text x="652" y="90" text-anchor="end">Claude Fable 5.1</text>
+              <text x="449" y="141">Kimi K3</text>
+              <text x="121" y="164" text-anchor="middle">MiniMax-M3</text>
+              <text x="209" y="172" text-anchor="middle">DeepSeek V4 Pro</text>
+              <text x="238" y="250">GLM 5.3</text>
+            </g>
+
+            <text x="96" y="52" class="ts" fill="#34d399">frontera capacidad / precio</text>
+            <circle cx="100" cy="330" r="5" class="dot"/><text x="112" y="335" class="ts">EE. UU. / Europa</text>
+            <circle cx="240" cy="330" r="5" class="dot wa"/><text x="252" y="335" class="ts">China</text>
+          </svg>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card ok">
+          <h3>La lectura honesta</h3>
+          <ul class="tight">
+            <li>La línea verde es la <b>frontera</b>: nadie da más calidad por menos precio.</li>
+            <li>Ahí sólo hay tres: <b>MiniMax-M3</b>, <b>Grok 4.6</b> y <b>Gemini 3.1 Pro</b>.</li>
+            <li>Claude y GPT-5.6 están arriba, pero pagando <b>4-16 veces más</b> por los mismos pocos puntos.</li>
+          </ul>
+        </div>
+        <div class="callout" style="font-size:18px">Consecuencia práctica: <b>modelo bueno y barato por defecto</b>; el caro, sólo cuando la tarea se resiste. Es la misma regla del bloque de inferencia, ahora con números.</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes"><ul>
+    <li>Datos: vals.ai (GPQA-Diamond) + tarifa pública, 23-oct-2026. Escala de precio logarítmica para que se vea.</li>
+    <li>Ojo con el sesgo: GPQA es "preguntas de doctorado". Para tu caso (código, documentos internos) la foto puede ser distinta: pide siempre una prueba con tus datos.</li>
+  </ul></aside>
+</section>
+
+<section class="slide" data-module="7 · Panorama 2026">
   <h2>Precios: la horquilla real en octubre de 2026 <span class="tag ok">dato</span></h2>
   <div class="body">
     <table>
@@ -3093,43 +3345,7 @@ modelo = [bloque] * N_capas</code></pre>
   <aside class="notes"><ul><li>Aviso sobre vídeo: es la modalidad que cambia más rápido y la más difícil de verificar en un catálogo; comprobar antes de citar marcas.</li></ul></aside>
 </section>
 
-<section class="slide" data-module="7 · Panorama 2026">
-  <h2>Benchmarks: para qué sirven y por qué no deciden</h2>
-  <div class="body">
-    <div class="cols c2">
-      <div class="col">
-        <div class="card">
-          <h3>Las familias clásicas</h3>
-          <ul class="tight">
-            <li><b>Conocimiento general</b> (tipo MMLU): preguntas de múltiples asignaturas. Hoy casi todos van sobrados: poca señal.</li>
-            <li><b>Ciencia y razonamiento</b> (tipo GPQA): preguntas de nivel experto.</li>
-            <li><b>Matemáticas</b> (tipo AIME): problemas con respuesta exacta, sensibles al "pensamiento".</li>
-            <li><b>Código real</b> (tipo SWE-bench): ¿arregla issues de repositorios auténticos? Es el más relevante para nosotros.</li>
-            <li><b>Agentes</b>: terminal, navegador, herramientas, varias vueltas.</li>
-            <li><b>Preferencia humana / arenas</b>: comparaciones a ciegas por votación.</li>
-          </ul>
-        </div>
-      </div>
-      <div class="col">
-        <div class="card bad">
-          <h3>Los cinco problemas</h3>
-          <ul class="tight">
-            <li><b>Contaminación</b>: las respuestas pueden estar en los datos de entrenamiento.</li>
-            <li><b>Sobreajuste al benchmark</b>: optimizar la métrica deja de medir lo que importa.</li>
-            <li><b>Formato y azar</b>: cambiar el orden de las opciones cambia el resultado.</li>
-            <li><b>El "voto humano" premia el estilo</b>: respuestas largas y seguras ganan aunque sean peores.</li>
-            <li><b>Cero relación con tu caso</b>: tu código, tu idioma, tu normativa.</li>
-          </ul>
-        </div>
-        <div class="okbox"><b>La única evaluación que vale es la tuya.</b> 30&#8211;50 casos reales de tu dominio, con respuesta esperada, y comparas modelos en una tarde. Eso es más útil que cualquier leaderboard.</div>
-      </div>
-    </div>
-  </div>
-  <aside class="notes"><ul>
-    <li>Proponer al equipo: montar un mini-set de evaluación propio (tareas reales) y repetirlo cada trimestre. Es la práctica con mejor relación esfuerzo/valor.</li>
-    <li>No citar puntuaciones concretas: caducan y no las hemos verificado aquí.</li>
-  </ul></aside>
-</section>
+
 
 <section class="slide" data-module="7 · Panorama 2026">
   <h2>Cómo elegir modelo para una tarea (sin perder la tarde)</h2>

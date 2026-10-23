@@ -45,7 +45,7 @@ Enlace directo a una diapositiva: `index.html#/42`.
 
 ---
 
-## Contenido: 177 diapositivas en 16 módulos
+## Contenido: 181 diapositivas en 16 módulos
 
 | Módulo | Diapositivas | Contenido |
 |---|---|---|
@@ -53,10 +53,10 @@ Enlace directo a una diapositiva: `index.html#/42`.
 | 1 · Qué es la IA | 8 | Definiciones, los tres saltos (transformer, ChatGPT, agentes), taxonomía, glosario |
 | 2 · Cómo aprende | 17 | Datos, pérdida, gradientes, sobreajuste, las 4 fases, **fine-tuning, LoRA y QLoRA**, **herramientas de entrenamiento (Unsloth, PEFT, TRL, Axolotl…)**, Unsloth en detalle y receta mínima paso a paso |
 | 3 · Anatomía de un LLM | 12 | Tokens, embeddings, atención, **la fórmula de la atención y self-attention**, **softmax (la función, la temperatura y por qué es derivable)**, bloques, muestreo, multimodalidad |
-| 4 · Inferencia | 15 | Prefill/decode, KV cache, cuantización, razonamiento, precios, hardware, API vs propio, **motores locales (llama.cpp, Ollama, vLLM) y la API compatible con OpenAI** |
+| 4 · Inferencia | 16 | Prefill/decode, KV cache, cuantización, razonamiento, precios, hardware, API vs propio, **motores locales (llama.cpp, Ollama, vLLM) y la API compatible con OpenAI**, **hardware: VRAM/RAM, ancho de banda y qué modelo cabe en cada equipo** |
 | 5 · Arquitecturas | 11 | Densa vs MoE, CNN, RNN/LSTM, tres familias de transformer, alternativas, otros modelos |
 | 6 · Difusión y ComfyUI | 9 | Difusión paso a paso, checkpoints/VAE/LoRA/ControlNet, ComfyUI, flujos de equipo, LoRA de imagen, vídeo y audio |
-| 7 · Panorama 2026 | 12 | Laboratorios, modelos punteros, precios, pesos abiertos, benchmarks, riesgos |
+| 7 · Panorama 2026 | 15 | Laboratorios, modelos punteros, precios, pesos abiertos, **benchmarks reales (SWE-bench Verified, GPQA-Diamond, LiveCodeBench) y capacidad por euro**, riesgos |
 | 8 · Harness y agentes | 20 | Bucle, herramientas, contexto, permisos, **tipos de harness (chat, IDE, CLI, nube, local)**, CLIs concretas (Claude Code, Codex, Gemini CLI, HanniPI, Copilot, Aider, OpenCode…), **superficies de control (T3 Code)**, MCP y catálogo de servidores, configuración sin sustos, paralelismo, **Orca: worktrees, terminales gestionadas y orquestación**, **el stack propio (HanniPI + HanniGram + Orca)**, coste |
 | 9 · Skills y contexto | 10 | Skills, **catálogo de skills típicas de un equipo (código y proceso)**, cómo se comparten y evolucionan, fichero de convenciones, memoria, ADRs, anatomía del prompt |
 | 10 · Día a día (código) | 11 | Código heredado, tests, revisión, refactors, SQL, bugs, anti-patrones |
@@ -125,6 +125,13 @@ Clases útiles: `cols c2` / `c3` / `c4` (columnas), `card`, `callout`, `okbox`, 
 
 - **Panorama de modelos** (laboratorios, precios, contexto, pesos abiertos): API pública de OpenRouter,
   snapshot del **17-oct-2026**, guardado en `datos/`.
+- **Benchmarks reales** (bloque 7), consultados el **23-oct-2026**:
+  - **SWE-bench Verified**: tablero oficial `swebench.com`, filtrando las ejecuciones con el mismo agente
+    estandarizado (`mini-SWE-agent`) para que sean comparables. Son runs de hasta **feb-2026**.
+  - **GPQA-Diamond y LiveCodeBench**: evaluaciones independientes de **vals.ai** (páginas públicas de cada
+    benchmark), con el precio de tarifa del mismo panel. Snapshot del **23-oct-2026**.
+  - Gráfico "capacidad por euro": esos mismos dos datos, con la frontera de Pareto marcada a mano.
+  - Regla: cualquier cifra de benchmark caduca; las diapositivas llevan la fecha y la fuente en el título.
 - **Unsloth** (velocidad, memoria, formatos, plataformas): datos publicados por el propio proyecto en su
   repositorio, consultados en la misma fecha. En la diapositiva se indica que son sus cifras.
 - **Arquitecturas, inferencia, difusión y buenas prácticas**: conocimiento estable, sin cifras volátiles.
