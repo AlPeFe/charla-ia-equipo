@@ -17,11 +17,12 @@
   let seconds = 0;
   let clockOn = false;
 
-  // ---- escala a la ventana
+  // ---- escala a la ventana y centra el escenario (origin 0 0, sin desbordes raros)
   function fit() {
-    const pad = 0;
-    const s = Math.min((innerWidth - pad) / 1280, (innerHeight - pad) / 720);
-    stage.style.transform = 'scale(' + s + ')';
+    const s = Math.min(innerWidth / 1280, innerHeight / 720);
+    const x = Math.round((innerWidth - 1280 * s) / 2);
+    const y = Math.round((innerHeight - 720 * s) / 2);
+    stage.style.transform = 'translate(' + x + 'px,' + y + 'px) scale(' + s + ')';
   }
   addEventListener('resize', fit);
 

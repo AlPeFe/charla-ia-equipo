@@ -8,7 +8,7 @@
 *{box-sizing:border-box}
 html,body{margin:0;padding:0;height:100%;background:var(--bg);color:var(--fg);font-family:var(--sans);overflow:hidden}
 #viewport{position:fixed;inset:0;display:grid;place-items:center;padding:0}
-#stage{width:1280px;height:720px;position:relative;transform-origin:center center;background:var(--bg)}
+#stage{width:1280px;height:720px;position:absolute;left:0;top:0;transform-origin:0 0;background:var(--bg)}
 
 /* ---------- slide shell ---------- */
 .slide{position:absolute;inset:0;padding:52px 64px 68px;display:none;flex-direction:column;gap:18px;
@@ -153,10 +153,15 @@ td.num{font-variant-numeric:tabular-nums;text-align:right;font-family:var(--mono
 @media print{
   html,body{overflow:visible;background:#fff}
   #viewport{position:static;display:block}
-  #stage{transform:none!important;width:100%;height:auto;background:#fff}
+  #stage{position:static;transform:none!important;width:100%;height:auto;background:#fff}
   #chrome,#progress,#help,#overview,#notes{display:none!important}
   .slide{display:flex!important;position:static;page-break-after:always;height:720px;color:#0b0f17;background:#fff}
   .slide *{color:#0b0f17!important}
+  /* portada en papel: sin fotos ni velo, solo el titulo */
+  .slide.cover-collage{position:relative;justify-content:center;padding:0 90px}
+  .cover-collage .collage,.cover-collage .cover-veil,.cover-collage .cover-head::before{display:none!important}
+  .cover-collage .cover-head{position:static;transform:none;width:100%}
+  .cover-collage .wordart{filter:none}
   .card,pre{border-color:#ccc}
 }
 
@@ -245,16 +250,37 @@ table.xxs th{font-size:12.5px}
 .tok.c{border-color:rgba(52,211,153,.6);background:rgba(52,211,153,.14)}
 .tok.d{border-color:rgba(251,191,36,.6);background:rgba(251,191,36,.14)}
 
-/* polaroid + portada */
-.polaroid{background:#f4f1e8;padding:12px 12px 46px;border-radius:6px;transform:rotate(2.2deg);
-  box-shadow:0 22px 48px rgba(0,0,0,.55),0 0 0 1px rgba(0,0,0,.4)}
-.polaroid img{display:block;width:100%;height:auto;filter:saturate(1.05) contrast(1.03)}
-.polaroid .cap{position:absolute;left:0;right:0;bottom:12px;text-align:center;font-family:"Comic Sans MS","Segoe Print",cursive;
-  font-size:13.5px;color:#4a3f5a}
-.slide.cover-wa{flex-direction:row;gap:0;padding:44px 56px;align-items:center;justify-content:space-between}
-.cover-wa .left{display:flex;flex-direction:column;gap:10px;width:62%}
-.cover-wa .right{width:34%;display:flex;justify-content:center;position:relative}
-.cover-wa .right .polaroid{width:100%;position:relative}
-.wordart{width:100%;display:block;filter:drop-shadow(0 10px 24px rgba(0,0,0,.55))}
+/* ---------- portada: collage de polaroids ---------- */
+.slide.cover-collage{flex-direction:column;padding:0;overflow:hidden;align-items:center;justify-content:center;isolation:isolate}
+.cover-collage .collage{position:absolute;inset:0;z-index:0}
+.cover-collage .ph{position:absolute;margin:0;padding:9px 9px 30px;border-radius:3px;background:#f5f1e6;
+  box-shadow:0 18px 38px rgba(0,0,0,.66),0 3px 8px rgba(0,0,0,.5),0 0 0 1px rgba(0,0,0,.35)}
+.cover-collage .ph img{display:block;width:100%;height:var(--h,240px);object-fit:cover;object-position:50% 26%;
+  filter:saturate(.96) contrast(1.04)}
+/* posiciones: las fotos sangran por los cuatro bordes y dejan libre el centro */
+.cover-collage .ph1{left:-46px;top:-44px;width:186px;--h:262px;transform:rotate(-8deg)}
+.cover-collage .ph2{left:118px;top:-62px;width:170px;--h:250px;transform:rotate(6deg)}
+.cover-collage .ph3{left:540px;top:-64px;width:252px;--h:168px;transform:rotate(-3deg)}
+.cover-collage .ph3 img{object-position:50% 42%}
+.cover-collage .ph4{left:1014px;top:-70px;width:196px;--h:258px;transform:rotate(7deg)}
+.cover-collage .ph5{left:1178px;top:86px;width:176px;--h:242px;transform:rotate(-9deg)}
+.cover-collage .ph6{left:1092px;top:346px;width:172px;--h:236px;transform:rotate(6deg)}
+.cover-collage .ph7{left:-58px;top:330px;width:182px;--h:252px;transform:rotate(5deg)}
+.cover-collage .ph8{left:138px;top:518px;width:172px;--h:228px;transform:rotate(-6deg)}
+.cover-collage .ph9{left:352px;top:566px;width:178px;--h:232px;transform:rotate(5deg)}
+.cover-collage .ph10{left:712px;top:556px;width:178px;--h:242px;transform:rotate(-7deg)}
+.cover-collage .ph11{left:958px;top:562px;width:162px;--h:216px;transform:rotate(8deg)}
+/* velo: oscurece el centro (para el titulo) y respeta la luz de las fotos en los bordes */
+.cover-veil{position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:radial-gradient(58% 62% at 50% 45%,rgba(6,9,14,.93) 0%,rgba(6,9,14,.84) 46%,rgba(6,9,14,.34) 82%,rgba(6,9,14,0) 100%),
+             linear-gradient(115deg,rgba(139,92,255,.14),rgba(34,211,238,.06) 55%,rgba(8,11,18,.04)),
+             linear-gradient(180deg,rgba(8,11,18,.42),rgba(8,11,18,0) 26%,rgba(8,11,18,0) 62%,rgba(8,11,18,.5))}
+.cover-collage .cover-head{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;
+  gap:2px;width:648px;transform:translateY(-4px)}
+.cover-collage .cover-head::before{content:"";position:absolute;left:50%;top:50%;width:1020px;height:560px;
+  transform:translate(-50%,-50%);border-radius:50%;pointer-events:none;
+  background:radial-gradient(closest-side,rgba(139,92,255,.30),rgba(34,211,238,.10) 55%,transparent 78%);filter:blur(30px)}
+.cover-collage .chispa{text-shadow:0 2px 14px rgba(0,0,0,.9)}
+.wordart{width:100%;display:block;filter:drop-shadow(0 18px 40px rgba(0,0,0,.85)) drop-shadow(0 0 26px rgba(139,92,255,.35))}
 .cover .chispa{font-family:"Comic Sans MS","Segoe Print",cursive;font-size:16px;color:#ffd23d;letter-spacing:.02em}
 .cols.top{align-items:start}

@@ -49,7 +49,7 @@ Enlace directo a una diapositiva: `index.html#/42`.
 
 | Módulo | Diapositivas | Contenido |
 |---|---|---|
-| 0 · Portada | 1 | Portada WordArt + foto, sin preámbulos |
+| 0 · Portada | 1 | Portada WordArt sobre collage de fotos, sin preámbulos |
 | 1 · Qué es la IA | 8 | Definiciones, los tres saltos (transformer, ChatGPT, agentes), taxonomía, glosario |
 | 2 · Cómo aprende | 17 | Datos, pérdida, gradientes, sobreajuste, las 4 fases, **fine-tuning, LoRA y QLoRA**, **herramientas de entrenamiento (Unsloth, PEFT, TRL, Axolotl…)**, Unsloth en detalle y receta mínima paso a paso |
 | 3 · Anatomía de un LLM | 12 | Tokens, embeddings, atención, **la fórmula de la atención y self-attention**, **softmax (la función, la temperatura y por qué es derivable)**, bloques, muestreo, multimodalidad |
@@ -69,11 +69,12 @@ Enlace directo a una diapositiva: `index.html#/42`.
 Cada diapositiva incluye **notas del ponente** (tecla `N`).
 
 El material visual (diagramas, curvas, matrices) es **SVG dibujado a mano dentro de cada diapositiva**:
-no hay dependencias ni imágenes externas más allá de la portada. Clases disponibles: `figure` + `svgfig`
+no hay dependencias ni imágenes externas más allá del collage de la portada. Clases disponibles: `figure` + `svgfig`
 con sus estilos (`box`, `box.hi/cy/ok/no/wa`, `ln`, `curve`, `dot`, `t`, `tb`, `ts`, `tc`), `bars` para
 barras, `tokens` para fichas tipo token, `stats` para cifras grandes y `pipe` para pipelines.
 
-La foto de la portada (`src/img/hanni.jpg`) se incrusta en `index.html` como data URI al construir.
+Las 11 fotos del collage de portada (`src/img/collage/c01.jpg` … `c11.jpg`, ya reducidas a 620×800 px) se
+incrustan en `index.html` como data URI al construir, así que el fichero sigue siendo autocontenido.
 
 ---
 
@@ -158,9 +159,12 @@ modelos abiertos, novedades). Después actualiza a mano las tablas de la secció
 
 ## Créditos de imágenes
 
-- **Portada**: Hanni Pham (NewJeans). Foto de **K-POPIT** (케이팝잇), vía Wikimedia Commons,
-  licencia **CC BY 3.0** (https://creativecommons.org/licenses/by/3.0). Si redistribuyes el material
-  fuera del equipo, mantén el crédito tal como aparece en la propia diapositiva.
+- **Portada**: collage de 11 fotos de **Hanni Pham** (NewJeans) en `src/img/collage/`. Proceden de
+  material gráfico recopilado para la charla (web y redes), no de un banco con licencia explícita:
+  valen para uso interno del equipo, pero **antes de publicar el material fuera de la empresa**
+  conviene sustituirlas por imágenes con licencia clara (p. ej. la foto de **K-POPIT** de Wikimedia
+  Commons, licencia **CC BY 3.0**: https://creativecommons.org/licenses/by/3.0).
+- La portada anterior (una sola polaroid, `src/img/hanni.jpg`) se retiró al pasar al collage.
 
 ---
 
