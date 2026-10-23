@@ -291,6 +291,14 @@ table.xxs th{font-size:12.5px}
 .pais.us{background:#8b5cff}
 .pais.cn{background:#fb7185}
 
+/* ---------- memes integrados en una esquina de la diapositiva ---------- */
+.slide .meme-inline{position:absolute;z-index:2;width:var(--mw,224px);height:auto;pointer-events:none;
+  border:6px solid #f4f1e8;border-radius:5px;transform:rotate(-2.5deg);
+  box-shadow:0 14px 32px rgba(0,0,0,.62),0 3px 8px rgba(0,0,0,.5),0 0 0 1px rgba(0,0,0,.4);
+  filter:saturate(.97) contrast(1.03)}
+.slide .meme-inline[data-c="bl"]{transform:rotate(2.5deg)}
+.slide .meme-inline[data-c="tr"]{transform:rotate(2deg)}
+
 /* ---------- diapositivas de meme (descanso) ---------- */
 .slide.meme{align-items:center;justify-content:center;text-align:center;padding:36px 64px 56px;gap:14px}
 .slide.meme .meme-shot{max-height:560px;max-width:88%;height:auto;border:7px solid #f4f1e8;border-radius:8px;
