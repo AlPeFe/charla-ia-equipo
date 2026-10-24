@@ -7,7 +7,6 @@
 </section>
 
 <section class="slide" data-module="4 · Inferencia">
-  <img class="meme-inline" src="img/memes/m22.jpg" alt="" style="left:1094px;top:524px;width:168px">
   <h2>Dos fases: leer (prefill) y escribir (decode)</h2>
   <div class="body compact">
     <div class="cols c2">
@@ -31,10 +30,10 @@
         </div>
       </div>
       <div class="col">
-        <div class="pre">
+        <div class="pre" style="display:flex;flex-direction:column;gap:12px">
           <div class="card">
             <h3>Por qué esto te importa como usuario</h3>
-            <table>
+            <table style="font-size:17px">
               <thead><tr><th>Si quieres&#8230;</th><th>Toca&#8230;</th></tr></thead>
               <tbody>
                 <tr><td>Respuesta que empiece antes</td><td>Prompt más corto, menos ficheros, caché de prompt</td></tr>
@@ -59,7 +58,7 @@
   <div class="body">
     <div class="cols c2-1">
       <div class="col">
-        <div class="figure">
+        <div class="figure" style="flex:0 0 auto">
           <svg class="svgfig" viewBox="0 0 660 190" role="img" aria-label="Sólo se calcula el token nuevo; el resto viene de la caché">
             <text x="10" y="24" class="tc">YA PROCESADO (en caché, gratis)</text>
             <g>
@@ -101,7 +100,7 @@
             <li>Si reordenas el prompt en cada llamada, rompes la caché y pagas todo.</li>
           </ul>
         </div>
-        <div class="okbox">Regla de oro: el orden del contexto es dinero. Los buenos harness ponen reglas y ficheros grandes delante justo por esto.</div>
+        <div class="okbox" style="font-size:18px">Regla de oro: el orden del contexto es dinero. Los buenos harness ponen reglas y ficheros grandes delante justo por esto.</div>
       </div>
     </div>
   </div>
@@ -111,7 +110,6 @@
 </section>
 
 <section class="slide" data-module="4 · Inferencia">
-  <img class="meme-inline" src="img/memes/m10.jpg" alt="" style="left:1036px;top:435px;width:224px">
   <h2>Servir a muchos: batching continuo y throughput</h2>
   <div class="body">
     <div class="cols c2">
@@ -143,19 +141,18 @@
 </section>
 
 <section class="slide" data-module="4 · Inferencia">
-  <img class="meme-inline" src="img/memes/m18.jpg" alt="" style="left:1065px;top:476px;width:196px">
   <h2>Cuantización: menos bits, menos memoria</h2>
   <div class="body">
     <div class="cols c1-2">
       <div class="col">
         <div class="card">
           <h3>Cuánta memoria para un modelo de 8B</h3>
-          <div class="bars">
-            <div class="bar"><span class="n">16 bits</span><div class="track"><div class="fill"></div></div><span class="v">16 GB</span></div>
-            <div class="bar"><span class="n">8 bits</span><div class="track"><div class="fill"></div></div><span class="v">8 GB</span></div>
-            <div class="bar"><span class="n">4 bits</span><div class="track"><div class="fill"></div></div><span class="v">4 GB</span></div>
+          <div class="bars" style="margin-top:4px">
+            <div class="bar" style="grid-template-columns:74px 1fr 66px"><span class="n">16 bits</span><div class="track"><div class="fill" style="width:100%"></div></div><span class="v">16 GB</span></div>
+            <div class="bar" style="grid-template-columns:74px 1fr 66px"><span class="n">8 bits</span><div class="track"><div class="fill" style="width:50%"></div></div><span class="v">8 GB</span></div>
+            <div class="bar" style="grid-template-columns:74px 1fr 66px"><span class="n">4 bits</span><div class="track"><div class="fill" style="width:25%"></div></div><span class="v">4 GB</span></div>
           </div>
-          <p class="small">La cuenta es fácil: <b>parámetros × bytes</b>, más la caché y el margen.</p>
+          <p class="small" style="margin-top:6px">La cuenta es fácil: <b>parámetros × bytes</b>, más la caché y el margen.</p>
         </div>
         <div class="card ok">
           <h3>Regla práctica</h3>
@@ -187,6 +184,11 @@
     <li>Si alguien quiere correr algo local: esta es la cuenta de memoria.</li>
     <li>Matiz honesto: en 4 bits pierdes sobre todo en tareas de razonamiento largo y código.</li>
   </ul></aside>
+</section>
+
+<section class="slide meme" data-module="4 · Inferencia">
+  <img class="meme-shot" src="img/memes/m10.jpg" alt="meme">
+  <aside class="notes"><ul><li>Meme de descanso: se pasa rapido, sin comentario. Si no hay tiempo, salta con <b>&#8594;</b>.</li></ul></aside>
 </section>
 
 <section class="slide" data-module="4 · Inferencia">
@@ -282,7 +284,7 @@
       <div class="col">
         <div class="card accent">
           <h3>Long context vs RAG</h3>
-          <table>
+          <table style="font-size:17px">
             <thead><tr><th></th><th>Long context</th><th>RAG</th></tr></thead>
             <tbody>
               <tr><td>Coste por pregunta</td><td>Alto y creciente</td><td>Bajo</td></tr>
@@ -303,7 +305,6 @@
 </section>
 
 <section class="slide" data-module="4 · Inferencia">
-  <img class="meme-inline" src="img/memes/m19.jpg" alt="" style="left:1065px;top:482px;width:196px">
   <h2>Memoria, compactación y trabajo largo</h2>
   <div class="body">
     <div class="cols c2">
@@ -335,7 +336,6 @@
 </section>
 
 <section class="slide" data-module="4 · Inferencia">
-  <img class="meme-inline" src="img/memes/m13.jpg" alt="" style="left:1070px;top:290px;width:196px">
   <h2>El trilema: calidad, coste y latencia</h2>
   <div class="body">
     <div class="cols c3">
@@ -383,6 +383,11 @@
     <li>Estos precios son la "tarifa pública por API" vía OpenRouter (snapshot del repo). Los planes de suscripción cambian la cuenta por completo.</li>
     <li>Consejo: poner un presupuesto por tarea y medirlo. La sorpresa de factura de fin de mes es un clásico.</li>
   </ul></aside>
+</section>
+
+<section class="slide meme" data-module="4 · Inferencia">
+  <img class="meme-shot" src="img/memes/m01.jpg" alt="meme">
+  <aside class="notes"><ul><li>Meme de descanso: se pasa rapido, sin comentario. Si no hay tiempo, salta con <b>&#8594;</b>.</li></ul></aside>
 </section>
 
 <section class="slide" data-module="4 · Inferencia">

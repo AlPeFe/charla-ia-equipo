@@ -7,7 +7,6 @@
 </section>
 
 <section class="slide" data-module="3 · Anatomía de un LLM">
-  <img class="meme-inline" src="img/memes/m20.jpg" alt="" style="left:1119px;top:121px;width:140px">
   <h2>La cadena completa, de tu texto a la respuesta</h2>
   <div class="body">
     <div class="figure">
@@ -66,26 +65,25 @@
 </section>
 
 <section class="slide" data-module="3 · Anatomía de un LLM">
-  <img class="meme-inline" src="img/memes/m08.jpg" alt="" style="left:1170px;top:600px;width:92px">
   <h2>Tokens: no ve letras ni palabras, ve trozos</h2>
   <div class="body">
     <div class="cols c2-1">
       <div class="col">
         <div class="card">
           <h3>Cómo trocea de verdad</h3>
-          <div class="tokens">
+          <div class="tokens" style="margin:4px 0 2px">
             <span class="tok a">Hola</span><span class="tok a">,</span><span class="tok a"> mundo</span>
           </div>
-          <div class="tokens">
+          <div class="tokens" style="margin:2px 0">
             <span class="tok b">des</span><span class="tok b">arrollo</span>
           </div>
-          <div class="tokens">
+          <div class="tokens" style="margin:2px 0">
             <span class="tok c">token</span><span class="tok c">ización</span>
           </div>
-          <div class="tokens">
+          <div class="tokens" style="margin:2px 0">
             <span class="tok d">2026</span><span class="tok d">-</span><span class="tok d">10</span><span class="tok d">-</span><span class="tok d">17</span>
           </div>
-          <p class="small">Regla rápida: <b>1 token ≈ 3-4 letras</b> en español. Una página ≈ 600 tokens.</p>
+          <p class="small" style="margin-top:2px">Regla rápida: <b>1 token ≈ 3-4 letras</b> en español. Una página ≈ 600 tokens.</p>
         </div>
         <div class="card accent">
           <h3>Por qué se parte así</h3>
@@ -102,7 +100,7 @@
             <li><b>El código se lleva bien</b>, pero la indentación también gasta.</li>
           </ul>
         </div>
-        <div class="okbox">Si necesitas exactitud con números o identificadores, dale una <b>herramienta</b> que cuente, no le pidas que "cuente".</div>
+        <div class="okbox" style="font-size:18px">Si necesitas exactitud con números o identificadores, dale una <b>herramienta</b> que cuente, no le pidas que "cuente".</div>
       </div>
     </div>
   </div>
@@ -113,7 +111,6 @@
 </section>
 
 <section class="slide" data-module="3 · Anatomía de un LLM">
-  <img class="meme-inline" src="img/memes/m26.jpg" alt="" style="left:1147px;top:577px;width:118px">
   <h2>Embeddings: el significado como mapa</h2>
   <div class="body">
     <div class="cols c2-1">
@@ -154,7 +151,7 @@
             <li><b>Ordenar por parecido</b> ("más como esto").</li>
           </ul>
         </div>
-        <div class="okbox">Los modelos de embeddings son pequeños, baratos y rapidísimos. Muchas veces <b>no necesitas un LLM</b>: necesitas un mapa y un umbral.</div>
+        <div class="okbox" style="font-size:18px">Los modelos de embeddings son pequeños, baratos y rapidísimos. Muchas veces <b>no necesitas un LLM</b>: necesitas un mapa y un umbral.</div>
       </div>
     </div>
   </div>
@@ -165,7 +162,6 @@
 </section>
 
 <section class="slide" data-module="3 · Anatomía de un LLM">
-  <img class="meme-inline" src="img/memes/m12.jpg" alt="" style="left:1066px;top:296px;width:196px">
   <h2>Atención: cada palabra mira a las demás</h2>
   <div class="body">
     <div class="cols c1-2">
@@ -259,8 +255,12 @@
   </ul></aside>
 </section>
 
+<section class="slide meme" data-module="3 · Anatomía de un LLM">
+  <img class="meme-shot" src="img/memes/m08.jpg" alt="meme">
+  <aside class="notes"><ul><li>Meme de descanso: se pasa rapido, sin comentario. Si no hay tiempo, salta con <b>&#8594;</b>.</li></ul></aside>
+</section>
+
 <section class="slide" data-module="3 · Anatomía de un LLM">
-  <img class="meme-inline" src="img/memes/m23.jpg" alt="" style="left:1123px;top:553px;width:140px">
   <h2>Self-attention: la fórmula, leída en voz alta</h2>
   <div class="body compact">
     <div class="math">
@@ -300,7 +300,6 @@
 </section>
 
 <section class="slide" data-module="3 · Anatomía de un LLM">
-  <img class="meme-inline" src="img/memes/m25.jpg" alt="" style="left:476px;top:524px;width:168px">
   <h2>Softmax: de números sueltos a una decisión</h2>
   <div class="body compact">
     <div class="math">
@@ -373,7 +372,7 @@ modelo = [bloque] * N_capas</code></pre>
       <div class="col">
         <div class="card accent">
           <h3>Parámetros típicos <span class="tag warn">orientativo</span></h3>
-          <table>
+          <table style="font-size:17px">
             <thead><tr><th>Modelo</th><th>Capas</th><th>Dimensión</th><th>Contexto</th></tr></thead>
             <tbody>
               <tr><td>7B</td><td class="num">32</td><td class="num">4.096</td><td class="num">8k&#8211;128k</td></tr>
@@ -393,7 +392,6 @@ modelo = [bloque] * N_capas</code></pre>
 </section>
 
 <section class="slide" data-module="3 · Anatomía de un LLM">
-  <img class="meme-inline" src="img/memes/m27.jpg" alt="" style="left:1094px;top:524px;width:168px">
   <h2>De probabilidades a texto: el muestreo</h2>
   <div class="body">
     <div class="cols c2">
@@ -431,14 +429,13 @@ modelo = [bloque] * N_capas</code></pre>
 </section>
 
 <section class="slide" data-module="3 · Anatomía de un LLM">
-  <img class="meme-inline" src="img/memes/m03.jpg" alt="" style="left:1159px;top:570px;width:104px">
   <h2>Multimodalidad: cómo entra una imagen o un audio</h2>
   <div class="body">
     <div class="cols c2">
       <div class="col">
         <div class="card">
           <h3>La receta habitual</h3>
-          <div class="flow">
+          <div class="flow" style="font-size:17px">
             <span class="node">Imagen</span><span class="arrow">&#8594;</span>
             <span class="node">Encoder visual<br>(ViT)</span><span class="arrow">&#8594;</span>
             <span class="node">Proyector</span><span class="arrow">&#8594;</span>
@@ -502,12 +499,16 @@ modelo = [bloque] * N_capas</code></pre>
   </ul></aside>
 </section>
 
+<section class="slide meme" data-module="3 · Anatomía de un LLM">
+  <img class="meme-shot" src="img/memes/m29.jpg" alt="meme">
+  <aside class="notes"><ul><li>Meme de descanso: se pasa rapido, sin comentario. Si no hay tiempo, salta con <b>&#8594;</b>.</li></ul></aside>
+</section>
+
 <section class="slide" data-module="3 · Anatomía de un LLM">
-  <img class="meme-inline" src="img/memes/m01.jpg" alt="" style="left:1036px;top:429px;width:224px">
   <h2>Idea clave del bloque</h2>
-  <div class="body center">
-    <div class="quote">Es un sistema de <b>dos fases</b>: entender (atención, determinista) y escribir (muestreo, estocástico).<br>Todo lo raro que ves viene de la segunda.</div>
-    <div class="cols c3">
+  <div class="body center" style="justify-content:center">
+    <div class="quote" style="max-width:1020px;font-size:29px">Es un sistema de <b>dos fases</b>: entender (atención, determinista) y escribir (muestreo, estocástico).<br>Todo lo raro que ves viene de la segunda.</div>
+    <div class="cols c3" style="max-width:1150px">
       <div class="card"><h3>¿Cuenta mal?</h3><p>No hay calculadora: dale una herramienta.</p></div>
       <div class="card"><h3>¿Ignora el final de mi documento?</h3><p>Contexto largo &#8800; contexto atendido: trocea y ordena.</p></div>
       <div class="card"><h3>¿Cambia la respuesta?</h3><p>Muestreo: baja la temperatura y valida el resultado.</p></div>
